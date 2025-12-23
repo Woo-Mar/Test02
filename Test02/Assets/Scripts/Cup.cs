@@ -27,6 +27,10 @@ public class Cup : MonoBehaviour
     [Header("Z轴设置")]
     public float cupZPosition = -2f; // 杯子Z轴，设为-2确保在最前面
 
+    [Header("垃圾桶检测")]
+    public bool isOverTrashBin = false;
+    public TrashBin currentTrashBin = null;
+
     private SpriteRenderer spriteRenderer; // 精灵渲染器
     private CoffeeMachine coffeeMachine;   // 咖啡机引用
     private Vector3 dragOffsetVector;      // 拖拽偏移向量
@@ -51,6 +55,54 @@ public class Cup : MonoBehaviour
         }
 
         originalSortingOrder = spriteRenderer.sortingOrder; // 保存原始渲染层级
+    }
+
+    void Update()
+    {
+        // 如果是空杯子且不在咖啡机上，确保Z轴正确
+        if (isEmpty && !isBeingDragged)
+        {
+            EnsureCorrectZPosition();
+        }
+
+        // 检查是否在垃圾桶上方（如果正在拖拽）
+        if (isBeingDragged)
+        {
+            CheckTrashBinOverlap();
+        }
+    }
+
+    /// <summary>
+    /// 检查是否在垃圾桶上方
+    /// </summary>
+    void CheckTrashBinOverlap()
+    {
+        TrashBin[] trashBins = FindObjectsOfType<TrashBin>();
+        TrashBin closestBin = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (TrashBin bin in trashBins)
+        {
+            float distance = Vector2.Distance(transform.position, bin.transform.position);
+            if (distance <= bin.interactionRadius && distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestBin = bin;
+            }
+        }
+
+        // 通知垃圾桶有杯子在上方
+        if (closestBin != null)
+        {
+            closestBin.CheckCupOverlap(this);
+            isOverTrashBin = true;
+            currentTrashBin = closestBin;
+        }
+        else
+        {
+            isOverTrashBin = false;
+            currentTrashBin = null;
+        }
     }
 
     // 确保杯子在正确的Z轴位置
@@ -150,10 +202,38 @@ public class Cup : MonoBehaviour
 
         // 确保Z轴正确
         EnsureCorrectZPosition();
-        // 检查是否拖拽到了顾客附近
-        CheckForCustomer();
+
+        // 如果在垃圾桶上方，不检查顾客，直接丢弃
+        if (isOverTrashBin && currentTrashBin != null)
+        {
+            // 这里不直接丢弃，因为垃圾桶会处理
+            Debug.Log("杯子在垃圾桶上方释放");
+            // 垃圾桶会在Update中检测到鼠标释放并处理
+            ReturnToOriginalPosition(); // 或者让垃圾桶处理
+        }
+        else
+        {
+            // 检查顾客
+            CheckForCustomer();
+        }
 
         Debug.Log("停止拖拽杯子");
+    }
+
+    /// <summary>
+    /// 返回到原始位置（当在垃圾桶上方释放但没有触发丢弃时）
+    /// </summary>
+    void ReturnToOriginalPosition()
+    {
+        if (coffeeMachine != null)
+        {
+            coffeeMachine.PlaceCup(gameObject);
+        }
+        else
+        {
+            transform.position = originalPosition;
+            EnsureCorrectZPosition();
+        }
     }
 
     // 每次修改位置后都调用此方法
