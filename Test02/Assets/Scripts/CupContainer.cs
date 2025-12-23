@@ -97,6 +97,11 @@ public class CupContainer : MonoBehaviour
         // 实例化新杯子
         GameObject newCup = Instantiate(cupPrefab);
 
+        // 确保初始Z轴正确
+        Vector3 cupPos = newCup.transform.position;
+        cupPos.z = -2f; // 设置初始Z轴
+        newCup.transform.position = cupPos;
+
         // 获取杯子脚本组件
         Cup cupScript = newCup.GetComponent<Cup>();
         if (cupScript == null)

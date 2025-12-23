@@ -24,6 +24,9 @@ public class Cup : MonoBehaviour
     public float dragSpeed = 10f;         // 拖拽移动速度
     public float dragOffset = 0.5f;       // 拖拽时与鼠标位置的垂直偏移
 
+    [Header("Z轴设置")]
+    public float cupZPosition = -2f; // 杯子Z轴，设为-2确保在最前面
+
     private SpriteRenderer spriteRenderer; // 精灵渲染器
     private CoffeeMachine coffeeMachine;   // 咖啡机引用
     private Vector3 dragOffsetVector;      // 拖拽偏移向量
@@ -38,6 +41,9 @@ public class Cup : MonoBehaviour
         cupCollider = GetComponent<Collider2D>();
         coffeeMachine = FindObjectOfType<CoffeeMachine>(); // 查找场景中的咖啡机
 
+        // 初始化Z轴
+        EnsureCorrectZPosition();
+
         // 设置初始外观
         if (isEmpty)
         {
@@ -47,11 +53,21 @@ public class Cup : MonoBehaviour
         originalSortingOrder = spriteRenderer.sortingOrder; // 保存原始渲染层级
     }
 
+    // 确保杯子在正确的Z轴位置
+    private void EnsureCorrectZPosition()
+    {
+        Vector3 pos = transform.position;
+        pos.z = cupZPosition;
+        transform.position = pos;
+    }
     /// <summary>
     /// 鼠标按下事件处理
     /// </summary>
     void OnMouseDown()
     {
+        // 先确保Z轴正确
+        EnsureCorrectZPosition();
+
         // 空杯子：点击后放置到咖啡机
         if (isEmpty && coffeeMachine != null)
         {
@@ -73,18 +89,18 @@ public class Cup : MonoBehaviour
     {
         isBeingDragged = true;
         originalPosition = transform.position;
-        originalPosition.z = 0; // 确保Z轴为0
+        // 确保原始位置的Z轴正确
+        originalPosition.z = cupZPosition;
 
         // 计算拖拽偏移（让杯子显示在鼠标上方）
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0;
+        mousePos.z = cupZPosition; // 鼠标位置也要用杯子的Z轴
         dragOffsetVector = transform.position - mousePos;
         dragOffsetVector.y += dragOffset; // 垂直偏移
-        dragOffsetVector.z = 0;
+        dragOffsetVector.z = 0; // 偏移向量的Z轴设为0，我们会在其他地方控制Z轴
 
         // 提高渲染层级，确保拖拽时在最上层
         spriteRenderer.sortingOrder = 100;
-
         // 拖拽视觉效果：轻微放大
         transform.localScale *= 1.1f;
 
@@ -100,10 +116,13 @@ public class Cup : MonoBehaviour
         {
             // 平滑跟随鼠标移动
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0;
+            mousePos.z = cupZPosition; // 确保使用杯子的Z轴
 
             Vector3 targetPosition = mousePos + dragOffsetVector;
+            targetPosition.z = cupZPosition; // 确保目标位置的Z轴正确
             transform.position = Vector3.Lerp(transform.position, targetPosition, dragSpeed * Time.deltaTime);
+            // 确保Z轴正确（防止插值导致Z轴变化）
+            EnsureCorrectZPosition();
         }
     }
 
@@ -129,10 +148,22 @@ public class Cup : MonoBehaviour
         spriteRenderer.sortingOrder = originalSortingOrder;
         transform.localScale /= 1.1f;
 
+        // 确保Z轴正确
+        EnsureCorrectZPosition();
         // 检查是否拖拽到了顾客附近
         CheckForCustomer();
 
         Debug.Log("停止拖拽杯子");
+    }
+
+    // 每次修改位置后都调用此方法
+    void LateUpdate()
+    {
+        // 如果是空杯子且不在咖啡机上，确保Z轴正确
+        if (isEmpty && !isBeingDragged)
+        {
+            EnsureCorrectZPosition();
+        }
     }
 
     /// <summary>
@@ -191,7 +222,8 @@ public class Cup : MonoBehaviour
 
             // 装满咖啡后可拖拽
             isDraggable = true;
-
+            // 装咖啡后确保Z轴正确
+            EnsureCorrectZPosition();
             Debug.Log("杯子已装满咖啡");
         }
     }
@@ -242,7 +274,7 @@ public class Cup : MonoBehaviour
         if (coffeeMachine != null && coffeeMachine.currentCup == this.gameObject)
         {
             coffeeMachine.currentCup = null;
-            //coffeeMachine.UpdateUI(); // 更新咖啡机UI状态
+            coffeeMachine.UpdateUI(); // 更新咖啡机UI状态
         }
 
         // 销毁杯子对象

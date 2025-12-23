@@ -72,7 +72,7 @@ public class CoffeeMachine : MonoBehaviour
     /// <summary>
     /// 更新咖啡机UI状态
     /// </summary>
-    void UpdateUI()
+    public void UpdateUI()
     {
         // 显示/隐藏咖啡粉和咖啡液UI
         coffeePowderUI.gameObject.SetActive(hasGroundCoffee);
@@ -180,9 +180,10 @@ public class CoffeeMachine : MonoBehaviour
                 currentCup.transform.position = cupPosition.position;
                 currentCup.transform.SetParent(cupPosition);
 
-                // 确保Z轴为0（2D深度控制）
+
+                // 确保Z轴正确
                 Vector3 pos = currentCup.transform.position;
-                pos.z = 0;
+                pos.z = -2f; // 硬编码为-2，或者从Cup脚本获取
                 currentCup.transform.position = pos;
 
                 // 从可用杯子列表中移除（已使用）
@@ -274,6 +275,11 @@ public class CoffeeMachine : MonoBehaviour
                 // 使用 cupPosition 的位置来重置杯子位置
                 cup.transform.position = cupPosition.position;
                 cup.transform.SetParent(null);
+
+                // 确保Z轴正确
+                Vector3 pos = cup.transform.position;
+                pos.z = -2f; // 硬编码为-2
+                cup.transform.position = pos;
 
                 // 重新添加到可用杯子列表
                 if (!availableCups.Contains(cup))
