@@ -74,6 +74,13 @@ public class CoffeeOrderManager : MonoBehaviour
     // 修改：生成顾客
     public void SpawnCustomer()
     {
+        // 添加检查：如果游戏未开始，不生成顾客
+        if (!canSpawnCustomers)
+        {
+            // Debug.Log("游戏未开始，暂停生成顾客");
+            return;
+        }
+
         // 检查是否达到最大顾客数量
         if (waitingCustomers.Count >= maxCustomers)
         {
@@ -138,6 +145,12 @@ public class CoffeeOrderManager : MonoBehaviour
     // 修改：完成订单时释放生成点
     public void CompleteOrder(Coffee coffee, Customer customer)
     {
+        // 添加检查：如果游戏未开始，不处理订单
+        if (!canSpawnCustomers)
+        {
+            return;
+        }
+
         if (waitingCustomers.Contains(customer))
         {
             // 释放顾客占用的生成点
