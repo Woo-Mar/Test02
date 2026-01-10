@@ -10,7 +10,6 @@ public class TrashBin : MonoBehaviour
     public Color highlightColor = Color.red; // 高亮颜色
 
     [Header("视觉效果")]
-    public GameObject trashEffectPrefab;   // 丢弃特效
     public AudioClip trashSound;          // 丢弃音效
 
     private Color originalColor;
@@ -87,13 +86,6 @@ public class TrashBin : MonoBehaviour
         {
             Debug.LogError("未找到咖啡机！");
             return;
-        }
-
-        // 播放丢弃特效
-        if (trashEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(trashEffectPrefab, transform.position, Quaternion.identity);
-            Destroy(effect, 2f);
         }
 
         // 播放音效

@@ -6,6 +6,7 @@ public class TrashEffect : MonoBehaviour
 {
     public float lifeTime = 2f;
     public float fadeDuration = 0.5f;
+    public float layer = -2f;
 
     private SpriteRenderer spriteRenderer;
     private float timer;

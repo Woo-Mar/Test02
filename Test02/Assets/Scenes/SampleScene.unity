@@ -1622,7 +1622,6 @@ MonoBehaviour:
   interactionRadius: 1.5
   binRenderer: {fileID: 1378563975}
   highlightColor: {r: 0.95045185, g: 1, b: 0, a: 1}
-  trashEffectPrefab: {fileID: 2130116388386304393, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
   trashSound: {fileID: 8300000, guid: 169394f0dece10c468c5af7bcd3ae9c9, type: 3}
 --- !u!61 &1378563978
 BoxCollider2D:
@@ -1814,7 +1813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   iceCubePrefab: {fileID: 71007469911599878, guid: 8faf5ca0638502044ba47ea621364d28, type: 3}
-  iceSpawnPoint: {fileID: 1972353308}
+  iceSpawnPoint: {fileID: 1485931281281542818, guid: 5b8dacc98c7ceca48aba766dc378d6a6, type: 3}
 --- !u!1 &1435102577
 GameObject:
   m_ObjectHideFlags: 0
@@ -2241,67 +2240,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1831624212919861015
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 7.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.77561605
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 346630460944712216, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2130116388386304393, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_Name
-      value: TrashEffect
-      objectReference: {fileID: 0}
-    - target: {fileID: 2130116388386304393, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ed356d7f48c472a4691d41e16f5a6800, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2318,4 +2256,3 @@ SceneRoots:
   - {fileID: 190399361}
   - {fileID: 1084569075}
   - {fileID: 1378563976}
-  - {fileID: 1831624212919861015}
