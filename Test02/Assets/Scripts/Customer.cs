@@ -33,6 +33,12 @@ public class Customer : MonoBehaviour
     private bool isWaiting = true;       // 是否在等待状态
     private bool isServed = false;       // 是否已被服务
 
+    [HideInInspector]//不需要在inspector中显示
+    public Transform spawnPoint;
+
+    // 添加：离开状态标记，防止多次触发离开逻辑
+    private bool isLeaving = false;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -48,7 +54,17 @@ public class Customer : MonoBehaviour
         }
 
         InitializeUI(); // 初始化UI显示
+        // 记录生成点（调试用）
+        if (spawnPoint != null)
+        {
+            Debug.Log($"顾客在 {spawnPoint.name} 生成");
+        }
+        else
+        {
+            Debug.LogWarning("顾客没有分配生成点！");
+        }
     }
+
 
     /// <summary>
     /// 初始化顾客UI显示
@@ -63,8 +79,6 @@ public class Customer : MonoBehaviour
 
         if (orderIcon != null)
         {
-            // 随机决定咖啡类型
-            wantsIcedCoffee = Random.value > 0.5f;
             // 根据订单类型设置图标
             orderIcon.sprite = wantsIcedCoffee ? icedCoffeeOrderSprite : coffeeOrderSprite;
             orderIcon.gameObject.SetActive(true); // 显示订单图标
@@ -75,23 +89,21 @@ public class Customer : MonoBehaviour
 
     void Update()
     {
-        // 更新等待中的顾客状态
-        if (isWaiting && !isServed)
+        if (isWaiting && !isServed && !isLeaving)
         {
-            currentPatience -= Time.deltaTime; // 减少耐心值
+            currentPatience -= Time.deltaTime;
 
-            // 更新耐心条UI
             if (patienceSlider != null)
             {
                 patienceSlider.value = currentPatience;
             }
 
-            UpdatePatienceColor(); // 更新耐心条颜色
+            UpdatePatienceColor();
 
-            // 耐心耗尽处理
+            // 耐心耗尽离开
             if (currentPatience <= 0)
             {
-                LeaveAngry(); // 生气离开
+                LeaveAngry();
             }
         }
     }
@@ -175,14 +187,15 @@ public class Customer : MonoBehaviour
     {
         isWaiting = false;
         isServed = true;
+        isLeaving = true; // 标记为正在离开
 
-        // 更新顾客外观为开心状态
+        // 更新外观
         if (happySprite != null)
         {
             spriteRenderer.sprite = happySprite;
         }
 
-        // 隐藏UI元素
+        // 隐藏UI
         if (orderIcon != null)
         {
             orderIcon.gameObject.SetActive(false);
@@ -195,21 +208,21 @@ public class Customer : MonoBehaviour
 
         Debug.Log("顾客收到正确的咖啡！");
 
-        // 通知杯子被服务（触发动画）
+        // 通知杯子被服务
         cup.OnServed();
 
-        // 计算奖励金额
+        // 计算奖励
         int reward = baseReward;
         if (cup.hasIce && wantsIcedCoffee)
         {
-            reward += iceBonus; // 加冰额外奖励
+            reward += iceBonus;
         }
 
-        // 根据剩余耐心计算额外奖励
+        // 额外奖励：根据剩余耐心
         float patienceBonus = currentPatience / patience;
         reward += Mathf.RoundToInt(reward * patienceBonus * 0.5f);
 
-        // 创建咖啡数据对象用于奖励计算
+        // 创建咖啡对象用于奖励计算
         Coffee servedCoffee = new Coffee
         {
             hasCoffeePowder = true,
@@ -220,11 +233,8 @@ public class Customer : MonoBehaviour
             value = reward
         };
 
-        // 完成订单（发放金币）
+        // 完成订单（这里会释放生成点）
         CoffeeOrderManager.Instance.CompleteOrder(servedCoffee, this);
-
-        // 延迟后开心离开
-        Invoke("LeaveHappy", 2f);
     }
 
     /// <summary>
@@ -260,37 +270,40 @@ public class Customer : MonoBehaviour
     /// <summary>
     /// 开心离开
     /// </summary>
+    // 修改：开心离开
     void LeaveHappy()
     {
+        if (isLeaving) return; // 防止重复调用
+
+        isLeaving = true;
         Debug.Log("顾客满意地离开了");
+
+        // 这里不需要手动释放生成点，因为CompleteOrder会处理
         Leave();
     }
 
-    /// <summary>
-    /// 生气离开
-    /// </summary>
+    // 修改：生气离开
     void LeaveAngry()
     {
+        if (isLeaving) return; // 防止重复调用
+
+        isLeaving = true;
+
         if (!isServed)
         {
             Debug.Log("顾客生气地离开了...");
-
-            // 播放生气离开音效（待实现）
-            // AudioManager.Instance.PlaySound("customerLeaveAngry");
         }
+
+        // 通知订单管理器顾客生气离开
+        CoffeeOrderManager.Instance.CustomerLeftAngry(this);
+
         Leave();
     }
 
-    /// <summary>
-    /// 离开场景的通用处理
-    /// </summary>
+    // 修改：离开通用处理
     void Leave()
     {
-        // 从等待列表中移除
-        if (CoffeeOrderManager.Instance.waitingCustomers.Contains(this))
-        {
-            CoffeeOrderManager.Instance.waitingCustomers.Remove(this);
-        }
+        isWaiting = false;
 
         // 播放离开动画
         StartCoroutine(LeaveAnimation());
@@ -320,7 +333,13 @@ public class Customer : MonoBehaviour
 
             yield return null; // 等待下一帧
         }
-
-        Destroy(gameObject); // 销毁顾客对象
+        // 在动画结束后才销毁对象
+        // 注意：对于CompleteOrder的情况，订单管理器会销毁对象
+        // 对于生气离开的情况，CustomerLeftAngry方法会销毁对象
+        // 所以这里不需要再销毁
+        // Destroy(gameObject); // 销毁顾客对象
     }
+
+    // 修改：正确服务咖啡
+
 }
