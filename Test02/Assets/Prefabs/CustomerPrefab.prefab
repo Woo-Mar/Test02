@@ -374,12 +374,16 @@ MonoBehaviour:
   angrySprite: {fileID: 21300000, guid: f60362c846f275c4a89d1ecdbe208a69, type: 3}
   patience: 30
   baseReward: 10
-  iceBonus: 5
   patienceSlider: {fileID: 7798553859447810830}
   orderIcon: {fileID: 8943971979237832515}
-  coffeeOrderSprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
+  hotCoffeeOrderSprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
   icedCoffeeOrderSprite: {fileID: 21300000, guid: 960460f82bab3e3439a6fd70f6711aae, type: 3}
-  wantsIcedCoffee: 0
+  latteOrderSprite: {fileID: 21300000, guid: 8f69bbe70967b204d9835d7746d7e38e, type: 3}
+  strawberryLatteOrderSprite: {fileID: 21300000, guid: f4bd1fa3568d05e45bdb53ad57f49254, type: 3}
+  carambolaAmericanoOrderSprite: {fileID: 21300000, guid: a71a8cf4d024a1848a498997443b6427, type: 3}
+  figTeaOrderSprite: {fileID: 21300000, guid: 8d608bfdaf6983e4595cd02eb7cbfd2d, type: 3}
+  wantedCoffeeType: 0
+  spawnPoint: {fileID: 0}
 --- !u!1 &6846338410970967121
 GameObject:
   m_ObjectHideFlags: 0

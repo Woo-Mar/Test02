@@ -12,13 +12,25 @@ public class Cup : MonoBehaviour
     public Sprite emptyCupSprite;        // 空杯子精灵
     public Sprite coffeeCupSprite;       // 热咖啡杯子精灵
     public Sprite icedCoffeeCupSprite;   // 冰咖啡杯子精灵
+    [Header("特殊外观")]
+    public Sprite latteSprite;             // 拿铁外观
+    public Sprite strawberryLatteSprite;   // 草莓拿铁外观
+    public Sprite carambolaAmericanoSprite; // 杨桃美式外观
+    public Sprite figTeaSprite;            // 无花果干茶外观
 
     [Header("State")]
     public bool isEmpty = true;           // 是否为空杯子
     public bool hasCoffee = false;        // 是否有咖啡
     public bool hasIce = false;           // 是否有冰
+    [Header("额外原料状态")]
+    public bool hasMilk = false;           // 是否有牛奶
+    public bool hasStrawberry = false;     // 是否有草莓酱
+    public bool hasCarambola = false;      // 是否有杨桃片
+    public bool hasFig = false;            // 是否有无花果干
+
     public bool isDraggable = true;       // 是否可拖拽
     public bool isBeingDragged = false;   // 是否正在被拖拽
+
 
     [Header("Drag Settings")]
     public float dragSpeed = 10f;         // 拖拽移动速度
@@ -73,6 +85,81 @@ public class Cup : MonoBehaviour
     }
 
     /// <summary>
+    /// 添加额外原料
+    /// </summary>
+    public void AddExtraIngredient(string ingredient)
+    {
+        switch (ingredient.ToLower())
+        {
+            case "milk":
+                hasMilk = true;
+                break;
+            case "strawberry":
+                hasStrawberry = true;
+                break;
+            case "carambola":
+                hasCarambola = true;
+                break;
+            case "fig":
+                hasFig = true;
+                // 无花果干茶不需要咖啡
+                if (!hasCoffee)
+                {
+                    hasCoffee = true; // 标记为有饮品
+                    isEmpty = false;
+                    isDraggable = true; // 重要：设置为可拖拽！
+                    spriteRenderer.sprite = figTeaSprite;
+                    Debug.Log($"无花果茶制作完成，设置isDraggable = {isDraggable}");
+                }
+                break;
+        }
+
+        // 更新外观
+        UpdateCupAppearance();
+
+        // 确保其他饮品也可以拖拽
+        if (hasCoffee && !isDraggable)
+        {
+            isDraggable = true;
+        }
+    }
+
+    /// <summary>
+    /// 更新杯子外观（根据原料组合）
+    /// </summary>
+    private void UpdateCupAppearance()
+    {
+        if (spriteRenderer == null) return;
+
+        // 检查咖啡类型并更新外观
+        if (hasFig && !hasCoffee)
+        {
+            // 无花果干茶
+            if (figTeaSprite != null)
+                spriteRenderer.sprite = figTeaSprite;
+        }
+        else if (hasStrawberry && hasMilk && hasCoffee)
+        {
+            // 草莓拿铁
+            if (strawberryLatteSprite != null)
+                spriteRenderer.sprite = strawberryLatteSprite;
+        }
+        else if (hasCarambola && hasIce && hasCoffee)
+        {
+            // 杨桃美式
+            if (carambolaAmericanoSprite != null)
+                spriteRenderer.sprite = carambolaAmericanoSprite;
+        }
+        else if (hasMilk && hasCoffee)
+        {
+            // 拿铁
+            if (latteSprite != null)
+                spriteRenderer.sprite = latteSprite;
+        }
+        // 其他情况保持原有逻辑
+    }
+
+    /// <summary>
     /// 检查是否在垃圾桶上方
     /// </summary>
     void CheckTrashBinOverlap()
@@ -115,9 +202,13 @@ public class Cup : MonoBehaviour
     /// <summary>
     /// 鼠标按下事件处理
     /// </summary>
+    /// <summary>
+    /// 鼠标按下事件处理
+    /// </summary>
     void OnMouseDown()
     {
-        // 先确保Z轴正确
+        Debug.Log($"点击杯子 - hasCoffee: {hasCoffee}, hasFig: {hasFig}, isEmpty: {isEmpty}, isDraggable: {isDraggable}");
+
         EnsureCorrectZPosition();
 
         // 空杯子：点击后放置到咖啡机
@@ -127,10 +218,16 @@ public class Cup : MonoBehaviour
             return;
         }
 
-        // 有咖啡的杯子：开始拖拽
-        if (hasCoffee && isDraggable)
+        // 有饮品（咖啡或无花果茶）就可以拖拽
+        bool hasAnyDrink = hasCoffee || hasFig;
+        if (hasAnyDrink && isDraggable)
         {
+            Debug.Log("开始拖拽杯子");
             StartDragging();
+        }
+        else
+        {
+            Debug.Log($"无法拖拽 - hasAnyDrink: {hasAnyDrink}, isDraggable: {isDraggable}");
         }
     }
 
@@ -360,6 +457,47 @@ public class Cup : MonoBehaviour
         // 销毁杯子对象
         Destroy(gameObject);
     }
+    /// <summary>
+    /// 重置杯子状态（当订单错误时）
+    /// </summary>
+    public void ResetCupState()
+    {
+        // 重置所有原料状态
+        hasMilk = false;
+        hasStrawberry = false;
+        hasCarambola = false;
+        hasIce = false;
+        hasFig = false;
+
+        // 如果还有咖啡，保持hasCoffee为true，否则设为false
+        if (!hasCoffee)
+        {
+            isEmpty = true;
+        }
+
+        // 重置外观为基本咖啡外观
+        if (hasCoffee && !hasIce)
+        {
+            spriteRenderer.sprite = coffeeCupSprite;
+        }
+        else if (hasCoffee && hasIce)
+        {
+            spriteRenderer.sprite = icedCoffeeCupSprite;
+        }
+        else if (hasFig)
+        {
+            spriteRenderer.sprite = figTeaSprite;
+        }
+        else
+        {
+            spriteRenderer.sprite = emptyCupSprite;
+            isEmpty = true;
+            hasCoffee = false;
+        }
+
+        Debug.Log("杯子状态已重置");
+    }
+
 
     /// <summary>
     /// 杯子被成功服务时的处理

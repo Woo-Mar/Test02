@@ -118,11 +118,11 @@ public class CoffeeOrderManager : MonoBehaviour
             // 记录顾客和生成点的映射
             customerSpawnPointMap[customerScript] = spawnPoint;
 
-            // 随机设置订单类型
-            customerScript.wantsIcedCoffee = Random.value > 0.5f;
+            // 顾客脚本会在Start()中自动随机设置订单类型
             waitingCustomers.Add(customerScript);
 
-            Debug.Log($"新顾客到达！在位置{spawnPoint.name}，想要{(customerScript.wantsIcedCoffee ? "冰咖啡" : "热咖啡")}");
+            // 注意：现在订单类型是在Customer.cs的Start()方法中随机生成的
+            Debug.Log($"新顾客到达！在位置{spawnPoint.name}");
         }
 
         // 安排下一个顾客生成

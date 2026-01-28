@@ -146,10 +146,21 @@ MonoBehaviour:
   emptyCupSprite: {fileID: 21300000, guid: 857474daf03e67e4fadb3066a6d105ef, type: 3}
   coffeeCupSprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
   icedCoffeeCupSprite: {fileID: 21300000, guid: 960460f82bab3e3439a6fd70f6711aae, type: 3}
+  latteSprite: {fileID: 21300000, guid: 8f69bbe70967b204d9835d7746d7e38e, type: 3}
+  strawberryLatteSprite: {fileID: 21300000, guid: f4bd1fa3568d05e45bdb53ad57f49254, type: 3}
+  carambolaAmericanoSprite: {fileID: 21300000, guid: a71a8cf4d024a1848a498997443b6427, type: 3}
+  figTeaSprite: {fileID: 21300000, guid: 8d608bfdaf6983e4595cd02eb7cbfd2d, type: 3}
   isEmpty: 1
   hasCoffee: 0
   hasIce: 0
+  hasMilk: 0
+  hasStrawberry: 0
+  hasCarambola: 0
+  hasFig: 0
   isDraggable: 1
   isBeingDragged: 0
   dragSpeed: 10
   dragOffset: 0.5
+  cupZPosition: -2
+  isOverTrashBin: 0
+  currentTrashBin: {fileID: 0}

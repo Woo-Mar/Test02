@@ -32,7 +32,7 @@ public class CoffeeMachine : MonoBehaviour
     public int maxCups = 5;                 // 最大杯子数量
 
     public GameObject currentCup;           // 当前放置在咖啡机上的杯子
-    private Coffee currentCoffee = new Coffee(); // 当前制作的咖啡数据
+    public Coffee currentCoffee = new Coffee(); // 当前制作的咖啡数据
 
     [Header("杯子容器引用")]
     public CupContainer cupContainer;      // 杯子容器引用
@@ -163,6 +163,9 @@ public class CoffeeMachine : MonoBehaviour
     /// <summary>
     /// 步骤3：放置杯子到咖啡机
     /// </summary>
+    /// <summary>
+    /// 步骤3：放置杯子到咖啡机
+    /// </summary>
     public void PlaceCup(GameObject cup)
     {
         Debug.Log($"尝试放置杯子，currentCup: {currentCup}, 传入的cup: {cup}");
@@ -180,11 +183,13 @@ public class CoffeeMachine : MonoBehaviour
                 currentCup.transform.position = cupPosition.position;
                 currentCup.transform.SetParent(cupPosition);
 
-
                 // 确保Z轴正确
                 Vector3 pos = currentCup.transform.position;
                 pos.z = -2f; // 硬编码为-2，或者从Cup脚本获取
                 currentCup.transform.position = pos;
+
+                // 重置当前咖啡数据，开始新的一杯
+                ResetCurrentCoffeeData();
 
                 // 从可用杯子列表中移除（已使用）
                 if (availableCups.Contains(cup))
@@ -204,6 +209,23 @@ public class CoffeeMachine : MonoBehaviour
         {
             Debug.Log($"无法放置杯子：currentCup不为空({currentCup != null}) 或传入的cup为空({cup == null})");
         }
+    }
+
+    /// <summary>
+    /// 重置当前咖啡数据
+    /// </summary>
+    private void ResetCurrentCoffeeData()
+    {
+        if (currentCoffee == null)
+        {
+            currentCoffee = new Coffee();
+        }
+        else
+        {
+            currentCoffee.Reset();
+        }
+
+        Debug.Log("咖啡数据已重置，可以开始制作新咖啡");
     }
 
     /// <summary>
@@ -227,34 +249,95 @@ public class CoffeeMachine : MonoBehaviour
         }
     }
 
+
     /// <summary>
-    /// 检查是否可以取走咖啡
+    /// 检查是否可以取走饮品
     /// </summary>
     public bool CanTakeCoffee()
     {
-        // 只要有杯子且杯子里面有咖啡就可以取走
-        return currentCup != null && currentCoffee.hasBrewedCoffee;
+        if (currentCup == null) return false;
+
+        Cup cup = currentCup.GetComponent<Cup>();
+        if (cup == null) return false;
+
+        // 检查咖啡数据
+        if (currentCoffee != null)
+        {
+            // 检查是否是纯无花果茶
+            bool isFigTeaOnly = currentCoffee.hasFig &&
+                               !currentCoffee.hasBrewedCoffee &&
+                               !currentCoffee.hasCoffeePowder;
+
+            // 检查是否是咖啡饮品
+            bool isCoffee = currentCoffee.hasBrewedCoffee;
+
+            if (isFigTeaOnly || isCoffee)
+            {
+                return true;
+            }
+        }
+
+        // 回退到检查杯子状态
+        return cup.hasCoffee || cup.hasFig;
     }
+
+
 
     /// <summary>
     /// 取走咖啡（由拖拽系统处理）
     /// </summary>
     public GameObject TakeCoffee()
     {
-        if (CanTakeCoffee())
+        if (CanTakeProduct()) // 使用新的检查方法
         {
-            GameObject coffeeToServe = currentCup;
+            GameObject productToServe = currentCup;
             currentCup = null;
             currentCoffee.isComplete = true;
 
-            Debug.Log("咖啡已取走");
+            // 重置咖啡数据，准备下一杯
+            ResetCurrentCoffeeData();
+
+            Debug.Log("饮品已取走");
             UpdateUI();
 
-            return coffeeToServe;
+            return productToServe;
         }
         return null;
     }
 
+    /// <summary>
+    /// 检查是否可以取走饮品
+    /// </summary>
+    public bool CanTakeProduct()
+    {
+        if (currentCup == null) return false;
+
+        Cup cup = currentCup.GetComponent<Cup>();
+        if (cup == null) return false;
+
+        // 检查是否有任何饮品（咖啡或无花果茶）
+        bool hasAnyDrink = cup.hasCoffee || cup.hasFig;
+
+        // 检查咖啡数据
+        if (currentCoffee != null)
+        {
+            // 检查是否是纯无花果茶
+            bool isFigTea = currentCoffee.hasFig &&
+                           !currentCoffee.hasBrewedCoffee &&
+                           !currentCoffee.hasCoffeePowder;
+
+            // 检查是否是咖啡饮品
+            bool isCoffee = currentCoffee.hasBrewedCoffee;
+
+            if (isFigTea || isCoffee)
+            {
+                return true;
+            }
+        }
+
+        // 回退到检查杯子状态
+        return hasAnyDrink;
+    }
     /// <summary>
     /// 回收空杯子
     /// </summary>
@@ -331,6 +414,44 @@ public class CoffeeMachine : MonoBehaviour
         else if (availableCups.Count == 0)
         {
             Debug.Log("没有可用的杯子了！");
+        }
+    }
+    /// <summary>
+    /// 检查当前咖啡是否符合某种类型的配方
+    /// </summary>
+    public bool CheckRecipe(Coffee.CoffeeType targetType)
+    {
+        if (currentCoffee == null) return false;
+
+        // 重新确定当前咖啡类型
+        currentCoffee.type = currentCoffee.DetermineCoffeeType();
+
+        return currentCoffee.type == targetType;
+    }
+
+    /// <summary>
+    /// 获取当前咖啡的价值
+    /// </summary>
+    public int GetCurrentCoffeeValue()
+    {
+        if (currentCoffee == null) return 0;
+
+        return currentCoffee.CalculateValue();
+    }
+
+    /// <summary>
+    /// 重置当前咖啡数据（用于开始制作新咖啡）
+    /// </summary>
+    public void ResetCurrentCoffee()
+    {
+        if (currentCup != null)
+        {
+            Cup cup = currentCup.GetComponent<Cup>();
+            if (cup != null && cup.isEmpty)
+            {
+                currentCoffee.Reset();
+                Debug.Log("咖啡数据已重置，可以开始制作新咖啡");
+            }
         }
     }
 }
