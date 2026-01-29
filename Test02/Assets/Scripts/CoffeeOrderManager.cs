@@ -157,7 +157,7 @@ public class CoffeeOrderManager : MonoBehaviour
             if (customerSpawnPointMap.ContainsKey(customer))
             {
                 Transform spawnPoint = customerSpawnPointMap[customer];
-                Debug.Log($"释放生成点: {spawnPoint.name}");
+                EventManager.Instance.TriggerGameLog($"释放生成点: {spawnPoint.name}");
                 customerSpawnPointMap.Remove(customer);
             }
 
@@ -166,9 +166,9 @@ public class CoffeeOrderManager : MonoBehaviour
             Destroy(customer.gameObject);
 
             // 发放金币
-            GameManager.Instance.AddMoney(coffee.value);
+            GameManager.Instance.AddMoney(coffee.value, $"订单完成:{coffee.type}");
 
-            Debug.Log($"订单完成！获得 {coffee.value} 金币，当前顾客数: {waitingCustomers.Count}");
+            EventManager.Instance.TriggerGameLog($"订单完成！获得 {coffee.value} 金币，当前顾客数: {waitingCustomers.Count}");
 
             // 尝试生成新顾客
             if (waitingCustomers.Count < maxCustomers && canSpawnCustomers)
@@ -179,7 +179,7 @@ public class CoffeeOrderManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("尝试完成不存在的顾客订单");
+            EventManager.Instance.TriggerGameLog("尝试完成不存在的顾客订单", LogType.Warning);
         }
     }
 

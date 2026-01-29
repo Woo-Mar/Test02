@@ -114,6 +114,11 @@ public class Cup : MonoBehaviour
                 break;
         }
 
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerExtraIngredientAdded(this, ingredient);
+        }
         // 检查配方是否正确，如果不正确则标记为失败饮品
         CheckRecipeValidity();
 
@@ -563,12 +568,20 @@ public class Cup : MonoBehaviour
         {
             hasCoffee = true;
             isEmpty = false;
-            spriteRenderer.sprite = coffeeCupSprite; // 更新为咖啡杯子外观
+            isDraggable = true; // 确保可拖拽
+            spriteRenderer.sprite = coffeeCupSprite;
+
+            Debug.Log($"杯子装满咖啡，设置isDraggable = {isDraggable}");
 
             // 装满咖啡后可拖拽
-            isDraggable = true;
-            // 装咖啡后确保Z轴正确
             EnsureCorrectZPosition();
+
+            // 触发事件
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerCupFilledWithCoffee(this);
+            }
+
             Debug.Log("杯子已装满咖啡");
         }
     }
@@ -587,12 +600,28 @@ public class Cup : MonoBehaviour
             if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
             {
                 coffeeMachine.currentCoffee.AddIngredient("ice");
+
+                // 触发事件
+                if (EventManager.Instance != null)
+                {
+                    EventManager.Instance.TriggerIngredientAdded("ice", coffeeMachine.currentCoffee, this);
+                }
+
                 // 检查配方是否正确
                 CheckRecipeValidity();
                 UpdateCupAppearance();
             }
 
-            Debug.Log("已加冰");
+            // 触发杯子加冰事件
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerCupIceAdded(this);
+            }
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("已加冰");
+            }
         }
     }
 
@@ -682,6 +711,11 @@ public class Cup : MonoBehaviour
     /// </summary>
     public void OnServed()
     {
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerCupServed(this);
+        }
         // 播放服务动画效果
         StartCoroutine(ServeAnimation());
     }

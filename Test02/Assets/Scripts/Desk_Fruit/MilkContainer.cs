@@ -53,21 +53,30 @@ public class MilkContainer : MonoBehaviour
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
-            Debug.Log("请先放置一个装有咖啡的杯子");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("请先放置一个装有咖啡的杯子", LogType.Warning);
+            }
             return;
         }
 
         Cup cup = coffeeMachine.currentCup.GetComponent<Cup>();
         if (cup == null || !cup.hasCoffee)
         {
-            Debug.Log("杯子没有咖啡，无法添加牛奶");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杯子没有咖啡，无法添加牛奶", LogType.Warning);
+            }
             return;
         }
 
         Coffee coffeeData = coffeeMachine.currentCoffee;
         if (coffeeData.hasMilk)
         {
-            Debug.Log("已经添加过牛奶了");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("已经添加过牛奶了", LogType.Warning);
+            }
             return;
         }
 
@@ -77,17 +86,15 @@ public class MilkContainer : MonoBehaviour
         // 添加牛奶原料到杯子
         cup.AddExtraIngredient("milk");
 
-        //// 生成牛奶特效
-        //if (milkEffectPrefab != null)
-        //{
-        //    GameObject effect = Instantiate(milkEffectPrefab, effectSpawnPoint.position, Quaternion.identity);
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerIngredientAdded("milk", coffeeData, cup);
+        }
 
-        //    AutoDestroy autoDestroy = effect.AddComponent<AutoDestroy>();
-        //    autoDestroy.destroyDelay = 1.5f;
-        //    autoDestroy.fadeOut = true;
-        //    autoDestroy.fadeDuration = 1f;
-        //}
-
-        Debug.Log("已添加牛奶！当前咖啡类型：" + coffeeData.type);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog($"已添加牛奶！当前咖啡类型：{coffeeData.type}");
+        }
     }
 }

@@ -53,21 +53,30 @@ public class CarambolaContainer : MonoBehaviour
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
-            Debug.Log("请先放置一个装有咖啡的杯子");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("请先放置一个装有咖啡的杯子", LogType.Warning);
+            }
             return;
         }
 
         Cup cup = coffeeMachine.currentCup.GetComponent<Cup>();
         if (cup == null || !cup.hasCoffee)
         {
-            Debug.Log("杯子没有咖啡，无法添加杨桃");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杯子没有咖啡，无法添加杨桃", LogType.Warning);
+            }
             return;
         }
 
         Coffee coffeeData = coffeeMachine.currentCoffee;
         if (coffeeData.hasCarambola)
         {
-            Debug.Log("已经添加过杨桃片了");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("已经添加过杨桃片了", LogType.Warning);
+            }
             return;
         }
 
@@ -77,17 +86,15 @@ public class CarambolaContainer : MonoBehaviour
         // 添加杨桃原料到杯子
         cup.AddExtraIngredient("carambola");
 
-        //// 生成杨桃片特效
-        //if (carambolaEffectPrefab != null)
-        //{
-        //    GameObject effect = Instantiate(carambolaEffectPrefab, effectSpawnPoint.position, Quaternion.identity);
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerIngredientAdded("carambola", coffeeData, cup);
+        }
 
-        //    AutoDestroy autoDestroy = effect.AddComponent<AutoDestroy>();
-        //    autoDestroy.destroyDelay = 1.5f;
-        //    autoDestroy.fadeOut = true;
-        //    autoDestroy.fadeDuration = 1f;
-        //}
-
-        Debug.Log("已添加杨桃片！当前咖啡类型：" + coffeeData.type);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog($"已添加杨桃片！当前咖啡类型：{coffeeData.type}");
+        }
     }
 }

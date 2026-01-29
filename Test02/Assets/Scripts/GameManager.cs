@@ -1,6 +1,7 @@
 // GameManager.cs - 游戏管理
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.VisualScripting.Member;
 
 /// <summary>
 /// 游戏管理器 - 管理游戏状态、金币系统和UI更新
@@ -26,15 +27,25 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UpdateUI(); // 初始化UI显示
+                    // 触发游戏开始事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameStarted();
+        }
     }
 
     /// <summary>
     /// 增加金币
     /// </summary>
     /// <param name="amount">增加的数量</param>
-    public void AddMoney(int amount)
+    public void AddMoney(int amount, string source = "unknown")
     {
         money += amount;
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerMoneyEarned(amount, source);
+        }
         UpdateUI(); // 更新UI显示
     }
 
@@ -43,12 +54,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="amount">消费数量</param>
     /// <returns>消费是否成功</returns>
-    public bool SpendMoney(int amount)
+    public bool SpendMoney(int amount, string purpose = "unknown")
     {
         // 检查金币是否足够
         if (money >= amount)
         {
             money -= amount;
+
+            // 触发事件
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerMoneySpent(amount, purpose);
+            }
+
             UpdateUI(); // 更新UI
             return true; // 消费成功
         }

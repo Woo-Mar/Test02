@@ -53,14 +53,20 @@ public class StrawberryContainer : MonoBehaviour
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
-            Debug.Log("请先放置一个装有咖啡的杯子");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("请先放置一个装有咖啡的杯子", LogType.Warning);
+            }
             return;
         }
 
         Cup cup = coffeeMachine.currentCup.GetComponent<Cup>();
         if (cup == null || !cup.hasCoffee)
         {
-            Debug.Log("杯子没有咖啡，无法添加草莓酱");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杯子没有咖啡，无法添加草莓酱", LogType.Warning);
+            }
             return;
         }
 
@@ -68,7 +74,10 @@ public class StrawberryContainer : MonoBehaviour
         Coffee coffeeData = coffeeMachine.currentCoffee;
         if (coffeeData.hasStrawberry)
         {
-            Debug.Log("已经添加过草莓酱了");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("已经添加过草莓酱了", LogType.Warning);
+            }
             return;
         }
 
@@ -78,18 +87,15 @@ public class StrawberryContainer : MonoBehaviour
         // 添加草莓原料到杯子
         cup.AddExtraIngredient("strawberry");
 
-        //// 生成草莓酱特效
-        //if (strawberryEffectPrefab != null)
-        //{
-        //    GameObject effect = Instantiate(strawberryEffectPrefab, effectSpawnPoint.position, Quaternion.identity);
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerIngredientAdded("strawberry", coffeeData, cup);
+        }
 
-        //    // 添加自动销毁
-        //    AutoDestroy autoDestroy = effect.AddComponent<AutoDestroy>();
-        //    autoDestroy.destroyDelay = 1.5f;
-        //    autoDestroy.fadeOut = true;
-        //    autoDestroy.fadeDuration = 1f;
-        //}
-
-        Debug.Log("已添加草莓酱！当前咖啡类型：" + coffeeData.type);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog($"已添加草莓酱！当前咖啡类型：{coffeeData.type}");
+        }
     }
 }

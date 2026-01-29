@@ -44,6 +44,11 @@ public class CoffeeMachine : MonoBehaviour
         brewButton.onClick.AddListener(BrewCoffee);
 
         UpdateUI(); // 更新UI状态
+                    // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerCoffeeMachineInitialized(this);
+        }
     }
 
     /// <summary>
@@ -96,7 +101,11 @@ public class CoffeeMachine : MonoBehaviour
             // 生成咖啡粉视觉效果
             StartCoroutine(SpawnCoffeePowderEffect());
 
-            Debug.Log("咖啡研磨完成！");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
+                EventManager.Instance.TriggerCoffeeGrinded("arabica"); // 假设咖啡豆类型
+            }
             UpdateUI();
         }
     }
@@ -123,16 +132,21 @@ public class CoffeeMachine : MonoBehaviour
             currentCoffee.hasBrewedCoffee = true;
 
             // 在杯子中生成咖啡液体
-            if (currentCup.GetComponent<Cup>() != null)
+            Cup cup = currentCup.GetComponent<Cup>();
+            if (cup != null)
             {
-                currentCup.GetComponent<Cup>().FillWithCoffee();
+                cup.FillWithCoffee();
                 currentCoffee.isInCup = true;
 
                 // 播放咖啡流动效果
                 StartCoroutine(SpawnCoffeeLiquidEffect());
             }
 
-            Debug.Log("咖啡萃取完成！");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("咖啡萃取完成！");
+                EventManager.Instance.TriggerCoffeeBrewed(currentCoffee, cup);
+            }
             UpdateUI();
 
             // 延迟重置咖啡机状态

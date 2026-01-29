@@ -53,7 +53,10 @@ public class FigContainer : MonoBehaviour
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
-            Debug.Log("请先放置一个杯子");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("请先放置一个杯子", LogType.Warning);
+            }
             return;
         }
 
@@ -66,7 +69,10 @@ public class FigContainer : MonoBehaviour
         Coffee coffeeData = coffeeMachine.currentCoffee;
         if (coffeeData.hasFig)
         {
-            Debug.Log("已经添加过无花果干了");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("已经添加过无花果干了", LogType.Warning);
+            }
             return;
         }
 
@@ -76,17 +82,15 @@ public class FigContainer : MonoBehaviour
         // 添加无花果原料到杯子
         cup.AddExtraIngredient("fig");
 
-        //// 生成无花果干特效
-        //if (figEffectPrefab != null)
-        //{
-        //    GameObject effect = Instantiate(figEffectPrefab, effectSpawnPoint.position, Quaternion.identity);
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerIngredientAdded("fig", coffeeData, cup);
+        }
 
-        //    AutoDestroy autoDestroy = effect.AddComponent<AutoDestroy>();
-        //    autoDestroy.destroyDelay = 1.5f;
-        //    autoDestroy.fadeOut = true;
-        //    autoDestroy.fadeDuration = 1f;
-        //}
-
-        Debug.Log("已添加无花果干！当前产品类型：" + coffeeData.type);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog($"已添加无花果干！当前产品类型：{coffeeData.type}");
+        }
     }
 }

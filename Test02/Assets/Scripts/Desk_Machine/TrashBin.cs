@@ -76,7 +76,10 @@ public class TrashBin : MonoBehaviour
     /// </summary>
     void DiscardCup(Cup cup)
     {
-        Debug.Log($"准备丢弃杯子: {cup.name}, 咖啡状态: {cup.hasCoffee}");
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog($"准备丢弃杯子: {cup.name}, 咖啡状态: {cup.hasCoffee}");
+        }
 
         // 获取咖啡机引用
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
@@ -84,7 +87,10 @@ public class TrashBin : MonoBehaviour
 
         if (coffeeMachine == null)
         {
-            Debug.LogError("未找到咖啡机！");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("未找到咖啡机！", LogType.Error);
+            }
             return;
         }
 
@@ -97,7 +103,10 @@ public class TrashBin : MonoBehaviour
         // 检查是否是咖啡机上的当前杯子
         if (coffeeMachine.currentCup == cup.gameObject)
         {
-            Debug.Log("丢弃咖啡机上的当前杯子");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("丢弃咖啡机上的当前杯子");
+            }
 
             // 解除咖啡机的绑定
             coffeeMachine.currentCup = null;
@@ -108,7 +117,16 @@ public class TrashBin : MonoBehaviour
         if (cupContainer != null)
         {
             cupContainer.RefillCups(1);
-            Debug.Log("杯子容器可用杯子数量+1");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杯子容器可用杯子数量+1");
+            }
+        }
+
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerCupDiscarded(cup);
         }
 
         // 销毁杯子

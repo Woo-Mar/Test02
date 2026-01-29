@@ -59,14 +59,20 @@ public class Customer : MonoBehaviour
         }
 
         InitializeUI(); // 初始化UI显示
+                        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerCustomerArrived(this, wantedCoffeeType);
+        }
+
         // 记录生成点（调试用）
         if (spawnPoint != null)
         {
-            Debug.Log($"顾客在 {spawnPoint.name} 生成");
+            EventManager.Instance.TriggerGameLog($"顾客在 {spawnPoint.name} 生成");
         }
         else
         {
-            Debug.LogWarning("顾客没有分配生成点！");
+            EventManager.Instance.TriggerGameLog("顾客没有分配生成点！", LogType.Warning);
         }
     }
 
@@ -365,7 +371,7 @@ public class Customer : MonoBehaviour
             patienceSlider.gameObject.SetActive(false);
         }
 
-        Debug.Log($"顾客收到正确的{coffee.type}！");
+        EventManager.Instance.TriggerGameLog($"顾客收到正确的{coffee.type}！");
 
         // 通知杯子被服务
         cup.OnServed();
@@ -379,6 +385,12 @@ public class Customer : MonoBehaviour
 
         // 更新咖啡价值（包含耐心奖励）
         coffee.value = reward;
+
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerOrderCompleted(this, coffee);
+        }
 
         // 完成订单（这里会释放生成点）
         CoffeeOrderManager.Instance.CompleteOrder(coffee, this);
@@ -410,7 +422,13 @@ public class Customer : MonoBehaviour
         // 减少耐心作为惩罚
         currentPatience -= 10f;
 
-        Debug.Log("订单错误！顾客不满意！");
+        EventManager.Instance.TriggerGameLog("订单错误！顾客不满意！");
+
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerOrderIncorrect(this);
+        }
 
         // 播放生气音效（待实现）
         // AudioManager.Instance.PlaySound("customerAngry");
@@ -425,6 +443,7 @@ public class Customer : MonoBehaviour
             LeaveAngry();
         }
     }
+
 
     /// <summary>
     /// 重置杯子以便重用
@@ -450,7 +469,13 @@ public class Customer : MonoBehaviour
 
         if (!isServed)
         {
-            Debug.Log("顾客生气地离开了...");
+            EventManager.Instance.TriggerGameLog("顾客生气地离开了...");
+        }
+
+        // 触发事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerCustomerLeftAngry(this);
         }
 
         // 通知订单管理器顾客生气离开
