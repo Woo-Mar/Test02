@@ -1,4 +1,4 @@
-// Cup.cs - 完整修改版（添加鼠标拖拽功能）
+// Cup.cs - 修正无花果茶显示问题
 using UnityEngine;
 using System.Collections;
 
@@ -17,6 +17,7 @@ public class Cup : MonoBehaviour
     public Sprite strawberryLatteSprite;   // 草莓拿铁外观
     public Sprite carambolaAmericanoSprite; // 杨桃美式外观
     public Sprite figTeaSprite;            // 无花果干茶外观
+    public Sprite failedDrinkSprite;       // 失败饮品外观
 
     [Header("State")]
     public bool isEmpty = true;           // 是否为空杯子
@@ -27,6 +28,7 @@ public class Cup : MonoBehaviour
     public bool hasStrawberry = false;     // 是否有草莓酱
     public bool hasCarambola = false;      // 是否有杨桃片
     public bool hasFig = false;            // 是否有无花果干
+    public bool isFailedDrink = false;     // 是否是失败饮品
 
     public bool isDraggable = true;       // 是否可拖拽
     public bool isBeingDragged = false;   // 是否正在被拖拽
@@ -105,22 +107,149 @@ public class Cup : MonoBehaviour
                 // 无花果干茶不需要咖啡
                 if (!hasCoffee)
                 {
-                    hasCoffee = true; // 标记为有饮品
                     isEmpty = false;
                     isDraggable = true; // 重要：设置为可拖拽！
-                    spriteRenderer.sprite = figTeaSprite;
                     Debug.Log($"无花果茶制作完成，设置isDraggable = {isDraggable}");
                 }
                 break;
         }
 
+        // 检查配方是否正确，如果不正确则标记为失败饮品
+        CheckRecipeValidity();
+
         // 更新外观
         UpdateCupAppearance();
 
         // 确保其他饮品也可以拖拽
-        if (hasCoffee && !isDraggable)
+        if ((hasCoffee || hasFig) && !isDraggable)
         {
             isDraggable = true;
+        }
+    }
+
+    /// <summary>
+    /// 检查配方是否正确
+    /// </summary>
+    private void CheckRecipeValidity()
+    {
+        // 如果没有饮品，不需要检查
+        if (!hasCoffee && !hasFig) return;
+
+        // 获取咖啡数据
+        CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
+        if (coffeeMachine == null || coffeeMachine.currentCoffee == null)
+        {
+            return;
+        }
+
+        Coffee coffeeData = coffeeMachine.currentCoffee;
+
+        // 检查是否是无花果茶
+        if (coffeeData.type == Coffee.CoffeeType.FigOnly)
+        {
+            // 无花果茶：只能有无花果，不能有咖啡或其他原料
+            if (coffeeData.hasBrewedCoffee || coffeeData.hasCoffeePowder ||
+                coffeeData.hasIce || coffeeData.hasMilk ||
+                coffeeData.hasStrawberry || coffeeData.hasCarambola)
+            {
+                isFailedDrink = true;
+                Debug.Log("无花果茶配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
+        }
+
+        // 如果没有咖啡，则不是有效的咖啡饮品
+        if (!hasCoffee)
+        {
+            isFailedDrink = true;
+            return;
+        }
+
+        // 检查是否是热咖啡
+        if (coffeeData.type == Coffee.CoffeeType.HotCoffee)
+        {
+            // 热咖啡：只有咖啡，不能有其他任何原料
+            if (coffeeData.hasIce || coffeeData.hasMilk ||
+                coffeeData.hasStrawberry || coffeeData.hasCarambola || coffeeData.hasFig)
+            {
+                isFailedDrink = true;
+                Debug.Log("热咖啡配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
+        }
+
+        // 检查是否是冰咖啡
+        if (coffeeData.type == Coffee.CoffeeType.IcedCoffee)
+        {
+            // 冰咖啡：咖啡+冰块，不能有其他原料
+            if (coffeeData.hasMilk || coffeeData.hasStrawberry ||
+                coffeeData.hasCarambola || coffeeData.hasFig)
+            {
+                isFailedDrink = true;
+                Debug.Log("冰咖啡配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
+        }
+
+        // 检查是否是拿铁
+        if (coffeeData.type == Coffee.CoffeeType.Latte)
+        {
+            // 拿铁：咖啡+牛奶，不能有其他原料
+            if (coffeeData.hasIce || coffeeData.hasStrawberry ||
+                coffeeData.hasCarambola || coffeeData.hasFig)
+            {
+                isFailedDrink = true;
+                Debug.Log("拿铁配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
+        }
+
+        // 检查是否是草莓拿铁
+        if (coffeeData.type == Coffee.CoffeeType.StrawberryLatte)
+        {
+            // 草莓拿铁：咖啡+牛奶+草莓，不能有其他原料
+            if (coffeeData.hasIce || coffeeData.hasCarambola || coffeeData.hasFig)
+            {
+                isFailedDrink = true;
+                Debug.Log("草莓拿铁配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
+        }
+
+        // 检查是否是杨桃美式
+        if (coffeeData.type == Coffee.CoffeeType.CarambolaAmericano)
+        {
+            // 杨桃美式：咖啡+冰块+杨桃，不能有其他原料
+            if (coffeeData.hasMilk || coffeeData.hasStrawberry || coffeeData.hasFig)
+            {
+                isFailedDrink = true;
+                Debug.Log("杨桃美式配方错误：含有其他原料");
+            }
+            else
+            {
+                isFailedDrink = false;
+            }
+            return;
         }
     }
 
@@ -131,32 +260,76 @@ public class Cup : MonoBehaviour
     {
         if (spriteRenderer == null) return;
 
-        // 检查咖啡类型并更新外观
+        // 如果是失败饮品，使用失败饮品sprite
+        if (isFailedDrink && failedDrinkSprite != null)
+        {
+            spriteRenderer.sprite = failedDrinkSprite;
+            Debug.Log("显示失败饮品外观");
+            return;
+        }
+
+        // 首先检查无花果干茶
         if (hasFig && !hasCoffee)
         {
             // 无花果干茶
             if (figTeaSprite != null)
+            {
                 spriteRenderer.sprite = figTeaSprite;
+                Debug.Log("显示无花果茶外观");
+            }
+            return; // 无花果茶不需要检查其他条件
         }
-        else if (hasStrawberry && hasMilk && hasCoffee)
+
+        // 如果只有咖啡而没有无花果，继续检查咖啡类型
+        if (hasCoffee && !hasFig)
         {
-            // 草莓拿铁
-            if (strawberryLatteSprite != null)
-                spriteRenderer.sprite = strawberryLatteSprite;
+            // 检查咖啡类型并更新外观
+            if (hasStrawberry && hasMilk && !hasIce && !hasCarambola)
+            {
+                // 草莓拿铁
+                if (strawberryLatteSprite != null)
+                {
+                    spriteRenderer.sprite = strawberryLatteSprite;
+                    Debug.Log("显示草莓拿铁外观");
+                }
+            }
+            else if (hasCarambola && hasIce && !hasMilk && !hasStrawberry)
+            {
+                // 杨桃美式
+                if (carambolaAmericanoSprite != null)
+                {
+                    spriteRenderer.sprite = carambolaAmericanoSprite;
+                    Debug.Log("显示杨桃美式外观");
+                }
+            }
+            else if (hasMilk && !hasIce && !hasStrawberry && !hasCarambola)
+            {
+                // 拿铁
+                if (latteSprite != null)
+                {
+                    spriteRenderer.sprite = latteSprite;
+                    Debug.Log("显示拿铁外观");
+                }
+            }
+            else if (hasIce && !hasMilk && !hasStrawberry && !hasCarambola)
+            {
+                // 冰咖啡
+                spriteRenderer.sprite = icedCoffeeCupSprite;
+                Debug.Log("显示冰咖啡外观");
+            }
+            else if (!hasIce && !hasMilk && !hasStrawberry && !hasCarambola && !hasFig)
+            {
+                // 热咖啡
+                spriteRenderer.sprite = coffeeCupSprite;
+                Debug.Log("显示热咖啡外观");
+            }
         }
-        else if (hasCarambola && hasIce && hasCoffee)
+        else if (!hasCoffee && !hasFig)
         {
-            // 杨桃美式
-            if (carambolaAmericanoSprite != null)
-                spriteRenderer.sprite = carambolaAmericanoSprite;
+            // 空杯子
+            spriteRenderer.sprite = emptyCupSprite;
+            Debug.Log("显示空杯子外观");
         }
-        else if (hasMilk && hasCoffee)
-        {
-            // 拿铁
-            if (latteSprite != null)
-                spriteRenderer.sprite = latteSprite;
-        }
-        // 其他情况保持原有逻辑
     }
 
     /// <summary>
@@ -199,15 +372,10 @@ public class Cup : MonoBehaviour
         pos.z = cupZPosition;
         transform.position = pos;
     }
-    /// <summary>
-    /// 鼠标按下事件处理
-    /// </summary>
-    /// <summary>
-    /// 鼠标按下事件处理
-    /// </summary>
+
     void OnMouseDown()
     {
-        Debug.Log($"点击杯子 - hasCoffee: {hasCoffee}, hasFig: {hasFig}, isEmpty: {isEmpty}, isDraggable: {isDraggable}");
+        Debug.Log($"点击杯子 - hasCoffee: {hasCoffee}, hasFig: {hasFig}, isEmpty: {isEmpty}, isDraggable: {isDraggable}, isFailedDrink: {isFailedDrink}");
 
         EnsureCorrectZPosition();
 
@@ -413,7 +581,16 @@ public class Cup : MonoBehaviour
         if (hasCoffee && !hasIce)
         {
             hasIce = true;
-            spriteRenderer.sprite = icedCoffeeCupSprite; // 更新为冰咖啡外观
+
+            // 添加冰块后检查配方是否正确
+            CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
+            if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
+            {
+                coffeeMachine.currentCoffee.AddIngredient("ice");
+                // 检查配方是否正确
+                CheckRecipeValidity();
+                UpdateCupAppearance();
+            }
 
             Debug.Log("已加冰");
         }
@@ -437,7 +614,7 @@ public class Cup : MonoBehaviour
     /// </summary>
     public bool IsReadyToServe()
     {
-        return hasCoffee;
+        return hasCoffee || hasFig; // 有咖啡或无花果茶都可以服务
     }
 
     /// <summary>
@@ -457,6 +634,7 @@ public class Cup : MonoBehaviour
         // 销毁杯子对象
         Destroy(gameObject);
     }
+
     /// <summary>
     /// 重置杯子状态（当订单错误时）
     /// </summary>
@@ -468,6 +646,7 @@ public class Cup : MonoBehaviour
         hasCarambola = false;
         hasIce = false;
         hasFig = false;
+        isFailedDrink = false; // 重置失败状态
 
         // 如果还有咖啡，保持hasCoffee为true，否则设为false
         if (!hasCoffee)
@@ -497,7 +676,6 @@ public class Cup : MonoBehaviour
 
         Debug.Log("杯子状态已重置");
     }
-
 
     /// <summary>
     /// 杯子被成功服务时的处理

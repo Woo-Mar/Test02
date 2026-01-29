@@ -28,13 +28,6 @@ public class IceContainer : MonoBehaviour
                 // 给杯子加冰
                 cup.AddIce();
 
-                // 获取咖啡数据并添加冰块原料
-                CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
-                if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
-                {
-                    coffeeMachine.currentCoffee.AddIngredient("ice");
-                }
-
                 // 生成冰块视觉效果
                 GameObject ice = Instantiate(iceCubePrefab, iceSpawnPoint.position, Quaternion.identity);
 
