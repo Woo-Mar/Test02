@@ -601,11 +601,7 @@ public class Cup : MonoBehaviour
             {
                 coffeeMachine.currentCoffee.AddIngredient("ice");
 
-                // 触发事件
-                if (EventManager.Instance != null)
-                {
-                    EventManager.Instance.TriggerIngredientAdded("ice", coffeeMachine.currentCoffee, this);
-                }
+                // 注意：这里不消耗库存，库存已在IceContainer.cs中消耗
 
                 // 检查配方是否正确
                 CheckRecipeValidity();

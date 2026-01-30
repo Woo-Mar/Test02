@@ -1,9 +1,8 @@
-// IceContainer.cs - 修正版本
+// IceContainer.cs - 修改版
 using UnityEngine;
 
 /// <summary>
 /// 冰块容器控制器 - 处理加冰功能
-/// 点击容器给附近的咖啡杯加冰
 /// </summary>
 public class IceContainer : MonoBehaviour
 {
@@ -52,8 +51,11 @@ public class IceContainer : MonoBehaviour
     {
         Debug.Log("尝试添加冰块...");
 
+        // 获取冰块消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("ice"); // 3块 每杯
+
         // 检查冰块库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("ice", 3)) // 每杯冰咖啡消耗3块冰
+        if (!IngredientSystem.Instance.HasEnoughIngredient("ice", amountToConsume))
         {
             if (EventManager.Instance != null)
             {
@@ -72,38 +74,43 @@ public class IceContainer : MonoBehaviour
             if (cup.hasCoffee && !cup.hasIce &&
                 Vector2.Distance(cup.transform.position, transform.position) < 500f) // 距离判断
             {
-                // 给杯子加冰
-                cup.AddIce();
-
-                // 获取咖啡数据并添加冰块原料
-                CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
-                if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
+                // 安全消耗原料
+                if (IngredientSystem.Instance.ConsumeIngredient("ice", amountToConsume, "IceContainer"))
                 {
-                    coffeeMachine.currentCoffee.AddIngredient("ice");
+                    // 给杯子加冰
+                    cup.AddIce();
 
-                    // 触发事件 - IngredientSystem会监听这个事件并消耗库存
+                    // 获取咖啡数据并添加冰块原料
+                    CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
+                    if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
+                    {
+                        coffeeMachine.currentCoffee.AddIngredient("ice");
+                    }
+
+                    // 生成冰块视觉效果
+                    GameObject ice = Instantiate(iceCubePrefab, iceSpawnPoint.position, Quaternion.identity);
+
+                    // 添加自动销毁组件（1秒后消失）
+                    AutoDestroy autoDestroy = ice.AddComponent<AutoDestroy>();
+                    autoDestroy.destroyDelay = 1f;
+                    autoDestroy.fadeOut = true;
+                    autoDestroy.fadeDuration = 0.5f;
+
                     if (EventManager.Instance != null)
                     {
-                        EventManager.Instance.TriggerIngredientAdded("ice", coffeeMachine.currentCoffee, cup);
+                        EventManager.Instance.TriggerGameLog("冰块已加入咖啡");
+                    }
+
+                    // 更新容器外观
+                    UpdateContainerVisual();
+                }
+                else
+                {
+                    if (EventManager.Instance != null)
+                    {
+                        EventManager.Instance.TriggerGameLog("冰块库存不足！", LogType.Warning);
                     }
                 }
-
-                // 生成冰块视觉效果
-                GameObject ice = Instantiate(iceCubePrefab, iceSpawnPoint.position, Quaternion.identity);
-
-                // 添加自动销毁组件（1秒后消失）
-                AutoDestroy autoDestroy = ice.AddComponent<AutoDestroy>();
-                autoDestroy.destroyDelay = 1f;
-                autoDestroy.fadeOut = true;
-                autoDestroy.fadeDuration = 0.5f;
-
-                if (EventManager.Instance != null)
-                {
-                    EventManager.Instance.TriggerGameLog("冰块已加入咖啡");
-                }
-
-                // 更新容器外观
-                UpdateContainerVisual();
 
                 break; // 只处理一个杯子
             }

@@ -1,4 +1,4 @@
-    // IngredientSystem.cs
+// IngredientSystem.cs - 修改后的版本
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -64,7 +64,6 @@ public class IngredientSystem : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             InitializeIngredients();
-            SubscribeToEvents();
         }
         else
         {
@@ -74,12 +73,18 @@ public class IngredientSystem : MonoBehaviour
 
     void Start()
     {
-        // 订阅事件
-        if (EventManager.Instance != null)
+        // 延迟订阅事件，确保EventManager已初始化
+        Invoke("DelayedSubscribe", 0.5f);
+    }
+
+    void DelayedSubscribe()
+    {
+        // 只订阅必要的事件，咖啡豆消耗事件
+        if (EventManager.Instance != null && !isSubscribed)
         {
             EventManager.Instance.OnCoffeeGrinded += OnCoffeeGrinded;
-            EventManager.Instance.OnIngredientAdded += OnIngredientAdded;
-            EventManager.Instance.OnCupDiscarded += OnCupDiscarded;
+            isSubscribed = true;
+            Debug.Log("IngredientSystem 已订阅咖啡研磨事件");
         }
     }
 
@@ -88,10 +93,7 @@ public class IngredientSystem : MonoBehaviour
         if (EventManager.Instance != null && isSubscribed)
         {
             EventManager.Instance.OnCoffeeGrinded -= OnCoffeeGrinded;
-            EventManager.Instance.OnIngredientAdded -= OnIngredientAdded;
-            EventManager.Instance.OnCupDiscarded -= OnCupDiscarded;
             isSubscribed = false;
-
             Debug.Log("IngredientSystem 已取消订阅事件");
         }
     }
@@ -110,23 +112,8 @@ public class IngredientSystem : MonoBehaviour
         };
     }
 
-    void SubscribeToEvents()
-    {
-        if (isSubscribed) return; // 防止重复订阅
-
-        // 订阅事件
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.OnCoffeeGrinded += OnCoffeeGrinded;
-            EventManager.Instance.OnIngredientAdded += OnIngredientAdded;
-            EventManager.Instance.OnCupDiscarded += OnCupDiscarded;
-            isSubscribed = true;
-
-            Debug.Log("IngredientSystem 已订阅事件");
-        }
-    }
     /// <summary>
-    /// 咖啡研磨时消耗咖啡豆
+    /// 咖啡研磨时消耗咖啡豆（仅此一处消耗咖啡豆）
     /// </summary>
     void OnCoffeeGrinded(string coffeeType)
     {
@@ -144,60 +131,31 @@ public class IngredientSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 添加原料时消耗对应原料
+    /// 安全消耗原料方法（由容器直接调用）
     /// </summary>
-    void OnIngredientAdded(string ingredient, Coffee coffee, Cup cupObj)
+    public bool ConsumeIngredient(string ingredientId, int amount, string source = "未知来源")
     {
-        Debug.Log($"添加原料 {ingredient}，触发消耗");
-
-        int amountToUse = 0;
-        Ingredient targetIngredient = null;
-
-        switch (ingredient.ToLower())
+        if (!ingredientDict.TryGetValue(ingredientId, out Ingredient ingredient))
         {
-            case "milk":
-                targetIngredient = milk;
-                amountToUse = milkPerLatte;
-                break;
-            case "strawberry":
-                targetIngredient = strawberry;
-                amountToUse = strawberryPerLatte;
-                break;
-            case "carambola":
-                targetIngredient = carambola;
-                amountToUse = carambolaPerAmericano;
-                break;
-            case "fig":
-                targetIngredient = fig;
-                amountToUse = figPerTea;
-                break;
-            case "ice":
-                targetIngredient = ice;
-                amountToUse = icePerIcedCoffee;
-                break;
+            Debug.LogError($"未知原料ID: {ingredientId}");
+            return false;
         }
 
-        if (targetIngredient != null && amountToUse > 0)
+        if (ingredient.currentAmount < amount)
         {
-            if (targetIngredient.Use(amountToUse))
-            {
-                EventManager.Instance.TriggerGameLog($"消耗{amountToUse}{targetIngredient.unit}{targetIngredient.name}");
-                OnInventoryChanged?.Invoke(targetIngredient.id, targetIngredient.currentAmount);
-            }
+            Debug.Log($"{source}: {ingredient.name} 库存不足，需要{amount}{ingredient.unit}，当前{ingredient.currentAmount}{ingredient.unit}");
+            return false;
         }
-    }
 
-    /// <summary>
-    /// 杯子被丢弃时消耗杯子
-    /// </summary>
-    void OnCupDiscarded(Cup cup)
-    {
-        // 杯子被丢弃时不需要减少库存
-        // 因为库存已经在生成杯子时减少了
-        Debug.Log("杯子被丢弃，但库存已在生成时扣除，不需要再次扣除");
+        if (ingredient.Use(amount))
+        {
+            Debug.Log($"{source}: 成功消耗{amount}{ingredient.unit}{ingredient.name}");
+            EventManager.Instance.TriggerGameLog($"消耗{amount}{ingredient.unit}{ingredient.name}");
+            OnInventoryChanged?.Invoke(ingredientId, ingredient.currentAmount);
+            return true;
+        }
 
-        // 注意：如果玩家丢弃的是已经制作好的饮品，库存已经在制作时扣除过了
-        // 如果丢弃的是空杯子（还没使用），那么库存已经扣除，也不需要再处理
+        return false;
     }
 
     /// <summary>
@@ -210,7 +168,7 @@ public class IngredientSystem : MonoBehaviour
             ingredient.Add(amount);
             EventManager.Instance.TriggerGameLog($"增加{ingredient.name} {amount}{ingredient.unit}");
 
-            // 触发UI更新事件（如果UI在监听）
+            // 触发UI更新事件
             OnInventoryChanged?.Invoke(ingredientId, ingredient.currentAmount);
         }
     }
@@ -228,20 +186,11 @@ public class IngredientSystem : MonoBehaviour
     }
 
     /// <summary>
-    /// 使用原料
+    /// 使用原料（兼容旧代码）
     /// </summary>
     public bool UseIngredient(string ingredientId, int amount)
     {
-        if (ingredientDict.TryGetValue(ingredientId, out Ingredient ingredient))
-        {
-            if (ingredient.Use(amount))
-            {
-                EventManager.Instance.TriggerGameLog($"使用{amount}{ingredient.unit}{ingredient.name}");
-                OnInventoryChanged?.Invoke(ingredientId, ingredient.currentAmount);
-                return true;
-            }
-        }
-        return false;
+        return ConsumeIngredient(ingredientId, amount, "直接调用");
     }
 
     /// <summary>
@@ -262,6 +211,24 @@ public class IngredientSystem : MonoBehaviour
         {
             coffeeBeans, milk, strawberry, carambola, fig, ice, cup
         };
+    }
+
+    /// <summary>
+    /// 获取原料消耗量配置
+    /// </summary>
+    public int GetConsumptionAmount(string ingredientId)
+    {
+        switch (ingredientId)
+        {
+            case "coffee": return coffeeBeansPerCup;
+            case "milk": return milkPerLatte;
+            case "strawberry": return strawberryPerLatte;
+            case "carambola": return carambolaPerAmericano;
+            case "fig": return figPerTea;
+            case "ice": return icePerIcedCoffee;
+            case "cup": return 1;
+            default: return 1;
+        }
     }
 
     /// <summary>

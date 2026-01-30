@@ -1,12 +1,12 @@
-// StrawberryContainer.cs - 修正版本
+// StrawberryContainer.cs - 修改版
 using UnityEngine;
 
 /// <summary>
-/// 草莓篮控制器 - 处理添加草莓酱功能
+/// 草莓酱容器控制器 - 处理添加草莓酱功能
 /// </summary>
 public class StrawberryContainer : MonoBehaviour
 {
-    [Header("草莓设置")]
+    [Header("草莓酱设置")]
     //public GameObject strawberryEffectPrefab;    // 草莓酱特效预制体
     //public Transform effectSpawnPoint;          // 特效生成位置
 
@@ -72,8 +72,11 @@ public class StrawberryContainer : MonoBehaviour
     {
         Debug.Log("尝试添加草莓酱...");
 
+        // 获取草莓酱消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("strawberry"); // 3g 每杯
+
         // 检查草莓酱库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("strawberry", 3)) // 每杯草莓拿铁消耗3g草莓酱
+        if (!IngredientSystem.Instance.HasEnoughIngredient("strawberry", amountToConsume))
         {
             if (EventManager.Instance != null)
             {
@@ -102,7 +105,6 @@ public class StrawberryContainer : MonoBehaviour
             return;
         }
 
-        // 检查是否已经添加过草莓
         Coffee coffeeData = coffeeMachine.currentCoffee;
         if (coffeeData.hasStrawberry)
         {
@@ -113,25 +115,30 @@ public class StrawberryContainer : MonoBehaviour
             return;
         }
 
-        // 添加草莓原料到咖啡数据
-        coffeeData.AddIngredient("strawberry");
-
-        // 添加草莓原料到杯子
-        cup.AddExtraIngredient("strawberry");
-
-        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
-        if (EventManager.Instance != null)
+        // 安全消耗原料
+        if (IngredientSystem.Instance.ConsumeIngredient("strawberry", amountToConsume, "StrawberryContainer"))
         {
-            EventManager.Instance.TriggerIngredientAdded("strawberry", coffeeData, cup);
-        }
+            // 添加草莓酱原料到咖啡数据
+            coffeeData.AddIngredient("strawberry");
 
-        if (EventManager.Instance != null)
+            // 添加草莓酱到杯子
+            cup.AddExtraIngredient("strawberry");
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog($"已添加草莓酱！当前咖啡类型：{coffeeData.type}");
+            }
+
+            // 更新容器外观
+            UpdateContainerVisual();
+        }
+        else
         {
-            EventManager.Instance.TriggerGameLog($"已添加草莓酱！当前咖啡类型：{coffeeData.type}");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("草莓酱库存不足！", LogType.Warning);
+            }
         }
-
-        // 更新容器外观
-        UpdateContainerVisual();
     }
 
     /// <summary>

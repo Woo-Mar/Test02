@@ -84,8 +84,11 @@ public class CupContainer : MonoBehaviour
 
         Debug.Log("尝试从库存获取杯子...");
 
+        // 获取杯子消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("cup"); // 1个 每个杯子
+
         // 检查杯子库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("cup", 1))
+        if (!IngredientSystem.Instance.HasEnoughIngredient("cup", amountToConsume))
         {
             Debug.Log("杯子库存不足！");
             EventManager.Instance.TriggerGameLog("杯子库存不足！", LogType.Warning);
@@ -110,8 +113,8 @@ public class CupContainer : MonoBehaviour
             return;
         }
 
-        // 使用杯子库存
-        if (IngredientSystem.Instance.UseIngredient("cup", 1))
+        // 安全消耗原料
+        if (IngredientSystem.Instance.ConsumeIngredient("cup", amountToConsume, "CupContainer"))
         {
             SpawnCupOnMachine(); // 在咖啡机上生成杯子
 

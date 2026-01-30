@@ -1,13 +1,13 @@
-// CarambolaContainer.cs - 修正版本
+// CarambolaContainer.cs - 修改版
 using UnityEngine;
 
 /// <summary>
-/// 杨桃篮控制器 - 处理添加杨桃片功能
+/// 杨桃容器控制器 - 处理添加杨桃片功能
 /// </summary>
 public class CarambolaContainer : MonoBehaviour
 {
     [Header("杨桃设置")]
-    //public GameObject carambolaEffectPrefab;    // 杨桃片特效预制体
+    //public GameObject carambolaEffectPrefab;    // 杨桃特效预制体
     //public Transform effectSpawnPoint;          // 特效生成位置
 
     [Header("视觉效果")]
@@ -72,8 +72,11 @@ public class CarambolaContainer : MonoBehaviour
     {
         Debug.Log("尝试添加杨桃片...");
 
+        // 获取杨桃片消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("carambola"); // 1片 每杯
+
         // 检查杨桃片库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("carambola", 1)) // 每杯杨桃美式消耗1片杨桃
+        if (!IngredientSystem.Instance.HasEnoughIngredient("carambola", amountToConsume))
         {
             if (EventManager.Instance != null)
             {
@@ -97,7 +100,7 @@ public class CarambolaContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
-                EventManager.Instance.TriggerGameLog("杯子没有咖啡，无法添加杨桃", LogType.Warning);
+                EventManager.Instance.TriggerGameLog("杯子没有咖啡，无法添加杨桃片", LogType.Warning);
             }
             return;
         }
@@ -112,25 +115,30 @@ public class CarambolaContainer : MonoBehaviour
             return;
         }
 
-        // 添加杨桃原料到咖啡数据
-        coffeeData.AddIngredient("carambola");
-
-        // 添加杨桃原料到杯子
-        cup.AddExtraIngredient("carambola");
-
-        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
-        if (EventManager.Instance != null)
+        // 安全消耗原料
+        if (IngredientSystem.Instance.ConsumeIngredient("carambola", amountToConsume, "CarambolaContainer"))
         {
-            EventManager.Instance.TriggerIngredientAdded("carambola", coffeeData, cup);
-        }
+            // 添加杨桃片原料到咖啡数据
+            coffeeData.AddIngredient("carambola");
 
-        if (EventManager.Instance != null)
+            // 添加杨桃片到杯子
+            cup.AddExtraIngredient("carambola");
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog($"已添加杨桃片！当前咖啡类型：{coffeeData.type}");
+            }
+
+            // 更新容器外观
+            UpdateContainerVisual();
+        }
+        else
         {
-            EventManager.Instance.TriggerGameLog($"已添加杨桃片！当前咖啡类型：{coffeeData.type}");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杨桃片库存不足！", LogType.Warning);
+            }
         }
-
-        // 更新容器外观
-        UpdateContainerVisual();
     }
 
     /// <summary>

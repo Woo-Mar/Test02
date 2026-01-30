@@ -1,8 +1,8 @@
-// MilkContainer.cs - 修正版本
+// MilkContainer.cs - 修改版
 using UnityEngine;
 
 /// <summary>
-/// 牛奶瓶控制器 - 处理添加牛奶功能
+/// 牛奶容器控制器 - 处理添加牛奶功能
 /// </summary>
 public class MilkContainer : MonoBehaviour
 {
@@ -72,8 +72,11 @@ public class MilkContainer : MonoBehaviour
     {
         Debug.Log("尝试添加牛奶...");
 
+        // 获取牛奶消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("milk"); // 5ml 每杯
+
         // 检查牛奶库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("milk", 5)) // 每杯拿铁消耗5ml牛奶
+        if (!IngredientSystem.Instance.HasEnoughIngredient("milk", amountToConsume))
         {
             if (EventManager.Instance != null)
             {
@@ -112,25 +115,30 @@ public class MilkContainer : MonoBehaviour
             return;
         }
 
-        // 添加牛奶原料到咖啡数据
-        coffeeData.AddIngredient("milk");
-
-        // 添加牛奶原料到杯子
-        cup.AddExtraIngredient("milk");
-
-        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
-        if (EventManager.Instance != null)
+        // 安全消耗原料
+        if (IngredientSystem.Instance.ConsumeIngredient("milk", amountToConsume, "MilkContainer"))
         {
-            EventManager.Instance.TriggerIngredientAdded("milk", coffeeData, cup);
-        }
+            // 添加牛奶原料到咖啡数据
+            coffeeData.AddIngredient("milk");
 
-        if (EventManager.Instance != null)
+            // 添加牛奶到杯子
+            cup.AddExtraIngredient("milk");
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog($"已添加牛奶！当前咖啡类型：{coffeeData.type}");
+            }
+
+            // 更新容器外观
+            UpdateContainerVisual();
+        }
+        else
         {
-            EventManager.Instance.TriggerGameLog($"已添加牛奶！当前咖啡类型：{coffeeData.type}");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("牛奶库存不足！", LogType.Warning);
+            }
         }
-
-        // 更新容器外观
-        UpdateContainerVisual();
     }
 
     /// <summary>

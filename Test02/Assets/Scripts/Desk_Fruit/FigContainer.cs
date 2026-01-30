@@ -1,13 +1,13 @@
-// FigContainer.cs - 修正版本
+// FigContainer.cs - 修改版
 using UnityEngine;
 
 /// <summary>
-/// 无花果干篮控制器 - 处理添加无花果干功能
+/// 无花果容器控制器 - 处理添加无花果干功能
 /// </summary>
 public class FigContainer : MonoBehaviour
 {
     [Header("无花果设置")]
-    //public GameObject figEffectPrefab;           // 无花果干特效预制体
+    //public GameObject figEffectPrefab;           // 无花果特效预制体
     //public Transform effectSpawnPoint;          // 特效生成位置
 
     [Header("视觉效果")]
@@ -72,8 +72,11 @@ public class FigContainer : MonoBehaviour
     {
         Debug.Log("尝试添加无花果干...");
 
+        // 获取无花果干消耗量配置
+        int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("fig"); // 1个 每份
+
         // 检查无花果干库存
-        if (!IngredientSystem.Instance.HasEnoughIngredient("fig", 1)) // 每份无花果茶消耗1个无花果干
+        if (!IngredientSystem.Instance.HasEnoughIngredient("fig", amountToConsume))
         {
             if (EventManager.Instance != null)
             {
@@ -108,25 +111,30 @@ public class FigContainer : MonoBehaviour
             return;
         }
 
-        // 添加无花果原料到咖啡数据
-        coffeeData.AddIngredient("fig");
-
-        // 添加无花果原料到杯子
-        cup.AddExtraIngredient("fig");
-
-        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
-        if (EventManager.Instance != null)
+        // 安全消耗原料
+        if (IngredientSystem.Instance.ConsumeIngredient("fig", amountToConsume, "FigContainer"))
         {
-            EventManager.Instance.TriggerIngredientAdded("fig", coffeeData, cup);
-        }
+            // 添加无花果干原料到咖啡数据
+            coffeeData.AddIngredient("fig");
 
-        if (EventManager.Instance != null)
+            // 添加无花果干到杯子
+            cup.AddExtraIngredient("fig");
+
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog($"已添加无花果干！当前产品类型：{coffeeData.type}");
+            }
+
+            // 更新容器外观
+            UpdateContainerVisual();
+        }
+        else
         {
-            EventManager.Instance.TriggerGameLog($"已添加无花果干！当前产品类型：{coffeeData.type}");
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("无花果干库存不足！", LogType.Warning);
+            }
         }
-
-        // 更新容器外观
-        UpdateContainerVisual();
     }
 
     /// <summary>
