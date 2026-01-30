@@ -1,27 +1,27 @@
-// CupContainer.cs - 修正版本
+// CupContainer.cs - 修改为完全使用库存系统
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// 杯子容器管理器 - 管理杯子的存储和供应
-/// 点击容器可以获取新杯子
+/// 杯子容器管理器 - 完全使用库存系统管理杯子
+/// 点击容器可以从库存系统中获取新杯子
 /// </summary>
 public class CupContainer : MonoBehaviour
 {
     [Header("杯子容器设置")]
     public CoffeeMachine coffeeMachine;       // 咖啡机引用
     public GameObject cupPrefab;              // 杯子预制体
-    public int maxCupsInContainer = 5;        // 容器最大容量
 
     [Header("视觉效果")]
     public SpriteRenderer containerRenderer;  // 容器精灵渲染器
     public Sprite emptyContainerSprite;       // 空容器精灵
     public Sprite fullContainerSprite;        // 满容器精灵
+    public Color highlightColor = Color.yellow;   // 高亮颜色
     public Color lowStockColor = Color.yellow;   // 低库存颜色
     public Color outOfStockColor = Color.red;    // 缺货颜色
 
-    private int currentCupsInContainer = 3;   // 当前杯子数量
     private Color originalColor;
+    private bool isInitialized = false;
 
     void Start()
     {
@@ -36,13 +36,24 @@ public class CupContainer : MonoBehaviour
             originalColor = containerRenderer.color;
         }
 
-        UpdateVisuals(); // 更新容器外观
+        // 延迟初始化，确保IngredientSystem已加载
+        Invoke("Initialize", 0.5f);
+    }
 
+    void Initialize()
+    {
         // 订阅库存变化事件
         if (IngredientSystem.Instance != null)
         {
             IngredientSystem.Instance.OnInventoryChanged += OnInventoryChanged;
             Debug.Log("CupContainer 已订阅库存变化事件");
+            UpdateVisuals(); // 初始更新容器外观
+            isInitialized = true;
+        }
+        else
+        {
+            Debug.LogError("IngredientSystem 未初始化！");
+            Invoke("Initialize", 0.5f); // 重试
         }
     }
 
@@ -65,24 +76,19 @@ public class CupContainer : MonoBehaviour
     }
 
     /// <summary>
-    /// 尝试从容器生成杯子（公共方法，咖啡机也可调用）
+    /// 尝试从库存系统中获取杯子（公共方法，咖啡机也可调用）
     /// </summary>
     public void TrySpawnCup()
     {
-        Debug.Log("尝试从容器获取杯子...");
+        if (!isInitialized) return;
+
+        Debug.Log("尝试从库存获取杯子...");
 
         // 检查杯子库存
         if (!IngredientSystem.Instance.HasEnoughIngredient("cup", 1))
         {
             Debug.Log("杯子库存不足！");
             EventManager.Instance.TriggerGameLog("杯子库存不足！", LogType.Warning);
-            return;
-        }
-
-        // 检查容器是否为空
-        if (currentCupsInContainer <= 0)
-        {
-            Debug.Log("杯子容器已空！");
             return;
         }
 
@@ -104,16 +110,12 @@ public class CupContainer : MonoBehaviour
             return;
         }
 
-        // 减少容器杯子数量并生成新杯子
-        currentCupsInContainer--;
-
-        // 使用杯子库存 - 杯子是特殊的，需要在容器中直接消耗
+        // 使用杯子库存
         if (IngredientSystem.Instance.UseIngredient("cup", 1))
         {
             SpawnCupOnMachine(); // 在咖啡机上生成杯子
-            UpdateVisuals();      // 更新容器外观
 
-            Debug.Log($"生成杯子成功，容器剩余杯子: {currentCupsInContainer}");
+            Debug.Log($"生成杯子成功，杯子库存: {IngredientSystem.Instance.GetIngredient("cup").currentAmount}");
         }
     }
 
@@ -156,14 +158,21 @@ public class CupContainer : MonoBehaviour
     }
 
     /// <summary>
-    /// 更新容器外观（根据剩余杯子数量）
+    /// 更新容器外观（根据库存数量）
     /// </summary>
     void UpdateVisuals()
     {
-        if (containerRenderer == null) return;
+        if (containerRenderer == null || !isInitialized) return;
+
+        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
+        if (cup == null)
+        {
+            Debug.LogError("无法获取杯子库存信息！");
+            return;
+        }
 
         // 根据杯子数量切换精灵
-        if (currentCupsInContainer <= 0)
+        if (cup.currentAmount <= 0)
         {
             containerRenderer.sprite = emptyContainerSprite;
         }
@@ -173,76 +182,59 @@ public class CupContainer : MonoBehaviour
         }
 
         // 根据库存状态设置颜色
-        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
-        if (cup != null)
-        {
-            float ratio = (float)cup.currentAmount / cup.maxAmount;
+        float ratio = (float)cup.currentAmount / cup.maxAmount;
 
-            if (cup.currentAmount <= 0)
-            {
-                // 缺货状态 - 红色
-                containerRenderer.color = outOfStockColor;
-            }
-            else if (ratio < 0.3f)
-            {
-                // 低库存状态 - 黄色
-                containerRenderer.color = lowStockColor;
-            }
-            else
-            {
-                // 正常库存 - 原始颜色
-                containerRenderer.color = originalColor;
-            }
+        if (cup.currentAmount <= 0)
+        {
+            // 缺货状态 - 红色
+            containerRenderer.color = outOfStockColor;
+        }
+        else if (ratio < 0.3f)
+        {
+            // 低库存状态 - 黄色
+            containerRenderer.color = lowStockColor;
+        }
+        else
+        {
+            // 正常库存 - 原始颜色
+            containerRenderer.color = originalColor;
+        }
+
+        Debug.Log($"杯子容器外观更新: 库存{cup.currentAmount}, 最大{cup.maxAmount}, 比例{ratio:F2}");
+    }
+
+    /// <summary>
+    /// 当原料库存变化时更新外观
+    /// </summary>
+    public void OnInventoryChanged(string ingredientId, int newAmount)
+    {
+        if (ingredientId == "cup")
+        {
+            Debug.Log($"杯子库存变化: {newAmount}");
+            UpdateVisuals();
         }
     }
 
     /// <summary>
-    /// 从咖啡机回收空杯子到容器
-    /// </summary>
-    /// <param name="cup">要回收的杯子</param>
-    public void ReturnCupToContainer(GameObject cup)
-    {
-        // 检查容器是否已满
-        if (currentCupsInContainer >= maxCupsInContainer)
-        {
-            Debug.Log("杯子容器已满，无法回收更多杯子");
-            Destroy(cup); // 容器满时销毁杯子
-            return;
-        }
-
-        // 回收杯子
-        currentCupsInContainer++;
-        UpdateVisuals();
-
-        Debug.Log($"回收杯子，容器当前杯子: {currentCupsInContainer}");
-    }
-
-    /// <summary>
-    /// 补充杯子到容器
-    /// </summary>
-    /// <param name="amount">补充数量</param>
-    public void RefillCups(int amount)
-    {
-        currentCupsInContainer = Mathf.Min(currentCupsInContainer + amount, maxCupsInContainer);
-        UpdateVisuals();
-
-        Debug.Log($"补充杯子，当前数量: {currentCupsInContainer}");
-    }
-
-    /// <summary>
-    /// 检查容器中是否有杯子
+    /// 检查是否有杯子库存
     /// </summary>
     public bool HasCups()
     {
-        return currentCupsInContainer > 0;
+        if (!isInitialized) return false;
+
+        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
+        return cup != null && cup.currentAmount > 0;
     }
 
     /// <summary>
-    /// 获取剩余杯子数量
+    /// 获取剩余杯子数量（从库存系统获取）
     /// </summary>
     public int GetRemainingCups()
     {
-        return currentCupsInContainer;
+        if (!isInitialized) return 0;
+
+        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
+        return cup != null ? cup.currentAmount : 0;
     }
 
     /// <summary>
@@ -252,7 +244,7 @@ public class CupContainer : MonoBehaviour
     {
         if (containerRenderer != null)
         {
-            containerRenderer.color = Color.yellow; // 高亮显示
+            containerRenderer.color = highlightColor;
         }
     }
 
@@ -265,13 +257,30 @@ public class CupContainer : MonoBehaviour
     }
 
     /// <summary>
-    /// 当原料库存变化时更新外观
+    /// 补充杯子库存（从采购系统调用）
     /// </summary>
-    public void OnInventoryChanged(string ingredientId, int newAmount)
+    /// <param name="amount">补充数量</param>
+    public void RefillCups(int amount)
     {
-        if (ingredientId == "cup")
+        if (!isInitialized) return;
+
+        IngredientSystem.Instance.AddIngredient("cup", amount);
+        Debug.Log($"补充杯子库存: {amount}个");
+    }
+
+    /// <summary>
+    /// 设置杯子最大库存（从采购系统调用）
+    /// </summary>
+    /// <param name="maxAmount">最大库存量</param>
+    public void SetMaxCups(int maxAmount)
+    {
+        if (!isInitialized) return;
+
+        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
+        if (cup != null)
         {
-            UpdateVisuals();
+            cup.maxAmount = maxAmount;
+            Debug.Log($"设置杯子最大库存: {maxAmount}个");
         }
     }
 }

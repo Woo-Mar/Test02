@@ -113,17 +113,14 @@ public class TrashBin : MonoBehaviour
             coffeeMachine.UpdateUI();
         }
 
-        // 如果杯子容器存在，增加可用杯子数量
-        if (cupContainer != null)
+        // 重要：不再增加杯子容器数量，因为杯子已经被消耗了
+        // 杯子被丢弃就是被消耗了，不应该再回到库存中
+        if (EventManager.Instance != null)
         {
-            cupContainer.RefillCups(1);
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.TriggerGameLog("杯子容器可用杯子数量+1");
-            }
+            EventManager.Instance.TriggerGameLog("杯子已被丢弃，从库存中扣除");
         }
 
-        // 触发事件
+        // 触发杯子丢弃事件
         if (EventManager.Instance != null)
         {
             EventManager.Instance.TriggerCupDiscarded(cup);

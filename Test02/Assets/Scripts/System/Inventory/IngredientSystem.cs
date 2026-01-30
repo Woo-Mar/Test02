@@ -190,13 +190,14 @@ public class IngredientSystem : MonoBehaviour
     /// <summary>
     /// 杯子被丢弃时消耗杯子
     /// </summary>
-    void OnCupDiscarded(Cup cupObj)
+    void OnCupDiscarded(Cup cup)
     {
-        if (cup.Use(1))
-        {
-            EventManager.Instance.TriggerGameLog("消耗1个杯子");
-            OnInventoryChanged?.Invoke(cup.id, cup.currentAmount);
-        }
+        // 杯子被丢弃时不需要减少库存
+        // 因为库存已经在生成杯子时减少了
+        Debug.Log("杯子被丢弃，但库存已在生成时扣除，不需要再次扣除");
+
+        // 注意：如果玩家丢弃的是已经制作好的饮品，库存已经在制作时扣除过了
+        // 如果丢弃的是空杯子（还没使用），那么库存已经扣除，也不需要再处理
     }
 
     /// <summary>
