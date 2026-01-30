@@ -1,4 +1,4 @@
-// StrawberryContainer.cs
+// StrawberryContainer.cs - 修正版本
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +13,8 @@ public class StrawberryContainer : MonoBehaviour
     [Header("视觉效果")]
     public SpriteRenderer containerRenderer;     // 容器精灵渲染器
     public Color highlightColor = Color.red;     // 高亮颜色
+    public Color lowStockColor = Color.yellow;   // 低库存颜色
+    public Color outOfStockColor = Color.gray;   // 缺货颜色
 
     private Color originalColor;
 
@@ -21,6 +23,24 @@ public class StrawberryContainer : MonoBehaviour
         if (containerRenderer != null)
         {
             originalColor = containerRenderer.color;
+            UpdateContainerVisual(); // 初始更新容器外观
+        }
+
+        // 订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged += OnInventoryChanged;
+            Debug.Log("StrawberryContainer 已订阅库存变化事件");
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 取消订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged -= OnInventoryChanged;
+            Debug.Log("StrawberryContainer 已取消订阅库存变化事件");
         }
     }
 
@@ -41,7 +61,7 @@ public class StrawberryContainer : MonoBehaviour
     {
         if (containerRenderer != null)
         {
-            containerRenderer.color = originalColor;
+            UpdateContainerVisual(); // 恢复库存状态颜色
         }
     }
 
@@ -50,6 +70,18 @@ public class StrawberryContainer : MonoBehaviour
     /// </summary>
     void AddStrawberryToCup()
     {
+        Debug.Log("尝试添加草莓酱...");
+
+        // 检查草莓酱库存
+        if (!IngredientSystem.Instance.HasEnoughIngredient("strawberry", 3)) // 每杯草莓拿铁消耗3g草莓酱
+        {
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("草莓酱库存不足！", LogType.Warning);
+            }
+            return;
+        }
+
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
@@ -87,7 +119,7 @@ public class StrawberryContainer : MonoBehaviour
         // 添加草莓原料到杯子
         cup.AddExtraIngredient("strawberry");
 
-        // 触发事件
+        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
         if (EventManager.Instance != null)
         {
             EventManager.Instance.TriggerIngredientAdded("strawberry", coffeeData, cup);
@@ -96,6 +128,49 @@ public class StrawberryContainer : MonoBehaviour
         if (EventManager.Instance != null)
         {
             EventManager.Instance.TriggerGameLog($"已添加草莓酱！当前咖啡类型：{coffeeData.type}");
+        }
+
+        // 更新容器外观
+        UpdateContainerVisual();
+    }
+
+    /// <summary>
+    /// 根据库存状态更新容器外观
+    /// </summary>
+    void UpdateContainerVisual()
+    {
+        if (containerRenderer == null) return;
+
+        IngredientSystem.Ingredient strawberry = IngredientSystem.Instance.GetIngredient("strawberry");
+        if (strawberry == null) return;
+
+        float ratio = (float)strawberry.currentAmount / strawberry.maxAmount;
+
+        if (strawberry.currentAmount <= 0)
+        {
+            // 缺货状态 - 灰色
+            containerRenderer.color = outOfStockColor;
+        }
+        else if (ratio < 0.3f)
+        {
+            // 低库存状态 - 黄色
+            containerRenderer.color = lowStockColor;
+        }
+        else
+        {
+            // 正常库存 - 原始颜色
+            containerRenderer.color = originalColor;
+        }
+    }
+
+    /// <summary>
+    /// 当原料库存变化时更新外观
+    /// </summary>
+    public void OnInventoryChanged(string ingredientId, int newAmount)
+    {
+        if (ingredientId == "strawberry")
+        {
+            UpdateContainerVisual();
         }
     }
 }

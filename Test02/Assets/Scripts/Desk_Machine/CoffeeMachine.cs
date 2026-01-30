@@ -93,6 +93,15 @@ public class CoffeeMachine : MonoBehaviour
     /// </summary>
     public void GrindCoffee()
     {
+        Debug.Log("尝试研磨咖啡...");
+
+        // 检查咖啡豆库存
+        if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10g每杯
+        {
+            EventManager.Instance.TriggerGameLog("咖啡豆不足！", LogType.Warning);
+            return;
+        }
+
         if (hasCoffeeBeans && !hasGroundCoffee)
         {
             hasGroundCoffee = true;
@@ -101,10 +110,11 @@ public class CoffeeMachine : MonoBehaviour
             // 生成咖啡粉视觉效果
             StartCoroutine(SpawnCoffeePowderEffect());
 
+            // 触发事件 - IngredientSystem会监听这个事件并消耗咖啡豆
             if (EventManager.Instance != null)
             {
-                EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
                 EventManager.Instance.TriggerCoffeeGrinded("arabica"); // 假设咖啡豆类型
+                EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
             }
             UpdateUI();
         }

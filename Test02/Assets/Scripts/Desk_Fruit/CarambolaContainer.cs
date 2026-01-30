@@ -1,4 +1,4 @@
-// CarambolaContainer.cs
+// CarambolaContainer.cs - 修正版本
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +13,8 @@ public class CarambolaContainer : MonoBehaviour
     [Header("视觉效果")]
     public SpriteRenderer containerRenderer;     // 容器精灵渲染器
     public Color highlightColor = Color.yellow;  // 高亮颜色
+    public Color lowStockColor = Color.yellow;   // 低库存颜色
+    public Color outOfStockColor = Color.gray;   // 缺货颜色
 
     private Color originalColor;
 
@@ -21,6 +23,24 @@ public class CarambolaContainer : MonoBehaviour
         if (containerRenderer != null)
         {
             originalColor = containerRenderer.color;
+            UpdateContainerVisual(); // 初始更新容器外观
+        }
+
+        // 订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged += OnInventoryChanged;
+            Debug.Log("CarambolaContainer 已订阅库存变化事件");
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 取消订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged -= OnInventoryChanged;
+            Debug.Log("CarambolaContainer 已取消订阅库存变化事件");
         }
     }
 
@@ -41,7 +61,7 @@ public class CarambolaContainer : MonoBehaviour
     {
         if (containerRenderer != null)
         {
-            containerRenderer.color = originalColor;
+            UpdateContainerVisual(); // 恢复库存状态颜色
         }
     }
 
@@ -50,6 +70,18 @@ public class CarambolaContainer : MonoBehaviour
     /// </summary>
     void AddCarambolaToCup()
     {
+        Debug.Log("尝试添加杨桃片...");
+
+        // 检查杨桃片库存
+        if (!IngredientSystem.Instance.HasEnoughIngredient("carambola", 1)) // 每杯杨桃美式消耗1片杨桃
+        {
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.TriggerGameLog("杨桃片库存不足！", LogType.Warning);
+            }
+            return;
+        }
+
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCup == null)
         {
@@ -86,7 +118,7 @@ public class CarambolaContainer : MonoBehaviour
         // 添加杨桃原料到杯子
         cup.AddExtraIngredient("carambola");
 
-        // 触发事件
+        // 触发事件 - IngredientSystem会监听这个事件并消耗库存
         if (EventManager.Instance != null)
         {
             EventManager.Instance.TriggerIngredientAdded("carambola", coffeeData, cup);
@@ -95,6 +127,49 @@ public class CarambolaContainer : MonoBehaviour
         if (EventManager.Instance != null)
         {
             EventManager.Instance.TriggerGameLog($"已添加杨桃片！当前咖啡类型：{coffeeData.type}");
+        }
+
+        // 更新容器外观
+        UpdateContainerVisual();
+    }
+
+    /// <summary>
+    /// 根据库存状态更新容器外观
+    /// </summary>
+    void UpdateContainerVisual()
+    {
+        if (containerRenderer == null) return;
+
+        IngredientSystem.Ingredient carambola = IngredientSystem.Instance.GetIngredient("carambola");
+        if (carambola == null) return;
+
+        float ratio = (float)carambola.currentAmount / carambola.maxAmount;
+
+        if (carambola.currentAmount <= 0)
+        {
+            // 缺货状态 - 灰色
+            containerRenderer.color = outOfStockColor;
+        }
+        else if (ratio < 0.3f)
+        {
+            // 低库存状态 - 黄色
+            containerRenderer.color = lowStockColor;
+        }
+        else
+        {
+            // 正常库存 - 原始颜色
+            containerRenderer.color = originalColor;
+        }
+    }
+
+    /// <summary>
+    /// 当原料库存变化时更新外观
+    /// </summary>
+    public void OnInventoryChanged(string ingredientId, int newAmount)
+    {
+        if (ingredientId == "carambola")
+        {
+            UpdateContainerVisual();
         }
     }
 }

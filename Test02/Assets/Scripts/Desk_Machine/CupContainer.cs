@@ -1,4 +1,4 @@
-// CupContainer.cs - 修正版
+// CupContainer.cs - 修正版本
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -17,8 +17,11 @@ public class CupContainer : MonoBehaviour
     public SpriteRenderer containerRenderer;  // 容器精灵渲染器
     public Sprite emptyContainerSprite;       // 空容器精灵
     public Sprite fullContainerSprite;        // 满容器精灵
+    public Color lowStockColor = Color.yellow;   // 低库存颜色
+    public Color outOfStockColor = Color.red;    // 缺货颜色
 
     private int currentCupsInContainer = 3;   // 当前杯子数量
+    private Color originalColor;
 
     void Start()
     {
@@ -28,7 +31,29 @@ public class CupContainer : MonoBehaviour
             coffeeMachine = FindObjectOfType<CoffeeMachine>();
         }
 
+        if (containerRenderer != null)
+        {
+            originalColor = containerRenderer.color;
+        }
+
         UpdateVisuals(); // 更新容器外观
+
+        // 订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged += OnInventoryChanged;
+            Debug.Log("CupContainer 已订阅库存变化事件");
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 取消订阅库存变化事件
+        if (IngredientSystem.Instance != null)
+        {
+            IngredientSystem.Instance.OnInventoryChanged -= OnInventoryChanged;
+            Debug.Log("CupContainer 已取消订阅库存变化事件");
+        }
     }
 
     /// <summary>
@@ -45,8 +70,14 @@ public class CupContainer : MonoBehaviour
     public void TrySpawnCup()
     {
         Debug.Log("尝试从容器获取杯子...");
-        Debug.Log($"容器当前杯子数: {currentCupsInContainer}");
-        Debug.Log($"咖啡机当前杯子: {coffeeMachine.currentCup}");
+
+        // 检查杯子库存
+        if (!IngredientSystem.Instance.HasEnoughIngredient("cup", 1))
+        {
+            Debug.Log("杯子库存不足！");
+            EventManager.Instance.TriggerGameLog("杯子库存不足！", LogType.Warning);
+            return;
+        }
 
         // 检查容器是否为空
         if (currentCupsInContainer <= 0)
@@ -75,10 +106,15 @@ public class CupContainer : MonoBehaviour
 
         // 减少容器杯子数量并生成新杯子
         currentCupsInContainer--;
-        SpawnCupOnMachine(); // 在咖啡机上生成杯子
-        UpdateVisuals();      // 更新容器外观
 
-        Debug.Log($"生成杯子成功，容器剩余杯子: {currentCupsInContainer}");
+        // 使用杯子库存 - 杯子是特殊的，需要在容器中直接消耗
+        if (IngredientSystem.Instance.UseIngredient("cup", 1))
+        {
+            SpawnCupOnMachine(); // 在咖啡机上生成杯子
+            UpdateVisuals();      // 更新容器外观
+
+            Debug.Log($"生成杯子成功，容器剩余杯子: {currentCupsInContainer}");
+        }
     }
 
     /// <summary>
@@ -136,11 +172,28 @@ public class CupContainer : MonoBehaviour
             containerRenderer.sprite = fullContainerSprite;
         }
 
-        // 根据剩余数量调整透明度（视觉反馈）
-        float fullness = (float)currentCupsInContainer / maxCupsInContainer;
-        Color color = containerRenderer.color;
-        color.a = 0.5f + fullness * 0.5f; // 透明度从50%到100%
-        containerRenderer.color = color;
+        // 根据库存状态设置颜色
+        IngredientSystem.Ingredient cup = IngredientSystem.Instance.GetIngredient("cup");
+        if (cup != null)
+        {
+            float ratio = (float)cup.currentAmount / cup.maxAmount;
+
+            if (cup.currentAmount <= 0)
+            {
+                // 缺货状态 - 红色
+                containerRenderer.color = outOfStockColor;
+            }
+            else if (ratio < 0.3f)
+            {
+                // 低库存状态 - 黄色
+                containerRenderer.color = lowStockColor;
+            }
+            else
+            {
+                // 正常库存 - 原始颜色
+                containerRenderer.color = originalColor;
+            }
+        }
     }
 
     /// <summary>
@@ -208,6 +261,17 @@ public class CupContainer : MonoBehaviour
     /// </summary>
     void OnMouseExit()
     {
-        UpdateVisuals(); // 恢复原始外观
+        UpdateVisuals(); // 恢复库存状态颜色
+    }
+
+    /// <summary>
+    /// 当原料库存变化时更新外观
+    /// </summary>
+    public void OnInventoryChanged(string ingredientId, int newAmount)
+    {
+        if (ingredientId == "cup")
+        {
+            UpdateVisuals();
+        }
     }
 }
