@@ -130,6 +130,12 @@ public class Customer : MonoBehaviour
     /// </summary>
     public void InitializeOrders(List<Coffee.CoffeeType> orderList, CustomerType type)
     {
+        // 确保 spriteRenderer 已赋值
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        Debug.Log($"InitializeOrders 被调用，type={type}");
+
         orders = new List<Coffee.CoffeeType>(orderList);
         ordersCompleted = new List<bool>(new bool[orders.Count]);
         completedCount = 0;
@@ -142,28 +148,36 @@ public class Customer : MonoBehaviour
                 break;
             case CustomerType.Impatient:
                 rewardMultiplier = 1f;
-                patience *= 0.6f;  // 急躁顾客耐心减少
+                patience *= 0.6f;
+                currentPatience = patience; // 同步当前耐心值
                 break;
             default:
                 rewardMultiplier = 1f;
                 break;
         }
 
-        // 设置顾客本体外观（与表情无关）
+        // 设置顾客本体外观
         if (spriteRenderer != null)
         {
             switch (type)
             {
                 case CustomerType.VIP:
                     spriteRenderer.sprite = vipSprite ?? normalSprite;
+                    Debug.Log($"VIP顾客设置精灵: {(vipSprite != null ? vipSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
                     break;
                 case CustomerType.Impatient:
                     spriteRenderer.sprite = impatientSprite ?? normalSprite;
+                    Debug.Log($"Impatient顾客设置精灵: {(impatientSprite != null ? impatientSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
                     break;
                 default:
                     spriteRenderer.sprite = normalSprite;
+                    Debug.Log($"普通顾客设置精灵: {normalSprite.name}");
                     break;
             }
+        }
+        else
+        {
+            Debug.LogError("spriteRenderer 仍然为 null！请检查顾客预制体上是否有 SpriteRenderer 组件。");
         }
 
         // 更新UI
@@ -176,7 +190,6 @@ public class Customer : MonoBehaviour
             patienceSlider.value = currentPatience;
         }
 
-        // 始终显示开心表情（等待状态也是开心）
         SetEmotion(happyEmotionSprite);
     }
 

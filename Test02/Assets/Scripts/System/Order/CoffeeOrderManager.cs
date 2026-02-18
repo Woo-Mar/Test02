@@ -96,6 +96,7 @@ public class CoffeeOrderManager : MonoBehaviour
 
         // 实例化顾客
         GameObject newCustomerObj = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity);
+        
         // 确保Z轴正确（设置为0，或根据场景调整）
         Vector3 pos = newCustomerObj.transform.position;
         pos.z = 0;
@@ -131,7 +132,7 @@ public class CoffeeOrderManager : MonoBehaviour
                 orderCount = 1;
                 break;
         }
-
+        Debug.Log($"[SpawnCustomer] 生成顾客类型: {type}, 订单数: {orderCount}");
         // 生成订单列表
         List<Coffee.CoffeeType> orders = new List<Coffee.CoffeeType>();
         for (int i = 0; i < orderCount; i++)
