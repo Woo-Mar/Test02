@@ -71,10 +71,9 @@ public class InventoryListener : MonoBehaviour
         }
     }
 
-    void OnOrderCompleted(Customer customer, Coffee coffee)
+    void OnOrderCompleted(Customer customer, int totalReward)
     {
-        // 订单完成，可以记录销售数据
-        Debug.Log($"销售记录: {coffee.type} 价值 {coffee.value}");
+        Debug.Log($"订单完成，总奖励: {totalReward}");
     }
 
     void OnGameLog(string message, LogType logType)

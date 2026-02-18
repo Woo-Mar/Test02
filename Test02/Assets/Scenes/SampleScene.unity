@@ -3282,6 +3282,7 @@ MonoBehaviour:
   customerPrefab: {fileID: 5352231559022564040, guid: df0a9636cb5c31547a2665e02672373c, type: 3}
   maxCustomers: 5
   canSpawnCustomers: 1
+  orderPhase: 3
 --- !u!4 &1321867869
 Transform:
   m_ObjectHideFlags: 0

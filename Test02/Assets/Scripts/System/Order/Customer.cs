@@ -1,18 +1,32 @@
-// Customer.cs - 修改后的版本
+// Customer.cs - 修改后的版本（仅开心/生气表情）
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
+using System.Collections.Generic;
 
-/// <summary>
-/// 顾客控制器 - 管理顾客行为、订单需求和耐心系统
-/// 处理咖啡服务、满意度评价和离开动画
-/// </summary>
 public class Customer : MonoBehaviour
 {
-    [Header("Visuals")]
-    public Sprite waitingSprite;        // 等待状态精灵
-    public Sprite happySprite;          // 满意状态精灵
-    public Sprite angrySprite;          // 生气状态精灵
+    public enum CustomerType
+    {
+        Normal,
+        VIP,
+        Impatient
+    }
+
+    [Header("表情图标")]
+    public SpriteRenderer emotionRenderer;   // 子物体的 SpriteRenderer
+    public Sprite happyEmotionSprite;        // 满意/默认状态精灵
+    public Sprite angryEmotionSprite;        // 生气状态精灵
+
+    [Header("音效")]
+    public AudioClip happySound;   // 正确交付时的开心音效
+    public AudioClip angrySound;   // 生气时的音效
+
+    [Header("顾客类型外观")]
+    public Sprite normalSprite;       // 普通顾客精灵
+    public Sprite vipSprite;          // VIP顾客精灵
+    public Sprite impatientSprite;    // 急躁顾客精灵
 
     [Header("Settings")]
     public float patience = 30f;        // 总耐心时间（秒）
@@ -21,58 +35,70 @@ public class Customer : MonoBehaviour
     [Header("UI")]
     public Slider patienceSlider;       // 耐心条UI
     public Image orderIcon;             // 订单图标
+    public TextMeshProUGUI remainingOrdersText;  // 显示剩余杯数的UI文字，比如 "×2"
 
     [Header("订单图标精灵")]
-    public Sprite hotCoffeeOrderSprite;        // 热咖啡订单图标
-    public Sprite icedCoffeeOrderSprite;       // 冰咖啡订单图标
-    public Sprite latteOrderSprite;            // 拿铁订单图标
-    public Sprite strawberryLatteOrderSprite;  // 草莓拿铁订单图标
-    public Sprite carambolaAmericanoOrderSprite; // 杨桃美式订单图标
-    public Sprite figTeaOrderSprite;           // 无花果干茶订单图标
+    public Sprite hotCoffeeOrderSprite;
+    public Sprite icedCoffeeOrderSprite;
+    public Sprite latteOrderSprite;
+    public Sprite strawberryLatteOrderSprite;
+    public Sprite carambolaAmericanoOrderSprite;
+    public Sprite figTeaOrderSprite;
 
-    [Header("Order Type")]
-    public Coffee.CoffeeType wantedCoffeeType = Coffee.CoffeeType.HotCoffee; // 顾客想要的咖啡类型
+    // 订单相关（非Inspector）
+    public CustomerType customerType { get; private set; }
+    public List<Coffee.CoffeeType> orders = new List<Coffee.CoffeeType>();
+    private List<bool> ordersCompleted = new List<bool>();
+    public int completedCount { get; private set; }
+    public int totalOrders => orders.Count;
+    public int remainingOrders => totalOrders - completedCount;
 
-    private SpriteRenderer spriteRenderer; // 精灵渲染器
-    private float currentPatience;        // 当前剩余耐心
-    private bool isWaiting = true;       // 是否在等待状态
-    private bool isServed = false;       // 是否已被服务
+    private float rewardMultiplier = 1f;        // VIP奖励倍率
+    private SpriteRenderer spriteRenderer;       // 角色本体渲染器
+    private float currentPatience;                // 当前剩余耐心
+    private bool isWaiting = true;                // 是否在等待状态
+    private bool isServed = false;                // 是否已被服务
+    private bool isLeaving = false;                // 是否正在离开
 
     [HideInInspector]
     public Transform spawnPoint;
 
-    // 添加：离开状态标记，防止多次触发离开逻辑
-    private bool isLeaving = false;
-
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        currentPatience = patience; // 初始化耐心值
+        currentPatience = patience;
 
-        // 随机生成顾客想要的咖啡类型（包括所有6种类型）
-        wantedCoffeeType = GetRandomCoffeeType();
+        // 初始化为开心表情
+        SetEmotion(happyEmotionSprite);
 
-        // 设置顾客初始外观
-        if (waitingSprite != null)
+        // 默认一个订单（会被 InitializeOrders 覆盖）
+        if (orders.Count == 0)
         {
-            spriteRenderer.sprite = waitingSprite;
+            orders = new List<Coffee.CoffeeType> { Coffee.CoffeeType.HotCoffee };
+            ordersCompleted = new List<bool> { false };
         }
 
-        InitializeUI(); // 初始化UI显示
-                        // 触发事件
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.TriggerCustomerArrived(this, wantedCoffeeType);
-        }
+        InitializeUI();
+        UpdateRemainingText();
+        UpdateOrderIcon();
+    }
 
-        // 记录生成点（调试用）
-        if (spawnPoint != null)
+    /// <summary>
+    /// 设置表情图标
+    /// </summary>
+    private void SetEmotion(Sprite emotionSprite)
+    {
+        if (emotionRenderer != null)
         {
-            EventManager.Instance.TriggerGameLog($"顾客在 {spawnPoint.name} 生成");
-        }
-        else
-        {
-            EventManager.Instance.TriggerGameLog("顾客没有分配生成点！", LogType.Warning);
+            if (emotionSprite != null)
+            {
+                emotionRenderer.sprite = emotionSprite;
+                emotionRenderer.gameObject.SetActive(true);
+            }
+            else
+            {
+                emotionRenderer.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -81,72 +107,127 @@ public class Customer : MonoBehaviour
     /// </summary>
     private Coffee.CoffeeType GetRandomCoffeeType()
     {
-        // 6种咖啡类型的概率分布（可以根据需要调整）
         float randomValue = Random.value;
-
-        if (randomValue < 0.2f)      // 20% 热咖啡
-            return Coffee.CoffeeType.HotCoffee;
-        else if (randomValue < 0.4f) // 20% 冰咖啡
-            return Coffee.CoffeeType.IcedCoffee;
-        else if (randomValue < 0.6f) // 20% 拿铁
-            return Coffee.CoffeeType.Latte;
-        else if (randomValue < 0.75f) // 15% 草莓拿铁
-            return Coffee.CoffeeType.StrawberryLatte;
-        else if (randomValue < 0.9f)  // 15% 杨桃美式
-            return Coffee.CoffeeType.CarambolaAmericano;
-        else                          // 10% 无花果干茶
-            return Coffee.CoffeeType.FigOnly;
+        if (randomValue < 0.2f) return Coffee.CoffeeType.HotCoffee;
+        else if (randomValue < 0.4f) return Coffee.CoffeeType.IcedCoffee;
+        else if (randomValue < 0.6f) return Coffee.CoffeeType.Latte;
+        else if (randomValue < 0.75f) return Coffee.CoffeeType.StrawberryLatte;
+        else if (randomValue < 0.9f) return Coffee.CoffeeType.CarambolaAmericano;
+        else return Coffee.CoffeeType.FigOnly;
     }
 
-    /// <summary>
-    /// 初始化顾客UI显示
-    /// </summary>
     void InitializeUI()
     {
         if (patienceSlider != null)
         {
-            patienceSlider.maxValue = patience; // 设置耐心条最大值
-            patienceSlider.value = currentPatience; // 设置当前值
-        }
-
-        if (orderIcon != null)
-        {
-            // 根据订单类型设置图标
-            SetOrderIcon(wantedCoffeeType);
-            orderIcon.gameObject.SetActive(true); // 显示订单图标
-
-            Debug.Log($"新顾客到达！想要{wantedCoffeeType}");
+            patienceSlider.maxValue = patience;
+            patienceSlider.value = currentPatience;
         }
     }
 
     /// <summary>
-    /// 根据咖啡类型设置订单图标
+    /// 由订单管理器调用，初始化顾客的订单和类型
     /// </summary>
+    public void InitializeOrders(List<Coffee.CoffeeType> orderList, CustomerType type)
+    {
+        orders = new List<Coffee.CoffeeType>(orderList);
+        ordersCompleted = new List<bool>(new bool[orders.Count]);
+        completedCount = 0;
+        customerType = type;
+
+        switch (type)
+        {
+            case CustomerType.VIP:
+                rewardMultiplier = 1.5f;
+                break;
+            case CustomerType.Impatient:
+                rewardMultiplier = 1f;
+                patience *= 0.6f;  // 急躁顾客耐心减少
+                break;
+            default:
+                rewardMultiplier = 1f;
+                break;
+        }
+
+        // 设置顾客本体外观（与表情无关）
+        if (spriteRenderer != null)
+        {
+            switch (type)
+            {
+                case CustomerType.VIP:
+                    spriteRenderer.sprite = vipSprite ?? normalSprite;
+                    break;
+                case CustomerType.Impatient:
+                    spriteRenderer.sprite = impatientSprite ?? normalSprite;
+                    break;
+                default:
+                    spriteRenderer.sprite = normalSprite;
+                    break;
+            }
+        }
+
+        // 更新UI
+        UpdateRemainingText();
+        UpdateOrderIcon();
+
+        if (patienceSlider != null)
+        {
+            patienceSlider.maxValue = patience;
+            patienceSlider.value = currentPatience;
+        }
+
+        // 始终显示开心表情（等待状态也是开心）
+        SetEmotion(happyEmotionSprite);
+    }
+
+    private void UpdateOrderIcon()
+    {
+        if (orderIcon == null) return;
+
+        for (int i = 0; i < orders.Count; i++)
+        {
+            if (!ordersCompleted[i])
+            {
+                SetOrderIcon(orders[i]);
+                return;
+            }
+        }
+        orderIcon.gameObject.SetActive(false);
+    }
+
+    private void UpdateRemainingText()
+    {
+        if (remainingOrdersText != null)
+        {
+            if (remainingOrders > 0)
+            {
+                remainingOrdersText.text = $"×{remainingOrders}";
+                remainingOrdersText.gameObject.SetActive(true);
+            }
+            else
+            {
+                remainingOrdersText.gameObject.SetActive(false);
+            }
+        }
+    }
+
     private void SetOrderIcon(Coffee.CoffeeType coffeeType)
     {
+        if (orderIcon == null) return;
         switch (coffeeType)
         {
             case Coffee.CoffeeType.HotCoffee:
-                orderIcon.sprite = hotCoffeeOrderSprite;
-                break;
+                orderIcon.sprite = hotCoffeeOrderSprite; break;
             case Coffee.CoffeeType.IcedCoffee:
-                orderIcon.sprite = icedCoffeeOrderSprite;
-                break;
+                orderIcon.sprite = icedCoffeeOrderSprite; break;
             case Coffee.CoffeeType.Latte:
-                orderIcon.sprite = latteOrderSprite;
-                break;
+                orderIcon.sprite = latteOrderSprite; break;
             case Coffee.CoffeeType.StrawberryLatte:
-                orderIcon.sprite = strawberryLatteOrderSprite;
-                break;
+                orderIcon.sprite = strawberryLatteOrderSprite; break;
             case Coffee.CoffeeType.CarambolaAmericano:
-                orderIcon.sprite = carambolaAmericanoOrderSprite;
-                break;
+                orderIcon.sprite = carambolaAmericanoOrderSprite; break;
             case Coffee.CoffeeType.FigOnly:
-                orderIcon.sprite = figTeaOrderSprite;
-                break;
-            default:
-                orderIcon.sprite = hotCoffeeOrderSprite;
-                break;
+                orderIcon.sprite = figTeaOrderSprite; break;
         }
     }
 
@@ -155,25 +236,16 @@ public class Customer : MonoBehaviour
         if (isWaiting && !isServed && !isLeaving)
         {
             currentPatience -= Time.deltaTime;
-
             if (patienceSlider != null)
-            {
                 patienceSlider.value = currentPatience;
-            }
 
             UpdatePatienceColor();
 
-            // 耐心耗尽离开
             if (currentPatience <= 0)
-            {
                 LeaveAngry();
-            }
         }
     }
 
-    /// <summary>
-    /// 根据耐心值更新耐心条颜色（绿色→黄色→红色）
-    /// </summary>
     void UpdatePatienceColor()
     {
         if (patienceSlider != null)
@@ -181,17 +253,14 @@ public class Customer : MonoBehaviour
             Image fillImage = patienceSlider.fillRect.GetComponent<Image>();
             if (fillImage != null)
             {
-                float patienceRatio = currentPatience / patience; // 耐心比例
-
+                float patienceRatio = currentPatience / patience;
                 if (patienceRatio > 0.5f)
                 {
-                    // 绿色到黄色渐变（高耐心）
                     float t = (patienceRatio - 0.5f) * 2f;
                     fillImage.color = Color.Lerp(Color.yellow, Color.green, t);
                 }
                 else
                 {
-                    // 黄色到红色渐变（低耐心）
                     float t = patienceRatio * 2f;
                     fillImage.color = Color.Lerp(Color.red, Color.yellow, t);
                 }
@@ -199,48 +268,56 @@ public class Customer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 尝试服务咖啡（由杯子拖拽触发）
-    /// </summary>
-    /// <param name="cup">被服务的杯子</param>
     public void TryServeCoffee(Cup cup)
     {
-        // 检查顾客状态
-        if (isServed || !isWaiting) return;
+        if (isServed || !isWaiting || isLeaving) return;
 
-        Debug.Log($"尝试服务顾客，顾客想要{wantedCoffeeType}");
-        Debug.Log($"杯子状态 - hasCoffee: {cup.hasCoffee}, hasFig: {cup.hasFig}");
-
-        // 检查杯子是否有饮品（包括无花果干茶）
-        if (!cup.hasCoffee && !cup.hasFig)
-        {
-            Debug.Log("杯子是空的！");
-            return;
-        }
-
-        // 获取咖啡数据
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine == null || coffeeMachine.currentCoffee == null)
         {
             Debug.Log("无法获取咖啡数据");
             return;
         }
-
         Coffee coffeeData = coffeeMachine.currentCoffee;
 
-        // 如果是无花果干茶，检查是否满足配方
-        if (coffeeData.type == Coffee.CoffeeType.FigOnly)
+        if (!cup.hasCoffee && !cup.hasFig) return;
+
+        int matchedIndex = -1;
+        for (int i = 0; i < orders.Count; i++)
         {
-            ServeFigTea(cup, coffeeData);
-            return;
+            if (!ordersCompleted[i] && coffeeData.type == orders[i])
+            {
+                matchedIndex = i;
+                break;
+            }
         }
 
-        // 检查咖啡订单
-        bool orderCorrect = CheckCoffeeOrder(cup, coffeeData);
-
-        if (orderCorrect)
+        if (matchedIndex >= 0)
         {
-            ServeCoffee(cup, coffeeData);
+            // 正确交付
+            if (orders[matchedIndex] == Coffee.CoffeeType.FigOnly)
+            {
+                float restore = patience * 0.3f;
+                currentPatience = Mathf.Min(patience, currentPatience + restore);
+                EventManager.Instance.TriggerGameLog($"无花果茶恢复了耐心 +{restore:F1}");
+            }
+
+            ordersCompleted[matchedIndex] = true;
+            completedCount++;
+            UpdateRemainingText();
+            EventManager.Instance.TriggerGameLog($"交付了一杯 {coffeeData.type}，剩余 {remainingOrders} 杯");
+            UpdateOrderIcon();
+            cup.OnServed();
+
+            if (completedCount == totalOrders)
+            {
+                int totalReward = CalculateTotalReward();
+                CompleteAllOrders(totalReward);
+            }
+            else
+            {
+                coffeeMachine.ResetCurrentCoffee();
+            }
         }
         else
         {
@@ -248,274 +325,115 @@ public class Customer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 检查咖啡订单（扩展版本）
-    /// </summary>
-    private bool CheckCoffeeOrder(Cup cup, Coffee coffee)
+    private int CalculateTotalReward()
     {
-        // 首先检查是否有咖啡
-        if (!coffee.hasBrewedCoffee) return false;
-
-        // 检查顾客想要的咖啡类型是否与制作的一致
-        if (coffee.type != wantedCoffeeType)
+        int total = 0;
+        foreach (var type in orders)
         {
-            Debug.Log($"咖啡类型不匹配！顾客想要{wantedCoffeeType}，但制作的是{coffee.type}");
-            return false;
+            int basePrice = DataManager.Instance.GetCoffeePrice(type);
+            total += Mathf.RoundToInt(basePrice * rewardMultiplier);
         }
-
-        // 根据咖啡类型检查原料
-        switch (wantedCoffeeType)
-        {
-            case Coffee.CoffeeType.HotCoffee:
-                // 热咖啡：只需要咖啡，不需要其他原料
-                return !cup.hasIce && !cup.hasMilk && !cup.hasStrawberry && !cup.hasCarambola;
-
-            case Coffee.CoffeeType.IcedCoffee:
-                // 冰咖啡：需要咖啡和冰
-                return cup.hasIce && !cup.hasMilk && !cup.hasStrawberry && !cup.hasCarambola;
-
-            case Coffee.CoffeeType.Latte:
-                // 拿铁：需要咖啡和牛奶
-                return cup.hasMilk && !cup.hasIce && !cup.hasStrawberry && !cup.hasCarambola;
-
-            case Coffee.CoffeeType.StrawberryLatte:
-                // 草莓拿铁：需要咖啡、牛奶和草莓
-                return cup.hasMilk && cup.hasStrawberry && !cup.hasIce && !cup.hasCarambola;
-
-            case Coffee.CoffeeType.CarambolaAmericano:
-                // 杨桃美式：需要咖啡、冰和杨桃
-                return cup.hasIce && cup.hasCarambola && !cup.hasMilk && !cup.hasStrawberry;
-
-            default:
-                return false;
-        }
+        return total;
     }
 
-    /// <summary>
-    /// 服务无花果干茶
-    /// </summary>
-    private void ServeFigTea(Cup cup, Coffee coffee)
+    private void CompleteAllOrders(int totalReward)
     {
-        if (!coffee.hasFig || coffee.hasBrewedCoffee || coffee.hasCoffeePowder)
-        {
-            Debug.Log("这不是纯无花果干茶！");
-            OrderIncorrect(cup);
-            return;
-        }
-
         isWaiting = false;
         isServed = true;
         isLeaving = true;
 
-        // 更新外观
-        if (happySprite != null)
+        // 隐藏所有 UI
+        if (orderIcon != null) orderIcon.gameObject.SetActive(false);
+        if (patienceSlider != null) patienceSlider.gameObject.SetActive(false);
+        if (remainingOrdersText != null) remainingOrdersText.gameObject.SetActive(false);
+
+        // 保持开心表情（或切换为开心，已经是开心则不变）
+        SetEmotion(happyEmotionSprite);
+        CoffeeOrderManager.Instance.CompleteOrder(this, totalReward);
+
+        // 播放开心音效
+        if (happySound != null)
         {
-            spriteRenderer.sprite = happySprite;
-        }
-
-        // 隐藏UI
-        if (orderIcon != null)
-        {
-            orderIcon.gameObject.SetActive(false);
-        }
-
-        if (patienceSlider != null)
-        {
-            patienceSlider.gameObject.SetActive(false);
-        }
-
-        Debug.Log("顾客收到无花果干茶！");
-
-        // 无花果干茶的特殊效果：恢复耐心
-        float patienceRestore = patience * 0.3f; // 恢复30%的耐心
-        currentPatience = Mathf.Min(patience, currentPatience + patienceRestore);
-        Debug.Log($"无花果干茶恢复了{patienceRestore}点耐心");
-
-        // 杯子被服务
-        cup.OnServed();
-
-        // 完成订单
-        CoffeeOrderManager.Instance.CompleteOrder(coffee, this);
-    }
-
-    /// <summary>
-    /// 正确服务咖啡的处理
-    /// </summary>
-    /// <param name="cup">被服务的杯子</param>
-    /// <param name="coffee">咖啡数据</param>
-    /// <summary>
-    /// 正确服务咖啡的处理
-    /// </summary>
-    /// <param name="cup">被服务的杯子</param>
-    /// <param name="coffee">咖啡数据</param>
-    void ServeCoffee(Cup cup, Coffee coffee)
-    {
-        isWaiting = false;
-        isServed = true;
-        isLeaving = true; // 标记为正在离开
-
-        // 更新外观
-        if (happySprite != null)
-        {
-            spriteRenderer.sprite = happySprite;
-        }
-
-        // 隐藏UI
-        if (orderIcon != null)
-        {
-            orderIcon.gameObject.SetActive(false);
-        }
-
-        if (patienceSlider != null)
-        {
-            patienceSlider.gameObject.SetActive(false);
-        }
-
-        EventManager.Instance.TriggerGameLog($"顾客收到正确的{coffee.type}！");
-
-        // 通知杯子被服务
-        cup.OnServed();
-
-        // 计算奖励
-        int reward = coffee.value;
-
-        // 额外奖励：根据剩余耐心
-        float patienceBonus = currentPatience / patience;
-        reward += Mathf.RoundToInt(reward * patienceBonus * 0.5f);
-
-        // 更新咖啡价值（包含耐心奖励）
-        coffee.value = reward;
-
-        // 触发事件
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.TriggerOrderCompleted(this, coffee);
-        }
-
-        // 完成订单（这里会释放生成点）
-        CoffeeOrderManager.Instance.CompleteOrder(coffee, this);
-
-        // 通知咖啡机重置（重要！）
-        CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
-        if (coffeeMachine != null)
-        {
-            coffeeMachine.ResetCurrentCoffee();
+            AudioSource.PlayClipAtPoint(happySound, transform.position);
         }
     }
 
-    /// <summary>
-    /// 订单错误的处理
-    /// </summary>
-    /// <param name="cup">错误的杯子</param>
-    /// <summary>
-    /// 订单错误的处理
-    /// </summary>
-    /// <param name="cup">错误的杯子</param>
     void OrderIncorrect(Cup cup)
     {
-        // 更新为生气外观
-        if (angrySprite != null)
-        {
-            spriteRenderer.sprite = angrySprite;
-        }
+        // 显示生气表情
+        SetEmotion(angryEmotionSprite);
 
-        // 减少耐心作为惩罚
+        // 减少耐心
         currentPatience -= 10f;
+        if (patienceSlider != null)
+            patienceSlider.value = currentPatience;
 
-        EventManager.Instance.TriggerGameLog("订单错误！顾客不满意！");
+        EventManager.Instance.TriggerGameLog("订单错误！顾客不满意！", LogType.Warning);
+        EventManager.Instance.TriggerOrderIncorrect(this);
 
-        // 触发事件
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.TriggerOrderIncorrect(this);
-        }
-
-        // 播放生气音效（待实现）
-        // AudioManager.Instance.PlaySound("customerAngry");
-
-        // 重置杯子状态，然后返回咖啡机
         ResetCupForReuse(cup);
         cup.ReturnToCoffeeMachine();
 
-        // 检查耐心是否耗尽
         if (currentPatience <= 0)
         {
             LeaveAngry();
         }
+
+        // 播放生气音效
+        if (angrySound != null)
+        {
+            AudioSource.PlayClipAtPoint(angrySound, transform.position);
+        }
     }
 
-
-    /// <summary>
-    /// 重置杯子以便重用
-    /// </summary>
     private void ResetCupForReuse(Cup cup)
     {
         if (cup == null) return;
-
-        // 通知咖啡机重置咖啡数据
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
         if (coffeeMachine != null)
-        {
             coffeeMachine.ResetCurrentCoffee();
-        }
     }
 
-    // 修改：生气离开
     void LeaveAngry()
     {
-        if (isLeaving) return; // 防止重复调用
-
+        if (isLeaving) return;
         isLeaving = true;
 
-        if (!isServed)
-        {
-            EventManager.Instance.TriggerGameLog("顾客生气地离开了...");
-        }
+        // 生气表情
+        SetEmotion(angryEmotionSprite);
 
-        // 触发事件
-        if (EventManager.Instance != null)
-        {
-            EventManager.Instance.TriggerCustomerLeftAngry(this);
-        }
+        EventManager.Instance.TriggerGameLog("顾客生气地离开了...");
+        EventManager.Instance.TriggerCustomerLeftAngry(this);
 
-        // 通知订单管理器顾客生气离开
         CoffeeOrderManager.Instance.CustomerLeftAngry(this);
-
-        Leave();
+        // 播放生气音效
+        if (angrySound != null)
+        {
+            AudioSource.PlayClipAtPoint(angrySound, transform.position);
+        }
     }
 
-    // 修改：离开通用处理
     void Leave()
     {
         isWaiting = false;
-
-        // 播放离开动画
         StartCoroutine(LeaveAnimation());
     }
 
-    /// <summary>
-    /// 离开动画协程（向右移动并淡出）
-    /// </summary>
     IEnumerator LeaveAnimation()
     {
-        float duration = 1f; // 动画持续时间
+        float duration = 1f;
         float elapsed = 0f;
-        Color originalColor = spriteRenderer.color; // 原始颜色
+        Color originalColor = spriteRenderer.color;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration; // 动画进度
-
-            // 向右移动
+            float t = elapsed / duration;
             transform.position += Vector3.right * Time.deltaTime * 2f;
-
-            // 淡出效果
             Color color = originalColor;
             color.a = Mathf.Lerp(1f, 0f, t);
             spriteRenderer.color = color;
-
-            yield return null; // 等待下一帧
+            yield return null;
         }
     }
 }

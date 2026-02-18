@@ -23,7 +23,7 @@ public class EventManager : MonoBehaviour
 
     // ===== 订单事件 =====
     public event Action<Customer, Coffee.CoffeeType> OnCustomerArrived;  // 顾客到达
-    public event Action<Customer, Coffee> OnOrderCompleted;  // 订单完成（正确）
+    public event Action<Customer, int> OnOrderCompleted;// 订单完成（正确）
     public event Action<Customer> OnOrderIncorrect;  // 订单错误
     public event Action<Customer> OnCustomerLeftAngry;  // 顾客生气离开
     public event Action<Customer, Coffee> OnFigTeaServed;  // 无花果茶服务
@@ -97,10 +97,10 @@ public class EventManager : MonoBehaviour
         LogEvent($"顾客到达，订单: {orderType}");
     }
 
-    public void TriggerOrderCompleted(Customer customer, Coffee coffee)
+    public void TriggerOrderCompleted(Customer customer, int totalReward)
     {
-        OnOrderCompleted?.Invoke(customer, coffee);
-        LogEvent($"订单完成: {coffee.type}，奖励: {coffee.value}金币");
+        OnOrderCompleted?.Invoke(customer, totalReward);
+        LogEvent($"订单完成，总奖励: {totalReward} 金币");
     }
 
     public void TriggerOrderIncorrect(Customer customer)

@@ -135,127 +135,108 @@ public class Cup : MonoBehaviour
     /// <summary>
     /// 检查配方是否正确
     /// </summary>
+    /// <summary>
+    /// 根据杯子的实际成分检查配方是否正确
+    /// </summary>
     private void CheckRecipeValidity()
     {
         // 如果没有饮品，不需要检查
         if (!hasCoffee && !hasFig) return;
 
-        // 获取咖啡数据
+        // 根据杯子自身的成分判断应该是什么类型的饮品
+        Coffee.CoffeeType currentType = DetermineDrinkTypeFromCup();
+
+        // 获取咖啡数据（仅用于调试对比）
         CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
-        if (coffeeMachine == null || coffeeMachine.currentCoffee == null)
-        {
-            return;
-        }
+        Coffee coffeeData = coffeeMachine?.currentCoffee;
 
-        Coffee coffeeData = coffeeMachine.currentCoffee;
+        // 标记失败饮品
+        isFailedDrink = false;
 
-        // 检查是否是无花果茶
-        if (coffeeData.type == Coffee.CoffeeType.FigOnly)
+        // 如果是无花果茶
+        if (hasFig && !hasCoffee)
         {
             // 无花果茶：只能有无花果，不能有咖啡或其他原料
-            if (coffeeData.hasBrewedCoffee || coffeeData.hasCoffeePowder ||
-                coffeeData.hasIce || coffeeData.hasMilk ||
-                coffeeData.hasStrawberry || coffeeData.hasCarambola)
+            if (hasIce || hasMilk || hasStrawberry || hasCarambola)
             {
                 isFailedDrink = true;
                 Debug.Log("无花果茶配方错误：含有其他原料");
             }
-            else
-            {
-                isFailedDrink = false;
-            }
             return;
         }
 
-        // 如果没有咖啡，则不是有效的咖啡饮品
+        // 必须有咖啡才能继续检查其他类型
         if (!hasCoffee)
         {
             isFailedDrink = true;
             return;
         }
 
-        // 检查是否是热咖啡
-        if (coffeeData.type == Coffee.CoffeeType.HotCoffee)
+        // 根据成分组合判断
+        if (hasStrawberry && hasMilk && !hasIce && !hasCarambola && !hasFig)
         {
-            // 热咖啡：只有咖啡，不能有其他任何原料
-            if (coffeeData.hasIce || coffeeData.hasMilk ||
-                coffeeData.hasStrawberry || coffeeData.hasCarambola || coffeeData.hasFig)
-            {
-                isFailedDrink = true;
-                Debug.Log("热咖啡配方错误：含有其他原料");
-            }
-            else
-            {
-                isFailedDrink = false;
-            }
-            return;
+            // 草莓拿铁：咖啡 + 牛奶 + 草莓
+            // 已经符合条件，标记为正确
+            isFailedDrink = false;
+        }
+        else if (hasCarambola && hasIce && !hasMilk && !hasStrawberry && !hasFig)
+        {
+            // 杨桃美式：咖啡 + 冰 + 杨桃
+            isFailedDrink = false;
+        }
+        else if (hasMilk && !hasIce && !hasStrawberry && !hasCarambola && !hasFig)
+        {
+            // 拿铁：咖啡 + 牛奶
+            isFailedDrink = false;
+        }
+        else if (hasIce && !hasMilk && !hasStrawberry && !hasCarambola && !hasFig)
+        {
+            // 冰咖啡：咖啡 + 冰
+            isFailedDrink = false;
+        }
+        else if (!hasIce && !hasMilk && !hasStrawberry && !hasCarambola && !hasFig)
+        {
+            // 热咖啡：只有咖啡
+            isFailedDrink = false;
+        }
+        else
+        {
+            // 其他不符合任何配方的组合
+            isFailedDrink = true;
+            Debug.Log("饮品配方错误：不符合任何已知配方");
         }
 
-        // 检查是否是冰咖啡
-        if (coffeeData.type == Coffee.CoffeeType.IcedCoffee)
+        // 可选：与 coffeeData 的类型进行比对，如果发现不一致，发出警告（便于调试）
+        if (coffeeData != null && currentType != coffeeData.type)
         {
-            // 冰咖啡：咖啡+冰块，不能有其他原料
-            if (coffeeData.hasMilk || coffeeData.hasStrawberry ||
-                coffeeData.hasCarambola || coffeeData.hasFig)
-            {
-                isFailedDrink = true;
-                Debug.Log("冰咖啡配方错误：含有其他原料");
-            }
-            else
-            {
-                isFailedDrink = false;
-            }
-            return;
+            Debug.LogWarning($"杯子成分确定的类型 {currentType} 与咖啡数据类型 {coffeeData.type} 不一致，可能存在同步问题");
         }
+    }
 
-        // 检查是否是拿铁
-        if (coffeeData.type == Coffee.CoffeeType.Latte)
-        {
-            // 拿铁：咖啡+牛奶，不能有其他原料
-            if (coffeeData.hasIce || coffeeData.hasStrawberry ||
-                coffeeData.hasCarambola || coffeeData.hasFig)
-            {
-                isFailedDrink = true;
-                Debug.Log("拿铁配方错误：含有其他原料");
-            }
-            else
-            {
-                isFailedDrink = false;
-            }
-            return;
-        }
+    /// <summary>
+    /// 根据杯子成分确定饮品类型（用于对比）
+    /// </summary>
+    private Coffee.CoffeeType DetermineDrinkTypeFromCup()
+    {
+        if (hasFig && !hasCoffee)
+            return Coffee.CoffeeType.FigOnly;
 
-        // 检查是否是草莓拿铁
-        if (coffeeData.type == Coffee.CoffeeType.StrawberryLatte)
-        {
-            // 草莓拿铁：咖啡+牛奶+草莓，不能有其他原料
-            if (coffeeData.hasIce || coffeeData.hasCarambola || coffeeData.hasFig)
-            {
-                isFailedDrink = true;
-                Debug.Log("草莓拿铁配方错误：含有其他原料");
-            }
-            else
-            {
-                isFailedDrink = false;
-            }
-            return;
-        }
+        if (!hasCoffee)
+            return Coffee.CoffeeType.HotCoffee; // 默认，但实际不应走到这里
 
-        // 检查是否是杨桃美式
-        if (coffeeData.type == Coffee.CoffeeType.CarambolaAmericano)
-        {
-            // 杨桃美式：咖啡+冰块+杨桃，不能有其他原料
-            if (coffeeData.hasMilk || coffeeData.hasStrawberry || coffeeData.hasFig)
-            {
-                isFailedDrink = true;
-                Debug.Log("杨桃美式配方错误：含有其他原料");
-            }
-            else
-            {
-                isFailedDrink = false;
-            }
-            return;
-        }
+        if (hasStrawberry && hasMilk && !hasIce && !hasCarambola)
+            return Coffee.CoffeeType.StrawberryLatte;
+
+        if (hasCarambola && hasIce && !hasMilk && !hasStrawberry)
+            return Coffee.CoffeeType.CarambolaAmericano;
+
+        if (hasMilk && !hasIce && !hasStrawberry && !hasCarambola)
+            return Coffee.CoffeeType.Latte;
+
+        if (hasIce && !hasMilk && !hasStrawberry && !hasCarambola)
+            return Coffee.CoffeeType.IcedCoffee;
+
+        return Coffee.CoffeeType.HotCoffee;
     }
 
     /// <summary>

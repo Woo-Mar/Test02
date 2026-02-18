@@ -124,12 +124,11 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-    void OnOrderCompleted(Customer customer, Coffee coffee)
+    void OnOrderCompleted(Customer customer, int totalReward)
     {
-        // 根据顾客奖励升级，增加额外奖励
         if (customerRewardUpgrade.level > 0)
         {
-            int bonus = Mathf.RoundToInt(coffee.value * 0.1f * customerRewardUpgrade.level);
+            int bonus = Mathf.RoundToInt(totalReward * 0.1f * customerRewardUpgrade.level);
             if (bonus > 0)
             {
                 GameManager.Instance.AddMoney(bonus, "升级奖励");

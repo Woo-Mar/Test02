@@ -19,6 +19,10 @@ public class CoffeeOrderManager : MonoBehaviour
     public int maxCustomers = 5;               // 最大顾客数量
     public bool canSpawnCustomers = true;      // 是否允许生成新顾客
 
+    [Header("订单阶段")]
+    [Tooltip("1=普通单杯, 2=VIP+1-2杯, 3=急躁+2-3杯")]
+    public int orderPhase = 1;
+
     // 添加字典来跟踪每个顾客生成点
     private Dictionary<Customer, Transform> customerSpawnPointMap = new Dictionary<Customer, Transform>();
 
@@ -74,68 +78,96 @@ public class CoffeeOrderManager : MonoBehaviour
     // 修改：生成顾客
     public void SpawnCustomer()
     {
-        // 添加检查：如果游戏未开始，不生成顾客
-        if (!canSpawnCustomers)
-        {
-            // Debug.Log("游戏未开始，暂停生成顾客");
-            return;
-        }
-
-        // 检查是否达到最大顾客数量
+        if (!canSpawnCustomers) return;
         if (waitingCustomers.Count >= maxCustomers)
         {
-            Debug.Log($"已达到最大顾客数({maxCustomers})，等待有空位");
-            Invoke("SpawnCustomer", 10f);
+            Invoke(nameof(SpawnCustomer), 10f);
             return;
         }
 
-        // 检查是否有空闲的生成点
-        int spawnPointIndex = FindAvailableSpawnPointIndex();
-        if (spawnPointIndex == -1)
+        int spawnIndex = FindAvailableSpawnPointIndex();
+        if (spawnIndex == -1)
         {
-            Debug.Log("所有生成点都被占用，等待有空位");
-            Invoke("SpawnCustomer", 5f);
+            Invoke(nameof(SpawnCustomer), 5f);
             return;
         }
 
-        Transform spawnPoint = customerSpawnPoints[spawnPointIndex];
+        Transform spawnPoint = customerSpawnPoints[spawnIndex];
 
-        // 生成顾客
-        Vector3 spawnPos = spawnPoint.position;
-        spawnPos.z = 0;
-        GameObject newCustomer = Instantiate(customerPrefab, spawnPos, Quaternion.identity);
+        // 实例化顾客
+        GameObject newCustomerObj = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity);
+        // 确保Z轴正确（设置为0，或根据场景调整）
+        Vector3 pos = newCustomerObj.transform.position;
+        pos.z = 0;
+        newCustomerObj.transform.position = pos;
 
-        Vector3 customerPos = newCustomer.transform.position;
-        customerPos.z = 0;
-        newCustomer.transform.position = customerPos;
+        Customer customer = newCustomerObj.GetComponent<Customer>();
 
-        Customer customerScript = newCustomer.GetComponent<Customer>();
-        if (customerScript != null)
+        // 根据阶段确定顾客类型和订单数量
+        Customer.CustomerType type;
+        int orderCount;
+
+        switch (orderPhase)
         {
-            // 设置顾客的生成点
-            customerScript.spawnPoint = spawnPoint;
-
-            // 记录顾客和生成点的映射
-            customerSpawnPointMap[customerScript] = spawnPoint;
-
-            // 顾客脚本会在Start()中自动随机设置订单类型
-            waitingCustomers.Add(customerScript);
-
-            // 注意：现在订单类型是在Customer.cs的Start()方法中随机生成的
-            Debug.Log($"新顾客到达！在位置{spawnPoint.name}");
+            case 1:
+                type = Customer.CustomerType.Normal;
+                orderCount = 1;
+                break;
+            case 2:
+                // 随机普通或VIP（各50%）
+                type = Random.value < 0.5f ? Customer.CustomerType.Normal : Customer.CustomerType.VIP;
+                orderCount = Random.Range(1, 3); // 1 或 2
+                break;
+            case 3:
+                // 随机三种类型，概率可调整
+                float r = Random.value;
+                if (r < 0.4f) type = Customer.CustomerType.Normal;
+                else if (r < 0.7f) type = Customer.CustomerType.VIP;
+                else type = Customer.CustomerType.Impatient;
+                orderCount = Random.Range(2, 4); // 2 或 3
+                break;
+            default:
+                type = Customer.CustomerType.Normal;
+                orderCount = 1;
+                break;
         }
 
-        // 安排下一个顾客生成
+        // 生成订单列表
+        List<Coffee.CoffeeType> orders = new List<Coffee.CoffeeType>();
+        for (int i = 0; i < orderCount; i++)
+        {
+            orders.Add(GetRandomCoffeeType());
+        }
+
+        // 初始化顾客
+        customer.spawnPoint = spawnPoint;
+        customer.InitializeOrders(orders, type);
+
+        // 记录映射
+        customerSpawnPointMap[customer] = spawnPoint;
+        waitingCustomers.Add(customer);
+
+        Debug.Log($"新顾客生成！类型：{type}，订单：{orderCount}杯，位置：{spawnPoint.name}");
+
+        // 安排下一个顾客
         if (canSpawnCustomers && waitingCustomers.Count < maxCustomers)
         {
             float nextSpawnTime = Random.Range(20f, 40f);
-            Invoke("SpawnCustomer", nextSpawnTime);
-        }
-        else
-        {
-            Invoke("SpawnCustomer", 10f);
+            Invoke(nameof(SpawnCustomer), nextSpawnTime);
         }
     }
+
+    private Coffee.CoffeeType GetRandomCoffeeType()
+    {
+        float r = Random.value;
+        if (r < 0.2f) return Coffee.CoffeeType.HotCoffee;
+        else if (r < 0.4f) return Coffee.CoffeeType.IcedCoffee;
+        else if (r < 0.6f) return Coffee.CoffeeType.Latte;
+        else if (r < 0.75f) return Coffee.CoffeeType.StrawberryLatte;
+        else if (r < 0.9f) return Coffee.CoffeeType.CarambolaAmericano;
+        else return Coffee.CoffeeType.FigOnly;
+    }
+
 
     /// <summary>
     /// 完成订单处理
@@ -143,43 +175,34 @@ public class CoffeeOrderManager : MonoBehaviour
     /// <param name="coffee">完成的咖啡对象</param>
     /// <param name="customer">被服务的顾客</param>
     // 修改：完成订单时释放生成点
-    public void CompleteOrder(Coffee coffee, Customer customer)
+    public void CompleteOrder(Customer customer, int totalReward)
     {
-        // 添加检查：如果游戏未开始，不处理订单
-        if (!canSpawnCustomers)
-        {
-            return;
-        }
-
         if (waitingCustomers.Contains(customer))
         {
-            // 释放顾客占用的生成点
+            // 释放生成点
             if (customerSpawnPointMap.ContainsKey(customer))
             {
                 Transform spawnPoint = customerSpawnPointMap[customer];
-                EventManager.Instance.TriggerGameLog($"释放生成点: {spawnPoint.name}");
+                Debug.Log($"释放生成点: {spawnPoint.name}");
                 customerSpawnPointMap.Remove(customer);
             }
 
-            // 从等待列表中移除
             waitingCustomers.Remove(customer);
-            Destroy(customer.gameObject);
 
             // 发放金币
-            GameManager.Instance.AddMoney(coffee.value, $"订单完成:{coffee.type}");
+            GameManager.Instance.AddMoney(totalReward, $"订单完成:{customer.customerType}");
 
-            EventManager.Instance.TriggerGameLog($"订单完成！获得 {coffee.value} 金币，当前顾客数: {waitingCustomers.Count}");
+            // 触发事件
+            EventManager.Instance.TriggerOrderCompleted(customer, totalReward);
+
+            Destroy(customer.gameObject);
 
             // 尝试生成新顾客
-            if (waitingCustomers.Count < maxCustomers && canSpawnCustomers)
+            if (canSpawnCustomers && waitingCustomers.Count < maxCustomers)
             {
                 float nextSpawnDelay = Random.Range(5f, 15f);
-                Invoke("SpawnCustomer", nextSpawnDelay);
+                Invoke(nameof(SpawnCustomer), nextSpawnDelay);
             }
-        }
-        else
-        {
-            EventManager.Instance.TriggerGameLog("尝试完成不存在的顾客订单", LogType.Warning);
         }
     }
 
@@ -188,25 +211,19 @@ public class CoffeeOrderManager : MonoBehaviour
     {
         if (waitingCustomers.Contains(customer))
         {
-            // 释放顾客占用的生成点
             if (customerSpawnPointMap.ContainsKey(customer))
             {
                 Transform spawnPoint = customerSpawnPointMap[customer];
                 Debug.Log($"顾客生气离开，释放生成点: {spawnPoint.name}");
                 customerSpawnPointMap.Remove(customer);
             }
-
-            // 从等待列表中移除
             waitingCustomers.Remove(customer);
             Destroy(customer.gameObject);
 
-            Debug.Log("顾客生气离开，当前顾客数: " + waitingCustomers.Count);
-
-            // 尝试生成新顾客
-            if (waitingCustomers.Count < maxCustomers && canSpawnCustomers)
+            if (canSpawnCustomers && waitingCustomers.Count < maxCustomers)
             {
                 float nextSpawnDelay = Random.Range(5f, 15f);
-                Invoke("SpawnCustomer", nextSpawnDelay);
+                Invoke(nameof(SpawnCustomer), nextSpawnDelay);
             }
         }
     }
