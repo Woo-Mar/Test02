@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 2598278531137045541}
   - component: {fileID: 3127436037994596887}
   m_Layer: 5
-  m_Name: IngredientItemPanel
+  m_Name: IngredientItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
