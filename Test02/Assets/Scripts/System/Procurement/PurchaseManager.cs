@@ -25,7 +25,7 @@ public class PurchaseManager : MonoBehaviour
     [Header("滚动文案设置")]
     public TMP_Text marqueeText;
     public RectTransform marqueeContainer;
-    public float scrollSpeed = 50f;
+    public float scrollSpeed = 100f;
 
     [Header("采购配置")]
     public List<PurchaseConfig> configs;
