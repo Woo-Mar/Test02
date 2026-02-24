@@ -191,6 +191,12 @@ public class Customer : MonoBehaviour
         }
 
         SetEmotion(happyEmotionSprite);
+
+        if (UpgradeManager.Instance != null)
+        {
+            patience += UpgradeManager.Instance.patienceBonus;
+            currentPatience = patience;
+        }
     }
 
     private void UpdateOrderIcon()
@@ -344,7 +350,9 @@ public class Customer : MonoBehaviour
         foreach (var type in orders)
         {
             int basePrice = DataManager.Instance.GetCoffeePrice(type);
-            total += Mathf.RoundToInt(basePrice * rewardMultiplier);
+            float multiplier = rewardMultiplier;
+            if (UpgradeManager.Instance != null) multiplier *= UpgradeManager.Instance.tipMultiplier;
+            total += Mathf.RoundToInt(basePrice * multiplier);
         }
         return total;
     }

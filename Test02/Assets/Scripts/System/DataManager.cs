@@ -91,16 +91,19 @@ public class DataManager : MonoBehaviour
 
     public int GetCoffeePrice(Coffee.CoffeeType type)
     {
+        int basePrice = 10;
         switch (type)
         {
-            case Coffee.CoffeeType.HotCoffee: return coffeePrices.hotCoffee;
-            case Coffee.CoffeeType.IcedCoffee: return coffeePrices.icedCoffee;
-            case Coffee.CoffeeType.Latte: return coffeePrices.latte;
-            case Coffee.CoffeeType.StrawberryLatte: return coffeePrices.strawberryLatte;
-            case Coffee.CoffeeType.CarambolaAmericano: return coffeePrices.carambolaAmericano;
-            case Coffee.CoffeeType.FigOnly: return coffeePrices.figTea;
-            default: return 10;
+            case Coffee.CoffeeType.HotCoffee: basePrice = coffeePrices.hotCoffee;break;
+            case Coffee.CoffeeType.IcedCoffee: basePrice = coffeePrices.icedCoffee; break;
+            case Coffee.CoffeeType.Latte: basePrice = coffeePrices.latte; break;
+            case Coffee.CoffeeType.StrawberryLatte: basePrice = coffeePrices.strawberryLatte; break;
+            case Coffee.CoffeeType.CarambolaAmericano: basePrice = coffeePrices.carambolaAmericano; break;
+            case Coffee.CoffeeType.FigOnly: basePrice = coffeePrices.figTea; break;
         }
+        if (UpgradeManager.Instance != null)
+            return Mathf.RoundToInt(basePrice * UpgradeManager.Instance.priceMultiplier);
+        return basePrice;
     }
 }
 
