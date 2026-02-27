@@ -81,22 +81,22 @@ public class UpgradeManager : MonoBehaviour
         allUIItems.Add(ui);
     }
 
-    public void TryUpgrade(int id, int cost)
+    // 【修改2】增加第三个参数接收点击的对应 UI
+    public void TryUpgrade(int id, int cost, UpgradeItemUI clickedItemUI)
     {
-        if (GameManager.Instance.SpendMoney(cost, "店铺升级"))
+        // 如果这里之前的字符串是乱码，建议修正回正常的提示文字
+        if (GameManager.Instance.SpendMoney(cost, "升级消费"))
         {
+            // 1. 设置数据以及应用游戏效果
             ApplyUpgradeEffect(id);
-            // 更新UI状态
-            foreach (var item in GetComponentsInChildren<UpgradeItemUI>())
-            {
-                // 这里简单处理，实际应根据ID匹配
-            }
-            // 重新刷新下当前点击的这个
-            EventManager.Instance.TriggerGameLog("升级成功！店铺属性已提升。");
 
-            // 简单处理：直接重绘UI或通过引用更新
-            upgradePanel.SetActive(false); // 强制关闭再开以刷新，或实现更精细的刷新
-            upgradePanel.SetActive(true);
+            // 2. 更新刚才被点击的这个 UI 表现，它的按键将完全被禁用并变成 "已解锁"
+            clickedItemUI.SetUnlocked();
+
+            // 3. 触发日志反馈
+            EventManager.Instance.TriggerGameLog("升级成功！");
+
+            // 你原本这里有一段重新开关UI面板的暴力刷新代码，现在有了 clickedItemUI.SetUnlocked(); 这一步属于精准刷新，不再需要开关面板了。
         }
     }
 
