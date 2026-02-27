@@ -7,6 +7,7 @@ public class UpgradeItemUI : MonoBehaviour
     public Image iconImage;
     public TMP_Text nameText;
     public TMP_Text costText;
+    public TMP_Text descriptionText;
     public Button actionButton;
     public TMP_Text buttonText;
 
@@ -15,11 +16,13 @@ public class UpgradeItemUI : MonoBehaviour
     private UpgradeManager manager;
     private bool isUnlocked;
 
-    public void Setup(int index, string name, int c, Sprite icon, bool unlocked, UpgradeManager mngr)
+    public void Setup(int index, string name, int c, string description, Sprite icon, bool unlocked, UpgradeManager mngr)
     {
         upgradeIndex = index;
         nameText.text = name;
         cost = c;
+        if (descriptionText != null)
+            descriptionText.text = description;
         iconImage.sprite = icon;
         isUnlocked = unlocked;
         manager = mngr;

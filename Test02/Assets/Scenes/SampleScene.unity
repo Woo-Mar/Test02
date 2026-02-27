@@ -7239,27 +7239,33 @@ MonoBehaviour:
   bgUpgrades:
   - name: "\u573A\u666F1"
     cost: 10
+    description: "\u9ED8\u8BA4\uFF01"
     icon: {fileID: 21300000, guid: e0204bf038f94c94fa20a7e8246a8aea, type: 3}
     isUnlocked: 1
   - name: "\u573A\u666F2"
     cost: 20
+    description: "\u589E\u52A010%\u5C0F\u8D39\uFF01"
     icon: {fileID: 21300000, guid: 274e83e88fe4e5649bd6c5d243cf318d, type: 3}
     isUnlocked: 0
   - name: "\u573A\u666F3"
     cost: 30
+    description: "\u589E\u52A020%\u5C0F\u8D39\uFF01"
     icon: {fileID: 21300000, guid: 8838f97ceb732c140a6fd0816d3d8f38, type: 3}
     isUnlocked: 0
   facilityUpgrades:
   - name: "\u5496\u5561\u673A\u5347\u7EA7"
     cost: 10
+    description: "\u996E\u54C1\u4EF7\u683C\u63D0\u5347\uFF01"
     icon: {fileID: 21300000, guid: 0a9de9da9f299224f88987cd101b37c3, type: 3}
     isUnlocked: 0
   - name: "\u5C55\u89C8\u54C11"
     cost: 20
+    description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
     icon: {fileID: 21300000, guid: ee161674b5179b14ab394c51fb87ce4a, type: 3}
     isUnlocked: 0
   - name: "\u5C55\u89C8\u54C12"
     cost: 30
+    description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
     icon: {fileID: 21300000, guid: aaebc7895424e6049af825db913f1507, type: 3}
     isUnlocked: 0
   tipMultiplier: 1

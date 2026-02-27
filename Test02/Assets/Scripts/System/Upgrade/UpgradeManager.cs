@@ -11,6 +11,7 @@ public class UpgradeManager : MonoBehaviour
     {
         public string name;
         public int cost;
+        public string description;
         public Sprite icon;
         public bool isUnlocked;
     }
@@ -77,7 +78,7 @@ public class UpgradeManager : MonoBehaviour
     {
         GameObject go = Instantiate(upgradeItemPrefab, parent);
         var ui = go.GetComponent<UpgradeItemUI>();
-        ui.Setup(index, data.name, data.cost, data.icon, data.isUnlocked, this);
+        ui.Setup(index, data.name, data.cost, data.description, data.icon, data.isUnlocked, this);
         allUIItems.Add(ui);
     }
 
