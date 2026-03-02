@@ -16,7 +16,6 @@ public class AchievementManager : MonoBehaviour
     [Header("成就配置")]
     public List<Achievement> achievements = new List<Achievement>();
 
-    // 【新增】保存所有生成的 UI 项，方便直接刷新
     private List<AchievementItemUI> spawnedUIItems = new List<AchievementItemUI>();
 
     void Awake() { Instance = this; }
@@ -24,30 +23,29 @@ public class AchievementManager : MonoBehaviour
     void Start()
     {
         achievementPanel.SetActive(false);
-        openButton.onClick.AddListener(OpenAchievementPanel); // 修改为调用新方法
+        openButton.onClick.AddListener(OpenAchievementPanel);
         closeButton.onClick.AddListener(() => achievementPanel.SetActive(false));
 
+        // 确保事件订阅
         if (EventManager.Instance != null)
         {
             EventManager.Instance.OnOrderCompleted += OnOrderCompleted;
             EventManager.Instance.OnMoneyEarned += OnMoneyEarned;
-            // ... 其他事件
+            Debug.Log("[成就系统] 已成功订阅事件");
         }
 
-        // 初始生成一次 UI 列表
         InitializeUI();
     }
 
-    // 【修改】点击打开按钮时，先刷新数据再显示
     void OpenAchievementPanel()
     {
         RefreshAllUI();
         achievementPanel.SetActive(true);
     }
 
-    // 【修改】只在初始化时生成物体
     void InitializeUI()
     {
+        // 清理旧物体
         foreach (Transform child in contentContainer) Destroy(child.gameObject);
         spawnedUIItems.Clear();
 
@@ -55,12 +53,15 @@ public class AchievementManager : MonoBehaviour
         {
             GameObject go = Instantiate(itemPrefab, contentContainer);
             AchievementItemUI ui = go.GetComponent<AchievementItemUI>();
-            ui.Setup(ach, this);
-            spawnedUIItems.Add(ui); // 存入列表
+            if (ui != null)
+            {
+                ui.Setup(ach, this);
+                spawnedUIItems.Add(ui);
+            }
         }
+        Debug.Log($"[成就系统] UI初始化完成，共生成 {spawnedUIItems.Count} 个项");
     }
 
-    // 【新增】刷新所有已存在的 UI 文字，而不销毁物体
     public void RefreshAllUI()
     {
         foreach (var ui in spawnedUIItems)
@@ -70,30 +71,24 @@ public class AchievementManager : MonoBehaviour
     }
 
     // --- 进度更新逻辑 ---
-
     public void UpdateProgress(string id, int addValue)
     {
+        // 查找成就
         var ach = achievements.Find(a => a.id == id);
-        if (ach != null && !ach.isClaimed) // 即使达成了也可以继续更新直到领取
+        if (ach != null)
         {
-            ach.currentProgress += addValue;
-            CheckReached(ach);
-
-            // 【关键】进度变了，立即刷新 UI 显示
-            RefreshAllUI();
+            if (!ach.isClaimed)
+            {
+                ach.currentProgress += addValue;
+                CheckReached(ach);
+                RefreshAllUI(); // 进度改变立即刷新
+                Debug.Log($"[成就系统] 成就 {id} 进度更新: {ach.currentProgress}/{ach.goalValue}");
+            }
         }
-    }
-
-    public void SetProgress(string id, int value)
-    {
-        var ach = achievements.Find(a => a.id == id);
-        if (ach != null && !ach.isClaimed)
+        else
         {
-            ach.currentProgress = value;
-            CheckReached(ach);
-
-            // 【关键】进度变了，立即刷新 UI 显示
-            RefreshAllUI();
+            // 如果你在控制台看到这条报错，说明你在Inspector里填的ID和代码里的不一致！
+            Debug.LogWarning($"[成就系统] 警告：尝试更新未知的成就ID: {id}");
         }
     }
 
@@ -117,26 +112,24 @@ public class AchievementManager : MonoBehaviour
         {
             ach.isClaimed = true;
             GameManager.Instance.AddMoney(ach.rewardMoney, "成就奖励");
-            RefreshAllUI(); // 领取后刷新按钮状态
+            RefreshAllUI();
         }
     }
 
-    // 监听事件
     void OnOrderCompleted(Customer customer, int reward)
     {
-        // 示例：每完成一个订单，某个总数成就+1
+        Debug.Log("[成就系统] 监听到订单完成，正在更新进度...");
         UpdateProgress("total_orders", 1);
 
-        // 检查是否包含无花果茶
         foreach (var type in customer.orders)
         {
-            if (type == Coffee.CoffeeType.FigOnly) UpdateProgress("fig_master", 1);
+            if (type == Coffee.CoffeeType.FigOnly)
+                UpdateProgress("fig_master", 1);
         }
     }
 
     void OnMoneyEarned(int amount, string source)
     {
-        // 累计金币成就
         UpdateProgress("money_collector", amount);
     }
 }

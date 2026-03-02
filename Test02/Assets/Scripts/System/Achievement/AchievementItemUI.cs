@@ -23,9 +23,13 @@ public class AchievementItemUI : MonoBehaviour
 
     public void RefreshUI()
     {
+        if (data == null) return;
+
         nameText.text = data.name;
         descText.text = data.description;
-        iconImage.sprite = data.icon;
+        if (iconImage != null) iconImage.sprite = data.icon;
+
+        // 更新进度文字
         progressText.text = $"{data.currentProgress}/{data.goalValue}";
 
         // 按钮状态逻辑
@@ -42,7 +46,7 @@ public class AchievementItemUI : MonoBehaviour
         else
         {
             claimButton.interactable = false;
-            buttonText.text = "未达成";
+            buttonText.text = "进行中";
         }
 
         claimButton.onClick.RemoveAllListeners();
