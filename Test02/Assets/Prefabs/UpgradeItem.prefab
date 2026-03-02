@@ -354,7 +354,7 @@ GameObject:
   - component: {fileID: 5122184905282945213}
   - component: {fileID: 4417346525478238658}
   - component: {fileID: 3337198932012742176}
-  - component: {fileID: 502426299699065530}
+  - component: {fileID: 35784915748263741}
   m_Layer: 5
   m_Name: UpgradeItem
   m_TagString: Untagged
@@ -424,7 +424,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &502426299699065530
+--- !u!114 &35784915748263741
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
