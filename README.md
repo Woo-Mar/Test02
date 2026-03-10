@@ -81,4 +81,6 @@
  【不要在LeftColumn/RightColumn的rect transform里改位置，直接在vertical layout group里面改位置】。
   我真服了。
 
-
+## 2026.3.02
+### C15
+1.按钮测试暂停

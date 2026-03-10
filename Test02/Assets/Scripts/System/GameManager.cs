@@ -10,6 +10,7 @@ using static Unity.VisualScripting.Member;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance; // 单例实例
+    public bool isPaused = false; // 记录当前是否暂停
 
     [Header("UI")]
     public Text moneyText;             // 金币显示文本
@@ -89,4 +90,25 @@ public class GameManager : MonoBehaviour
             customerCountText.text = $"等待顾客: {customerCount}";
         }
     }
+    /// <summary>
+    /// 切换暂停状态
+    /// </summary>
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        // Time.timeScale = 0 时，所有 Update 中的 Time.deltaTime 都会变为 0，从而实现暂停
+        Time.timeScale = isPaused ? 0f : 1f;
+
+        if (EventManager.Instance != null)
+        {
+            if (isPaused)
+                EventManager.Instance.TriggerGamePaused();
+            else
+                EventManager.Instance.TriggerGameResumed();
+        }
+
+        Debug.Log(isPaused ? "游戏已暂停" : "游戏已恢复");
+    }
+
 }

@@ -120,7 +120,8 @@ public class InventoryPanelController : MonoBehaviour
             UpdateAllIngredientUI();
 
             // 暂停游戏（可选）
-            Time.timeScale = 0f;
+            if (!GameManager.Instance.isPaused)
+                GameManager.Instance.TogglePause();
 
             EventManager.Instance.TriggerGameLog("打开原料面板");
         }
@@ -140,7 +141,8 @@ public class InventoryPanelController : MonoBehaviour
             inventoryPanel.SetActive(false);
 
             // 恢复游戏
-            Time.timeScale = 1f;
+            if (GameManager.Instance.isPaused)
+                GameManager.Instance.TogglePause();
 
             EventManager.Instance.TriggerGameLog("关闭原料面板");
         }
