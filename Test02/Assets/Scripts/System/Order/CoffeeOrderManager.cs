@@ -157,7 +157,11 @@ public class CoffeeOrderManager : MonoBehaviour
             Invoke(nameof(SpawnCustomer), nextSpawnTime);
         }
     }
-
+    public void SetOrderPhase(int phase)
+    {
+        orderPhase = phase;
+        Debug.Log("订单阶段更新为: " + phase);
+    }
     private Coffee.CoffeeType GetRandomCoffeeType()
     {
         float r = Random.value;

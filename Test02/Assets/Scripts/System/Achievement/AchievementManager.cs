@@ -126,6 +126,8 @@ public class AchievementManager : MonoBehaviour
     void OnOrderCompleted(Customer customer, int reward)
     {
         Debug.Log("[成就系统] 监听到订单完成，正在更新进度...");
+        if (!ProgressGuideManager.Instance.achievementButton.activeSelf)
+            return;
         UpdateProgress("total_orders", 1);
 
         foreach (var type in customer.orders)
@@ -137,6 +139,8 @@ public class AchievementManager : MonoBehaviour
 
     void OnMoneyEarned(int amount, string source)
     {
+        if (!ProgressGuideManager.Instance.achievementButton.activeSelf)
+            return;
         UpdateProgress("money_collector", amount);
     }
 }
