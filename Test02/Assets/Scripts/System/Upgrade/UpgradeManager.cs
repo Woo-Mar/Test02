@@ -51,13 +51,25 @@ public class UpgradeManager : MonoBehaviour
     void Start()
     {
         upgradePanel.SetActive(false);
-        openButton.onClick.AddListener(() => upgradePanel.SetActive(true));
-        closeButton.onClick.AddListener(() => upgradePanel.SetActive(false));
+        openButton.onClick.AddListener(OpenUpgradePanel);
+        closeButton.onClick.AddListener(CloseUpgradePanel);
 
         // Ä¬ÈÏ±³¾°1ÒÑ½âËø
         if (bgUpgrades.Count > 0) bgUpgrades[0].isUnlocked = true;
 
         InitUI();
+    }
+
+    public void OpenUpgradePanel()
+    {
+        upgradePanel.SetActive(true);
+        GameManager.Instance.SetPause(true);
+    }
+
+    public void CloseUpgradePanel()
+    {
+        upgradePanel.SetActive(false);
+        GameManager.Instance.SetPause(false);
     }
 
     void InitUI()

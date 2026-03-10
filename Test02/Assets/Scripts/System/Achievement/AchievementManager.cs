@@ -24,7 +24,7 @@ public class AchievementManager : MonoBehaviour
     {
         achievementPanel.SetActive(false);
         openButton.onClick.AddListener(OpenAchievementPanel);
-        closeButton.onClick.AddListener(() => achievementPanel.SetActive(false));
+        closeButton.onClick.AddListener(CloseAchievementPanel); // 改为调用方法
 
         // 确保事件订阅
         if (EventManager.Instance != null)
@@ -37,10 +37,17 @@ public class AchievementManager : MonoBehaviour
         InitializeUI();
     }
 
-    void OpenAchievementPanel()
+    public void OpenAchievementPanel()
     {
         RefreshAllUI();
         achievementPanel.SetActive(true);
+        GameManager.Instance.SetPause(true);
+    }
+
+    public void CloseAchievementPanel()
+    {
+        achievementPanel.SetActive(false);
+        GameManager.Instance.SetPause(false);
     }
 
     void InitializeUI()

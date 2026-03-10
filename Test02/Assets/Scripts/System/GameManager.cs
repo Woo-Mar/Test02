@@ -93,11 +93,10 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// 切换暂停状态
     /// </summary>
-    public void TogglePause()
+    // GameManager.cs
+    public void SetPause(bool pause)
     {
-        isPaused = !isPaused;
-
-        // Time.timeScale = 0 时，所有 Update 中的 Time.deltaTime 都会变为 0，从而实现暂停
+        isPaused = pause;
         Time.timeScale = isPaused ? 0f : 1f;
 
         if (EventManager.Instance != null)
@@ -107,8 +106,8 @@ public class GameManager : MonoBehaviour
             else
                 EventManager.Instance.TriggerGameResumed();
         }
-
         Debug.Log(isPaused ? "游戏已暂停" : "游戏已恢复");
     }
+
 
 }

@@ -74,9 +74,15 @@ public class PurchaseManager : MonoBehaviour
     {
         UpdateMarketTrend();
         purchasePanel.SetActive(true);
+        GameManager.Instance.SetPause(true);
     }
 
-    public void ClosePanel() => purchasePanel.SetActive(false);
+    public void ClosePanel()
+    {
+        purchasePanel.SetActive(false);
+        GameManager.Instance.SetPause(false);
+    }
+
 
     public void TryPurchase(string id, int cost, int amount)
     {

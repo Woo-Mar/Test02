@@ -119,9 +119,8 @@ public class InventoryPanelController : MonoBehaviour
             inventoryPanel.SetActive(true);
             UpdateAllIngredientUI();
 
-            // 暂停游戏（可选）
-            if (!GameManager.Instance.isPaused)
-                GameManager.Instance.TogglePause();
+            // 暂停游戏
+            GameManager.Instance.SetPause(true); // 打开时强制暂停
 
             EventManager.Instance.TriggerGameLog("打开原料面板");
         }
@@ -142,7 +141,7 @@ public class InventoryPanelController : MonoBehaviour
 
             // 恢复游戏
             if (GameManager.Instance.isPaused)
-                GameManager.Instance.TogglePause();
+                GameManager.Instance.SetPause(false); // 关闭时强制恢复
 
             EventManager.Instance.TriggerGameLog("关闭原料面板");
         }
