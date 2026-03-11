@@ -97,9 +97,9 @@ public class CoffeeOrderManager : MonoBehaviour
         // 实例化顾客
         GameObject newCustomerObj = Instantiate(customerPrefab, spawnPoint.position, Quaternion.identity);
         
-        // 确保Z轴正确（设置为0，或根据场景调整）
+        // 确保Z轴正确（设置为1，或根据场景调整）
         Vector3 pos = newCustomerObj.transform.position;
-        pos.z = 0;
+        pos.z = 1;
         newCustomerObj.transform.position = pos;
 
         Customer customer = newCustomerObj.GetComponent<Customer>();
