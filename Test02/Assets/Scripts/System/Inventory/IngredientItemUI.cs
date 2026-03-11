@@ -16,6 +16,17 @@ public class IngredientItemUI : MonoBehaviour
     public Slider progressSlider;     // 进度条（可选）
     public TMP_Text idText;               // ID（调试用，可隐藏）
 
+    [Header("进度条")]
+    public Image fillImage;
+    private Color fillColor;
+
+    void Start()
+    {
+        if (fillImage != null)
+            fillColor = fillImage.color;
+    }
+
+
     /// <summary>
     /// 更新UI显示
     /// </summary>
@@ -45,16 +56,6 @@ public class IngredientItemUI : MonoBehaviour
         {
             progressSlider.maxValue = ingredient.maxAmount;
             progressSlider.value = ingredient.currentAmount;
-
-            // 根据库存量设置颜色
-            Image fillImage = progressSlider.fillRect?.GetComponent<Image>();
-            if (fillImage != null)
-            {
-                float ratio = (float)ingredient.currentAmount / ingredient.maxAmount;
-                if (ratio < 0.2f) fillImage.color = Color.red;
-                else if (ratio < 0.5f) fillImage.color = Color.yellow;
-                else fillImage.color = Color.green;
-            }
         }
     }
 }

@@ -27,7 +27,7 @@ RectTransform:
   m_GameObject: {fileID: 1400814571950323675}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2610655250508835164}
@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0.666687, y: 5.3333435}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 120, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5120425498010678281
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
+  m_Sprite: {fileID: 44221636, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -592,12 +592,12 @@ MonoBehaviour:
   patienceSlider: {fileID: 7798553859447810830}
   orderIcon: {fileID: 8943971979237832515}
   remainingOrdersText: {fileID: 2179244677892377026}
-  hotCoffeeOrderSprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
-  icedCoffeeOrderSprite: {fileID: 21300000, guid: 960460f82bab3e3439a6fd70f6711aae, type: 3}
-  latteOrderSprite: {fileID: 21300000, guid: 8f69bbe70967b204d9835d7746d7e38e, type: 3}
-  strawberryLatteOrderSprite: {fileID: 21300000, guid: f4bd1fa3568d05e45bdb53ad57f49254, type: 3}
-  carambolaAmericanoOrderSprite: {fileID: 21300000, guid: a71a8cf4d024a1848a498997443b6427, type: 3}
-  figTeaOrderSprite: {fileID: 21300000, guid: 8d608bfdaf6983e4595cd02eb7cbfd2d, type: 3}
+  hotCoffeeOrderSprite: {fileID: -588762238, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  icedCoffeeOrderSprite: {fileID: 305885834, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  latteOrderSprite: {fileID: -225727136, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  strawberryLatteOrderSprite: {fileID: -1690023648, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  carambolaAmericanoOrderSprite: {fileID: 1709811815, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  figTeaOrderSprite: {fileID: 44221636, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   orders: 
   spawnPoint: {fileID: 0}
 --- !u!1 &6846338410970967121
