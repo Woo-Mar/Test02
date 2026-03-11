@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.58, y: -2.9, z: 0}
-  m_LocalScale: {x: 1, y: 1.43, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 857474daf03e67e4fadb3066a6d105ef, type: 3}
+  m_Sprite: {fileID: 1529295972, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -122,7 +122,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.12, y: 1.68}
+    oldSize: {x: 1.13, y: 1.6}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -143,14 +143,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3b73ad7a2d8bc2428daa7620672bdc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emptyCupSprite: {fileID: 21300000, guid: 857474daf03e67e4fadb3066a6d105ef, type: 3}
-  coffeeCupSprite: {fileID: 21300000, guid: 8e768c5300cc1304885c92cd1361d5bc, type: 3}
-  icedCoffeeCupSprite: {fileID: 21300000, guid: 960460f82bab3e3439a6fd70f6711aae, type: 3}
-  latteSprite: {fileID: 21300000, guid: 8f69bbe70967b204d9835d7746d7e38e, type: 3}
-  strawberryLatteSprite: {fileID: 21300000, guid: f4bd1fa3568d05e45bdb53ad57f49254, type: 3}
-  carambolaAmericanoSprite: {fileID: 21300000, guid: a71a8cf4d024a1848a498997443b6427, type: 3}
-  figTeaSprite: {fileID: 21300000, guid: 8d608bfdaf6983e4595cd02eb7cbfd2d, type: 3}
-  failedDrinkSprite: {fileID: 21300000, guid: f2459945cf4edd44487c92186fc8f929, type: 3}
+  emptyCupSprite: {fileID: 1529295972, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  coffeeCupSprite: {fileID: -588762238, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  icedCoffeeCupSprite: {fileID: 305885834, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  latteSprite: {fileID: -225727136, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  strawberryLatteSprite: {fileID: -1690023648, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  carambolaAmericanoSprite: {fileID: 1709811815, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  figTeaSprite: {fileID: 44221636, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
+  failedDrinkSprite: {fileID: 1938598072, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   isEmpty: 1
   hasCoffee: 0
   hasIce: 0

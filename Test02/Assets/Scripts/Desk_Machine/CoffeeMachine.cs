@@ -85,6 +85,7 @@ public class CoffeeMachine : MonoBehaviour
 
         // …Ë÷√∞¥≈•Ωªª•◊¥Ã¨
         grindButton.interactable = hasCoffeeBeans && !hasGroundCoffee;
+        //grindButton.interactable = true;
         brewButton.interactable = hasGroundCoffee && currentCup != null;
     }
 

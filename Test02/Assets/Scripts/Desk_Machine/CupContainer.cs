@@ -16,9 +16,9 @@ public class CupContainer : MonoBehaviour
     public SpriteRenderer containerRenderer;  // 容器精灵渲染器
     public Sprite emptyContainerSprite;       // 空容器精灵
     public Sprite fullContainerSprite;        // 满容器精灵
-    public Color highlightColor = Color.yellow;   // 高亮颜色
-    public Color lowStockColor = Color.yellow;   // 低库存颜色
-    public Color outOfStockColor = Color.red;    // 缺货颜色
+    //public Color highlightColor = Color.yellow;   // 高亮颜色
+    //public Color lowStockColor = Color.yellow;   // 低库存颜色
+    //public Color outOfStockColor = Color.red;    // 缺货颜色
 
     private Color originalColor;
     private bool isInitialized = false;
@@ -184,26 +184,26 @@ public class CupContainer : MonoBehaviour
             containerRenderer.sprite = fullContainerSprite;
         }
 
-        // 根据库存状态设置颜色
-        float ratio = (float)cup.currentAmount / cup.maxAmount;
+        //// 根据库存状态设置颜色
+        //float ratio = (float)cup.currentAmount / cup.maxAmount;
 
-        if (cup.currentAmount <= 0)
-        {
-            // 缺货状态 - 红色
-            containerRenderer.color = outOfStockColor;
-        }
-        else if (ratio < 0.3f)
-        {
-            // 低库存状态 - 黄色
-            containerRenderer.color = lowStockColor;
-        }
-        else
-        {
-            // 正常库存 - 原始颜色
-            containerRenderer.color = originalColor;
-        }
+        //if (cup.currentAmount <= 0)
+        //{
+        //    // 缺货状态 - 红色
+        //    containerRenderer.color = outOfStockColor;
+        //}
+        //else if (ratio < 0.3f)
+        //{
+        //    // 低库存状态 - 黄色
+        //    containerRenderer.color = lowStockColor;
+        //}
+        //else
+        //{
+        //    // 正常库存 - 原始颜色
+        //    containerRenderer.color = originalColor;
+        //}
 
-        Debug.Log($"杯子容器外观更新: 库存{cup.currentAmount}, 最大{cup.maxAmount}, 比例{ratio:F2}");
+        //Debug.Log($"杯子容器外观更新: 库存{cup.currentAmount}, 最大{cup.maxAmount}, 比例{ratio:F2}");
     }
 
     /// <summary>
@@ -243,13 +243,13 @@ public class CupContainer : MonoBehaviour
     /// <summary>
     /// 鼠标悬停效果
     /// </summary>
-    void OnMouseEnter()
-    {
-        if (containerRenderer != null)
-        {
-            containerRenderer.color = highlightColor;
-        }
-    }
+    //void OnMouseEnter()
+    //{
+    //    if (containerRenderer != null)
+    //    {
+    //        containerRenderer.color = highlightColor;
+    //    }
+    //}
 
     /// <summary>
     /// 鼠标离开效果

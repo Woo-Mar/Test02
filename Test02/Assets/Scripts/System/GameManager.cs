@@ -1,7 +1,9 @@
 // GameManager.cs - 游戏管理
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Unity.VisualScripting.Member;
+
 
 /// <summary>
 /// 游戏管理器 - 管理游戏状态、金币系统和UI更新
@@ -13,8 +15,8 @@ public class GameManager : MonoBehaviour
     public bool isPaused = false; // 记录当前是否暂停
 
     [Header("UI")]
-    public Text moneyText;             // 金币显示文本
-    public Text customerCountText;     // 顾客数量显示文本
+    public TMP_Text moneyText;             // 金币显示文本
+    public TMP_Text customerCountText;     // 顾客数量显示文本
 
     [Header("Game Data")]
     public int money = 100;            // 当前金币数量
@@ -81,13 +83,13 @@ public class GameManager : MonoBehaviour
     {
         // 更新金币显示
         if (moneyText != null)
-            moneyText.text = $"金币: {money}";
+            moneyText.text = $"{money}";
 
         // 更新顾客数量显示
         if (customerCountText != null)
         {
             int customerCount = CoffeeOrderManager.Instance.waitingCustomers.Count;
-            customerCountText.text = $"等待顾客: {customerCount}";
+            customerCountText.text = $"{customerCount}";
         }
     }
     /// <summary>

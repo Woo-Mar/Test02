@@ -140,7 +140,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 199621739, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  m_Sprite: {fileID: 957740933, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1321410035, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  m_Sprite: {fileID: -1264590325, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -425,7 +425,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1363717229, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  m_Sprite: {fileID: -195330448, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -511,7 +511,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bcbb4ecac2c508147a7ddfae1c5b1ee7, type: 3}
+  m_Sprite: {fileID: -136947520, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -558,7 +558,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.25, y: 2.25}
+    oldSize: {x: 4.91, y: 4.5813456}
     newSize: {x: 2.25, y: 2.25}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -581,12 +581,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   happySound: {fileID: 8300000, guid: 746cb87f4e98cad4e98bd598307d474a, type: 3}
   angrySound: {fileID: 8300000, guid: cc298bfd3c17455429b61de11ba6361e, type: 3}
-  happyNormalSprite: {fileID: -1523925121, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
-  angryNormalSprite: {fileID: 2009068125, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
-  happyVipSprite: {fileID: -928588096, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
-  angryVipSprite: {fileID: 1790878741, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
-  happyImpatientSprite: {fileID: -1069856063, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
-  angryImpatientSprite: {fileID: -93425937, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  happyNormalSprite: {fileID: -1499255941, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  angryNormalSprite: {fileID: -502959054, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  happyVipSprite: {fileID: 504010526, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  angryVipSprite: {fileID: 1963248386, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  happyImpatientSprite: {fileID: 1830261826, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  angryImpatientSprite: {fileID: -2137626496, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   patience: 30
   baseReward: 10
   patienceSlider: {fileID: 7798553859447810830}
@@ -701,7 +701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1687726434, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
+  m_Sprite: {fileID: 1086378837, guid: 5039a320822073f498947ae075fbeb9a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

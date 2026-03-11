@@ -25,11 +25,11 @@ public class UpgradeManager : MonoBehaviour
     public GameObject upgradeItemPrefab;
 
     [Header("场景引用")]
-    public Image backgroundImage;
+    public SpriteRenderer background;
     public GameObject exhibit1;
     public GameObject exhibit2;
     public SpriteRenderer coffeeMachineSR;
-    public SpriteRenderer tableSR;        // 场景中桌子的 SpriteRenderer
+    //public SpriteRenderer tableSR;        // 场景中桌子的 SpriteRenderer
 
 
     [Header("资源配置")]
@@ -121,13 +121,13 @@ public class UpgradeManager : MonoBehaviour
             // 1、切换背景图
             if (id < backgroundSprites.Length)
             {
-                backgroundImage.sprite = backgroundSprites[id];
+                background.sprite = backgroundSprites[id];
             }
             // 2、切换桌子图
-            if (tableSR != null && id < tableSprites.Length)
-            {
-                tableSR.sprite = tableSprites[id];
-            }
+            //if (tableSR != null && id < tableSprites.Length)
+            //{
+            //    tableSR.sprite = tableSprites[id];
+            //}
             tipMultiplier = 1.0f + (id * 0.1f); // 背景2加10%，背景3加20%
         }
         else // 设施类
