@@ -1574,8 +1574,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 855, y: 160}
-  m_SizeDelta: {x: 200, y: 300}
+  m_AnchoredPosition: {x: 832, y: -227}
+  m_SizeDelta: {x: 249, y: 261}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &422838452
 MonoBehaviour:
@@ -1597,7 +1597,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 621650784, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4642,7 +4642,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -5191,7 +5191,6 @@ RectTransform:
   - {fileID: 1870398035}
   - {fileID: 925500648}
   - {fileID: 42498853}
-  - {fileID: 1082532023}
   - {fileID: 71207828}
   - {fileID: 883227106}
   - {fileID: 307090725}
@@ -5200,6 +5199,7 @@ RectTransform:
   - {fileID: 495394667}
   - {fileID: 433032320}
   - {fileID: 2004816318}
+  - {fileID: 1082532023}
   - {fileID: 1363429035}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5658,7 +5658,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1082532023
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5668,7 +5668,7 @@ RectTransform:
   m_GameObject: {fileID: 1082532022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.91, y: 0.9, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1972027310}
@@ -5694,15 +5694,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: d2595ce01f1d2c94491cc258abd21a8d, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6707,7 +6707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactionRadius: 1.5
   binRenderer: {fileID: 1378563975}
-  highlightColor: {r: 0.48427665, g: 0.48427665, b: 0.48427665, a: 1}
+  highlightColor: {r: 0.48427665, g: 0.48427665, b: 0.48427665, a: 0}
   trashSound: {fileID: 8300000, guid: 169394f0dece10c468c5af7bcd3ae9c9, type: 3}
 --- !u!61 &1378563978
 BoxCollider2D:
@@ -8655,23 +8655,23 @@ MonoBehaviour:
   coffeeMachineSR: {fileID: 1719515090}
   backgroundSprites:
   - {fileID: 21300000, guid: 2c0795c7a0d450b459307ff179849942, type: 3}
-  - {fileID: 21300000, guid: 274e83e88fe4e5649bd6c5d243cf318d, type: 3}
+  - {fileID: 21300000, guid: 9799bdbe4e321334691b5904cdaf2f96, type: 3}
   - {fileID: 21300000, guid: 8838f97ceb732c140a6fd0816d3d8f38, type: 3}
   tableSprites:
   - {fileID: 21300000, guid: 80f57117738342a4198ced529a287da2, type: 3}
   - {fileID: 21300000, guid: 863d64a47b94fcd458e68f5a1b50aff9, type: 3}
-  - {fileID: 21300000, guid: 0bd58ffb2729b80418928fb3416e1e1e, type: 3}
+  - {fileID: 621650784, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
   upgradedMachineSprite: {fileID: 21300000, guid: 80f57117738342a4198ced529a287da2, type: 3}
   bgUpgrades:
   - name: "\u573A\u666F1"
     cost: 10
     description: "\u9ED8\u8BA4\uFF01"
-    icon: {fileID: 21300000, guid: e0204bf038f94c94fa20a7e8246a8aea, type: 3}
+    icon: {fileID: 21300000, guid: 2c0795c7a0d450b459307ff179849942, type: 3}
     isUnlocked: 1
   - name: "\u573A\u666F2"
     cost: 20
     description: "\u589E\u52A010%\u5C0F\u8D39\uFF01"
-    icon: {fileID: 21300000, guid: 274e83e88fe4e5649bd6c5d243cf318d, type: 3}
+    icon: {fileID: 21300000, guid: 9799bdbe4e321334691b5904cdaf2f96, type: 3}
     isUnlocked: 0
   - name: "\u573A\u666F3"
     cost: 30
@@ -8692,7 +8692,7 @@ MonoBehaviour:
   - name: "\u5C55\u89C8\u54C12"
     cost: 30
     description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
-    icon: {fileID: 21300000, guid: aaebc7895424e6049af825db913f1507, type: 3}
+    icon: {fileID: 621650784, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
     isUnlocked: 0
   tipMultiplier: 1
   patienceBonus: 0
