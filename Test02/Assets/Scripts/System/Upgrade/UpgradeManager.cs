@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+// using UnityEngine.UIElements;
 
 public class UpgradeManager : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class UpgradeManager : MonoBehaviour
     public GameObject exhibit1;
     public GameObject exhibit2;
     public SpriteRenderer coffeeMachineSR;
-    //public SpriteRenderer tableSR;        // 场景中桌子的 SpriteRenderer
+    public SpriteRenderer tableSR;        // 场景中桌子的 SpriteRenderer
 
 
     [Header("资源配置")]
@@ -50,9 +51,9 @@ public class UpgradeManager : MonoBehaviour
 
     void Start()
     {
-        upgradePanel.SetActive(false);
         openButton.onClick.AddListener(OpenUpgradePanel);
-        closeButton.onClick.AddListener(CloseUpgradePanel);
+        closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+
 
         // 默认背景1已解锁
         if (bgUpgrades.Count > 0) bgUpgrades[0].isUnlocked = true;
@@ -63,14 +64,12 @@ public class UpgradeManager : MonoBehaviour
     public void OpenUpgradePanel()
     {
         upgradePanel.SetActive(true);
-        GameManager.Instance.SetPause(true);
     }
 
-    public void CloseUpgradePanel()
-    {
-        upgradePanel.SetActive(false);
-        GameManager.Instance.SetPause(false);
-    }
+    //public void CloseUpgradePanel()
+    //{
+    //    upgradePanel.SetActive(false);
+    //}
 
     void InitUI()
     {
@@ -124,10 +123,10 @@ public class UpgradeManager : MonoBehaviour
                 background.sprite = backgroundSprites[id];
             }
             // 2、切换桌子图
-            //if (tableSR != null && id < tableSprites.Length)
-            //{
-            //    tableSR.sprite = tableSprites[id];
-            //}
+            if (tableSR != null && id < tableSprites.Length)
+            {
+                tableSR.sprite = tableSprites[id];
+            }
             tipMultiplier = 1.0f + (id * 0.1f); // 背景2加10%，背景3加20%
         }
         else // 设施类

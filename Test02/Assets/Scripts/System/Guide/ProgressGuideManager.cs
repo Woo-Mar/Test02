@@ -26,6 +26,8 @@ public class ProgressGuideManager : MonoBehaviour
     [Header("Buttons")]
     public GameObject upgradeButton;
     public GameObject achievementButton;
+    public Image ushadow;
+    public Image ashadow;
 
     private int soldCount = 0;
     private int earnedMoney = 0;
@@ -41,6 +43,8 @@ public class ProgressGuideManager : MonoBehaviour
     {
         upgradeButton.SetActive(false);
         achievementButton.SetActive(false);
+        ushadow.gameObject.SetActive(true);
+        ashadow.gameObject.SetActive(true);
 
         guideButton.onClick.AddListener(OnGuideButtonClick);
 
@@ -98,6 +102,7 @@ public class ProgressGuideManager : MonoBehaviour
         if (guideStep == 2)
         {
             upgradeButton.SetActive(true);
+            ushadow.gameObject.SetActive(false);
             // 第二阶段：订单进入阶段2
             CoffeeOrderManager.Instance.SetOrderPhase(2);
 
@@ -106,6 +111,7 @@ public class ProgressGuideManager : MonoBehaviour
         if (guideStep == 3)
         {
             achievementButton.SetActive(true);
+            ashadow.gameObject.SetActive(false);
             // 第三阶段：订单进入阶段3
             CoffeeOrderManager.Instance.SetOrderPhase(3);
 

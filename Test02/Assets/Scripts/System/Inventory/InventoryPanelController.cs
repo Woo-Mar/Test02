@@ -29,7 +29,8 @@ public class InventoryPanelController : MonoBehaviour
     {
         Debug.Log("InventoryPanelController Start");
 
-        // 初始化UI
+
+        //初始化UI
         if (openInventoryButton != null)
         {
             openInventoryButton.onClick.AddListener(OpenInventoryPanel);
@@ -41,21 +42,12 @@ public class InventoryPanelController : MonoBehaviour
 
         if (closeButton != null)
         {
-            closeButton.onClick.AddListener(CloseInventoryPanel);
+            closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+
         }
         else
         {
             Debug.LogError("closeButton 未设置！");
-        }
-
-        // 隐藏面板
-        if (inventoryPanel != null)
-        {
-            inventoryPanel.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("inventoryPanel 未设置！");
         }
 
         // 检查预制体
@@ -70,8 +62,10 @@ public class InventoryPanelController : MonoBehaviour
             Debug.LogError("ingredientListContainer 未设置！");
         }
 
-        // 延迟初始化，确保IngredientSystem已初始化
-        Invoke("DelayedInitialize", 0.5f);
+        // 延迟初始化，确保IngredientSystem已初始化,别删
+        // 这行是因为每次打开panel都不显示预制体，所以暂时去掉这个延迟。
+        //Invoke("DelayedInitialize", 0.5f);
+        DelayedInitialize();
     }
 
     /// <summary>
@@ -119,9 +113,6 @@ public class InventoryPanelController : MonoBehaviour
             inventoryPanel.SetActive(true);
             UpdateAllIngredientUI();
 
-            // 暂停游戏
-            GameManager.Instance.SetPause(true); // 打开时强制暂停
-
             EventManager.Instance.TriggerGameLog("打开原料面板");
         }
         else
@@ -133,19 +124,16 @@ public class InventoryPanelController : MonoBehaviour
     /// <summary>
     /// 关闭原料面板
     /// </summary>
-    public void CloseInventoryPanel()
-    {
-        if (inventoryPanel != null)
-        {
-            inventoryPanel.SetActive(false);
+    //public void CloseInventoryPanel()
+    //{
+    //    if (inventoryPanel != null)
+    //    {
+    //        inventoryPanel.SetActive(false);
 
-            // 恢复游戏
-            if (GameManager.Instance.isPaused)
-                GameManager.Instance.SetPause(false); // 关闭时强制恢复
 
-            EventManager.Instance.TriggerGameLog("关闭原料面板");
-        }
-    }
+    //        EventManager.Instance.TriggerGameLog("关闭原料面板");
+    //    }
+    //}
 
     /// <summary>
     /// 创建所有原料的UI项

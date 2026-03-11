@@ -37,9 +37,11 @@ public class PurchaseManager : MonoBehaviour
 
     void Start()
     {
-        purchasePanel.SetActive(false);
+        // purchasePanel.SetActive(false);
         openButton.onClick.AddListener(OpenPanel);
-        closeButton.onClick.AddListener(ClosePanel);
+        //closeButton.onClick.AddListener(ClosePanel);
+        closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+
 
         // 订阅销售事件
         if (EventManager.Instance != null)
@@ -74,14 +76,12 @@ public class PurchaseManager : MonoBehaviour
     {
         UpdateMarketTrend();
         purchasePanel.SetActive(true);
-        GameManager.Instance.SetPause(true);
     }
 
-    public void ClosePanel()
-    {
-        purchasePanel.SetActive(false);
-        GameManager.Instance.SetPause(false);
-    }
+    //public void ClosePanel()
+    //{
+    //    purchasePanel.SetActive(false);
+    //}
 
 
     public void TryPurchase(string id, int cost, int amount)
