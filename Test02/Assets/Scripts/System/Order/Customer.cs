@@ -14,19 +14,21 @@ public class Customer : MonoBehaviour
         Impatient
     }
 
-    [Header("表情图标")]
-    public SpriteRenderer emotionRenderer;   // 子物体的 SpriteRenderer
-    public Sprite happyEmotionSprite;        // 满意/默认状态精灵
-    public Sprite angryEmotionSprite;        // 生气状态精灵
+    private Color maxPatienceColor;
 
     [Header("音效")]
     public AudioClip happySound;   // 正确交付时的开心音效
     public AudioClip angrySound;   // 生气时的音效
 
-    [Header("顾客类型外观")]
-    public Sprite normalSprite;       // 普通顾客精灵
-    public Sprite vipSprite;          // VIP顾客精灵
-    public Sprite impatientSprite;    // 急躁顾客精灵
+    [Header("顾客表情外观")]
+    public Sprite happyNormalSprite;
+    public Sprite angryNormalSprite;
+
+    public Sprite happyVipSprite;
+    public Sprite angryVipSprite;
+
+    public Sprite happyImpatientSprite;
+    public Sprite angryImpatientSprite;
 
     [Header("Settings")]
     public float patience = 30f;        // 总耐心时间（秒）
@@ -68,8 +70,8 @@ public class Customer : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         currentPatience = patience;
 
-        // 初始化为开心表情
-        SetEmotion(happyEmotionSprite);
+        UpdateCustomerSprite(true);
+
 
         // 默认一个订单（会被 InitializeOrders 覆盖）
         if (orders.Count == 0)
@@ -77,30 +79,42 @@ public class Customer : MonoBehaviour
             orders = new List<Coffee.CoffeeType> { Coffee.CoffeeType.HotCoffee };
             ordersCompleted = new List<bool> { false };
         }
+        // 读取 Fill 的颜色
+        if (patienceSlider != null)
+        {
+            Image fillImage = patienceSlider.fillRect.GetComponent<Image>();
+            if (fillImage != null)
+            {
+                maxPatienceColor = fillImage.color;
+            }
+        }
 
         InitializeUI();
         UpdateRemainingText();
         UpdateOrderIcon();
     }
 
-    /// <summary>
-    /// 设置表情图标
-    /// </summary>
-    private void SetEmotion(Sprite emotionSprite)
+    void UpdateCustomerSprite(bool isHappy)
     {
-        if (emotionRenderer != null)
+        if (spriteRenderer == null) return;
+
+        switch (customerType)
         {
-            if (emotionSprite != null)
-            {
-                emotionRenderer.sprite = emotionSprite;
-                emotionRenderer.gameObject.SetActive(true);
-            }
-            else
-            {
-                emotionRenderer.gameObject.SetActive(false);
-            }
+            case CustomerType.VIP:
+                spriteRenderer.sprite = isHappy ? happyVipSprite : angryVipSprite;
+                break;
+
+            case CustomerType.Impatient:
+                spriteRenderer.sprite = isHappy ? happyImpatientSprite : angryImpatientSprite;
+                break;
+
+            default:
+                spriteRenderer.sprite = isHappy ? happyNormalSprite : angryNormalSprite;
+                break;
         }
     }
+
+
 
     /// <summary>
     /// 随机生成咖啡类型
@@ -162,16 +176,16 @@ public class Customer : MonoBehaviour
             switch (type)
             {
                 case CustomerType.VIP:
-                    spriteRenderer.sprite = vipSprite ?? normalSprite;
-                    Debug.Log($"VIP顾客设置精灵: {(vipSprite != null ? vipSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
+                    spriteRenderer.sprite = happyVipSprite ?? happyNormalSprite;
+                    Debug.Log($"VIP顾客设置精灵: {(happyVipSprite != null ? happyVipSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
                     break;
                 case CustomerType.Impatient:
-                    spriteRenderer.sprite = impatientSprite ?? normalSprite;
-                    Debug.Log($"Impatient顾客设置精灵: {(impatientSprite != null ? impatientSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
+                    spriteRenderer.sprite = happyImpatientSprite ?? happyNormalSprite;
+                    Debug.Log($"Impatient顾客设置精灵: {(happyImpatientSprite != null ? happyImpatientSprite.name : "null")}，最终使用: {spriteRenderer.sprite.name}");
                     break;
                 default:
-                    spriteRenderer.sprite = normalSprite;
-                    Debug.Log($"普通顾客设置精灵: {normalSprite.name}");
+                    spriteRenderer.sprite = happyNormalSprite;
+                    Debug.Log($"普通顾客设置精灵: {happyNormalSprite.name}");
                     break;
             }
         }
@@ -190,7 +204,8 @@ public class Customer : MonoBehaviour
             patienceSlider.value = currentPatience;
         }
 
-        SetEmotion(happyEmotionSprite);
+        UpdateCustomerSprite(true);
+
 
         if (UpgradeManager.Instance != null)
         {
@@ -276,7 +291,7 @@ public class Customer : MonoBehaviour
                 if (patienceRatio > 0.5f)
                 {
                     float t = (patienceRatio - 0.5f) * 2f;
-                    fillImage.color = Color.Lerp(Color.yellow, Color.green, t);
+                    fillImage.color = Color.Lerp(Color.yellow, maxPatienceColor, t);
                 }
                 else
                 {
@@ -369,7 +384,7 @@ public class Customer : MonoBehaviour
         if (remainingOrdersText != null) remainingOrdersText.gameObject.SetActive(false);
 
         // 保持开心表情（或切换为开心，已经是开心则不变）
-        SetEmotion(happyEmotionSprite);
+        UpdateCustomerSprite(true);
         CoffeeOrderManager.Instance.CompleteOrder(this, totalReward);
 
         // 播放开心音效
@@ -382,7 +397,7 @@ public class Customer : MonoBehaviour
     void OrderIncorrect(Cup cup)
     {
         // 显示生气表情
-        SetEmotion(angryEmotionSprite);
+        UpdateCustomerSprite(false);
 
         // 减少耐心
         currentPatience -= 10f;
@@ -421,7 +436,8 @@ public class Customer : MonoBehaviour
         isLeaving = true;
 
         // 生气表情
-        SetEmotion(angryEmotionSprite);
+        UpdateCustomerSprite(false);
+
 
         EventManager.Instance.TriggerGameLog("顾客生气地离开了...");
         EventManager.Instance.TriggerCustomerLeftAngry(this);
