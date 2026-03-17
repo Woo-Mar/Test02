@@ -37,6 +37,12 @@ public class CoffeeMachine : MonoBehaviour
     [Header("杯子容器引用")]
     public CupContainer cupContainer;      // 杯子容器引用
 
+    [Header("手动制作(Brew)")]
+    public Slider brewSlider;        // 关联你界面里的进度条组件 (原名 grindSlider)
+    public int requiredBrewClicks = 10; // 需要点击10次
+    private int currentBrewClicks = 0;
+    public bool isAutomatic = false; // 是否已升级为自动咖啡机 (UpgradeManager会修改它)
+
     void Start()
     {
         // 初始化按钮点击事件
@@ -92,9 +98,39 @@ public class CoffeeMachine : MonoBehaviour
     /// <summary>
     /// 步骤1：研磨咖啡豆
     /// </summary>
+    //public void GrindCoffee()
+    //{
+    //    Debug.Log("尝试研磨咖啡...");
+
+    //    // 检查咖啡豆库存
+    //    if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10g每杯
+    //    {
+    //        EventManager.Instance.TriggerGameLog("咖啡豆不足！", LogType.Warning);
+    //        return;
+    //    }
+
+    //    if (hasCoffeeBeans && !hasGroundCoffee)
+    //    {
+    //        hasGroundCoffee = true;
+    //        currentCoffee.hasCoffeePowder = true;
+
+    //        // 生成咖啡粉视觉效果
+    //        StartCoroutine(SpawnCoffeePowderEffect());
+
+    //        // 触发事件 - IngredientSystem会监听这个事件并消耗咖啡豆
+    //        if (EventManager.Instance != null)
+    //        {
+    //            EventManager.Instance.TriggerCoffeeGrinded("arabica"); // 假设咖啡豆类型
+    //            EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
+    //        }
+    //        UpdateUI();
+    //    }
+    //}
+
     public void GrindCoffee()
     {
-        Debug.Log("尝试研磨咖啡...");
+        // 检查是否有咖啡机使用权限(阶段2开启)
+        if (ProgressGuideManager.Instance.guideStep < 2) return;
 
         // 检查咖啡豆库存
         if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10g每杯
@@ -111,14 +147,78 @@ public class CoffeeMachine : MonoBehaviour
             // 生成咖啡粉视觉效果
             StartCoroutine(SpawnCoffeePowderEffect());
 
-            // 触发事件 - IngredientSystem会监听这个事件并消耗咖啡豆
             if (EventManager.Instance != null)
             {
-                EventManager.Instance.TriggerCoffeeGrinded("arabica"); // 假设咖啡豆类型
+                EventManager.Instance.TriggerCoffeeGrinded("arabica");
                 EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
             }
             UpdateUI();
         }
+    }
+    public void BrewCoffee()
+    {
+        if (hasGroundCoffee && currentCup != null)
+        {
+            if (isAutomatic)
+            {
+                // 如果已经升级了咖啡机，点击1次直接完成
+                CompleteBrewing();
+            }
+            else
+            {
+                // 没升级时，需要点击10次
+                currentBrewClicks++;
+
+                // 显示并更新进度条
+                if (brewSlider != null)
+                {
+                    brewSlider.gameObject.SetActive(true);
+                    brewSlider.maxValue = requiredBrewClicks;
+                    brewSlider.value = currentBrewClicks;
+                }
+
+                // 达到10次后完成制作
+                if (currentBrewClicks >= requiredBrewClicks)
+                {
+                    CompleteBrewing();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 真正的萃取完成逻辑
+    /// </summary>
+    private void CompleteBrewing()
+    {
+        hasGroundCoffee = false;
+        hasBrewedCoffee = true;
+        currentCoffee.hasBrewedCoffee = true;
+
+        // 隐藏进度条并重置点击次数
+        currentBrewClicks = 0;
+        if (brewSlider != null) brewSlider.gameObject.SetActive(false);
+
+        // 在杯子中生成咖啡液体
+        Cup cup = currentCup.GetComponent<Cup>();
+        if (cup != null)
+        {
+            cup.FillWithCoffee();
+            currentCoffee.isInCup = true;
+
+            // 播放咖啡流动效果
+            StartCoroutine(SpawnCoffeeLiquidEffect());
+        }
+
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.TriggerGameLog("咖啡萃取完成！");
+            EventManager.Instance.TriggerCoffeeBrewed(currentCoffee, cup);
+        }
+        UpdateUI();
+
+        // 延迟重置咖啡机状态
+        Invoke("ResetMachine", 1f);
     }
 
     /// <summary>
@@ -131,39 +231,39 @@ public class CoffeeMachine : MonoBehaviour
         Destroy(powder);
     }
 
-    /// <summary>
-    /// 步骤2：萃取咖啡
-    /// </summary>
-    public void BrewCoffee()
-    {
-        if (hasGroundCoffee && currentCup != null)
-        {
-            hasGroundCoffee = false;
-            hasBrewedCoffee = true;
-            currentCoffee.hasBrewedCoffee = true;
+    ///// <summary>
+    ///// 步骤2：萃取咖啡
+    ///// </summary>
+    //public void BrewCoffee()
+    //{
+    //    if (hasGroundCoffee && currentCup != null)
+    //    {
+    //        hasGroundCoffee = false;
+    //        hasBrewedCoffee = true;
+    //        currentCoffee.hasBrewedCoffee = true;
 
-            // 在杯子中生成咖啡液体
-            Cup cup = currentCup.GetComponent<Cup>();
-            if (cup != null)
-            {
-                cup.FillWithCoffee();
-                currentCoffee.isInCup = true;
+    //        // 在杯子中生成咖啡液体
+    //        Cup cup = currentCup.GetComponent<Cup>();
+    //        if (cup != null)
+    //        {
+    //            cup.FillWithCoffee();
+    //            currentCoffee.isInCup = true;
 
-                // 播放咖啡流动效果
-                StartCoroutine(SpawnCoffeeLiquidEffect());
-            }
+    //            // 播放咖啡流动效果
+    //            StartCoroutine(SpawnCoffeeLiquidEffect());
+    //        }
 
-            if (EventManager.Instance != null)
-            {
-                EventManager.Instance.TriggerGameLog("咖啡萃取完成！");
-                EventManager.Instance.TriggerCoffeeBrewed(currentCoffee, cup);
-            }
-            UpdateUI();
+    //        if (EventManager.Instance != null)
+    //        {
+    //            EventManager.Instance.TriggerGameLog("咖啡萃取完成！");
+    //            EventManager.Instance.TriggerCoffeeBrewed(currentCoffee, cup);
+    //        }
+    //        UpdateUI();
 
-            // 延迟重置咖啡机状态
-            Invoke("ResetMachine", 1f);
-        }
-    }
+    //        // 延迟重置咖啡机状态
+    //        Invoke("ResetMachine", 1f);
+    //    }
+    //}
 
     /// <summary>
     /// 咖啡液流动特效协程

@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using System.Collections;
 
 public class PurchaseManager : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class PurchaseManager : MonoBehaviour
 
     [Header("采购配置")]
     public List<PurchaseConfig> configs;
+
+    [Header("配送时间")]
+    public float deliveryTime = 30f; // 初始30秒
 
     // 销售追踪
     private Dictionary<Coffee.CoffeeType, int> salesHistory = new Dictionary<Coffee.CoffeeType, int>();
@@ -78,23 +82,50 @@ public class PurchaseManager : MonoBehaviour
         purchasePanel.SetActive(true);
     }
 
-    //public void ClosePanel()
-    //{
-    //    purchasePanel.SetActive(false);
-    //}
 
+    //public void TryPurchase(string id, int cost, int amount)
+    //{
+    //    if (GameManager.Instance.SpendMoney(cost, "采购原料:" + id))
+    //    {
+    //        IngredientSystem.Instance.AddIngredient(id, amount);
+    //        EventManager.Instance.TriggerGameLog($"采购成功：增加了 {amount} {id}");
+    //    }
+    //    else
+    //    {
+    //        EventManager.Instance.TriggerGameLog("金币不足，无法采购！", LogType.Warning);
+    //    }
+    //}
 
     public void TryPurchase(string id, int cost, int amount)
     {
-        if (GameManager.Instance.SpendMoney(cost, "采购原料:" + id))
+        // --- 1. 阶段锁定逻辑 ---
+        if (ProgressGuideManager.Instance.guideStep == 1)
         {
-            IngredientSystem.Instance.AddIngredient(id, amount);
-            EventManager.Instance.TriggerGameLog($"采购成功：增加了 {amount} {id}");
+            if (id != "fig" && id != "cup")
+            {
+                SetMarqueeText("由于交通不便，该物资暂时无法送达！");
+                return;
+            }
         }
-        else
+
+        // --- 2. 扣钱与物流 ---
+        if (GameManager.Instance.SpendMoney(cost, "采购:" + id))
         {
-            EventManager.Instance.TriggerGameLog("金币不足，无法采购！", LogType.Warning);
+            SetMarqueeText($"订单已发出，由于路不好走，预计{deliveryTime:F0}秒送达");
+            StartCoroutine(DeliveryProcess(id, amount));
         }
+    }
+
+    IEnumerator DeliveryProcess(string id, int amount)
+    {
+        yield return new WaitForSeconds(deliveryTime);
+        IngredientSystem.Instance.AddIngredient(id, amount);
+        EventManager.Instance.TriggerGameLog($"物资 {id} 已送达仓库！");
+    }
+
+    void SetMarqueeText(string msg)
+    {
+        if (marqueeText != null) marqueeText.text = msg;
     }
 
     // --- 市场动态逻辑 ---

@@ -162,16 +162,36 @@ public class CoffeeOrderManager : MonoBehaviour
         orderPhase = phase;
         Debug.Log("订单阶段更新为: " + phase);
     }
+    // 在 CoffeeOrderManager.cs 中修改 GetRandomCoffeeType 方法
     private Coffee.CoffeeType GetRandomCoffeeType()
     {
-        float r = Random.value;
-        if (r < 0.2f) return Coffee.CoffeeType.HotCoffee;
-        else if (r < 0.4f) return Coffee.CoffeeType.IcedCoffee;
-        else if (r < 0.6f) return Coffee.CoffeeType.Latte;
-        else if (r < 0.75f) return Coffee.CoffeeType.StrawberryLatte;
-        else if (r < 0.9f) return Coffee.CoffeeType.CarambolaAmericano;
-        else return Coffee.CoffeeType.FigOnly;
+        if (orderPhase == 1)
+        {
+            return Coffee.CoffeeType.FigOnly; // 第一阶段只有无花果茶
+        }
+        else if (orderPhase == 2)
+        {
+            // 增加：热/冰咖啡、拿铁、草莓拿铁、无花果
+            float r = Random.value;
+            if (r < 0.2f) return Coffee.CoffeeType.HotCoffee;
+            if (r < 0.4f) return Coffee.CoffeeType.IcedCoffee;
+            if (r < 0.6f) return Coffee.CoffeeType.Latte;
+            if (r < 0.8f) return Coffee.CoffeeType.StrawberryLatte;
+            return Coffee.CoffeeType.FigOnly;
+        }
+        else // Phase 3
+        {
+            // 增加杨桃美式
+            float r = Random.value;
+            if (r < 0.15f) return Coffee.CoffeeType.HotCoffee;
+            if (r < 0.3f) return Coffee.CoffeeType.IcedCoffee;
+            if (r < 0.45f) return Coffee.CoffeeType.Latte;
+            if (r < 0.6f) return Coffee.CoffeeType.StrawberryLatte;
+            if (r < 0.8f) return Coffee.CoffeeType.CarambolaAmericano;
+            return Coffee.CoffeeType.FigOnly;
+        }
     }
+
 
 
     /// <summary>

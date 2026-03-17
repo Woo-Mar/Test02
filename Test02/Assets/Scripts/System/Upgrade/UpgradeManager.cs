@@ -94,53 +94,84 @@ public class UpgradeManager : MonoBehaviour
     }
 
     // 【修改2】增加第三个参数接收点击的对应 UI
+    // 【修改1】将返回值改为 bool，用于判断升级是否真正成功应用
     public void TryUpgrade(int id, int cost, UpgradeItemUI clickedItemUI)
     {
-        // 如果这里之前的字符串是乱码，建议修正回正常的提示文字
-        if (GameManager.Instance.SpendMoney(cost, "升级消费"))
+        // 先检查是否满足金币条件
+        if (GameManager.Instance.money < cost)
         {
-            // 1. 设置数据以及应用游戏效果
-            ApplyUpgradeEffect(id);
+            EventManager.Instance.TriggerGameLog("金币不足，无法升级！", LogType.Warning);
+            return;
+        }
 
-            // 2. 更新刚才被点击的这个 UI 表现，它的按键将完全被禁用并变成 "已解锁"
-            clickedItemUI.SetUnlocked();
-
-            // 3. 触发日志反馈
-            EventManager.Instance.TriggerGameLog("升级成功！");
-
-            // 你原本这里有一段重新开关UI面板的暴力刷新代码，现在有了 clickedItemUI.SetUnlocked(); 这一步属于精准刷新，不再需要开关面板了。
+        // 尝试应用效果，如果内部条件不满足会返回 false
+        if (ApplyUpgradeEffect(id))
+        {
+            // 只有真正成功了，才扣钱和更新UI
+            if (GameManager.Instance.SpendMoney(cost, "升级消费"))
+            {
+                clickedItemUI.SetUnlocked();
+                EventManager.Instance.TriggerGameLog("升级成功！");
+            }
         }
     }
 
-    void ApplyUpgradeEffect(int id)
+    // 【修改2】改为 bool 类型
+    bool ApplyUpgradeEffect(int id)
     {
         if (id < 100) // 背景类
         {
             bgUpgrades[id].isUnlocked = true;
-            // 1、切换背景图
-            if (id < backgroundSprites.Length)
-            {
-                background.sprite = backgroundSprites[id];
-            }
-            // 2、切换桌子图
-            if (tableSR != null && id < tableSprites.Length)
-            {
-                tableSR.sprite = tableSprites[id];
-            }
-            tipMultiplier = 1.0f + (id * 0.1f); // 背景2加10%，背景3加20%
+            if (id < backgroundSprites.Length) background.sprite = backgroundSprites[id];
+            if (tableSR != null && id < tableSprites.Length) tableSR.sprite = tableSprites[id];
+            tipMultiplier = 1.0f + (id * 0.1f);
+            return true;
         }
         else // 设施类
         {
             int index = id - 100;
-            facilityUpgrades[index].isUnlocked = true;
-            if (index == 0)
+            if (index == 0) // 咖啡机升级
             {
-                coffeeMachineSR.sprite = upgradedMachineSprite;
-                priceMultiplier = 1.2f;
+                // 检查：背景必须达到第3级 (index 2)
+                if (bgUpgrades.Count >= 3 && bgUpgrades[2].isUnlocked)
+                {
+                    facilityUpgrades[index].isUnlocked = true;
+
+                    // 确保这里能找到咖啡机
+                    CoffeeMachine machine = FindObjectOfType<CoffeeMachine>();
+                    if (machine != null)
+                    {
+                        machine.isAutomatic = true;
+                        // 如果咖啡机里有手动研磨次数，记得重置它（可选）
+                    }
+
+                    if (coffeeMachineSR != null) coffeeMachineSR.sprite = upgradedMachineSprite;
+                    return true; // 真正成功
+                }
+                else
+                {
+                    EventManager.Instance.TriggerGameLog("升级失败：需要先将店铺背景升级至第三级！", LogType.Warning);
+                    return false; // 条件不满足，升级失败
+                }
             }
-            if (index == 1) { exhibit1.SetActive(true); patienceBonus += 10f; }
-            if (index == 2) { exhibit2.SetActive(true); patienceBonus += 10f; }
-            
+
+            if (index == 1) // 道路升级
+            {
+                facilityUpgrades[index].isUnlocked = true;
+                PurchaseManager pm = FindObjectOfType<PurchaseManager>();
+                if (pm != null) pm.deliveryTime = 10f;
+                return true;
+            }
+
+            if (index == 2)
+            {
+                facilityUpgrades[index].isUnlocked = true;
+                if (exhibit2 != null) exhibit2.SetActive(true);
+                patienceBonus += 10f;
+                return true;
+            }
+
+            return false;
         }
     }
 }
