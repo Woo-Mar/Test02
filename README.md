@@ -113,8 +113,9 @@
 3.修改数值。
 4.按键音效（UI），制作（气泡）、点击音效等。
 5.流程那里 图片可以放解锁的相关内容 比如放上解锁的顾客图像和系统按钮。
+6.结算显示饮品logo加数量，以及丢进垃圾桶的饮品，以及金币。
 
 ## 2026.3.17
 ### C19
 1.受限—突破—成长（游戏设计里常说的 gating / progression / trade-off）：前置依赖链 (Dependency Chain)，瓶颈效应 (Bottleneck Effect)，叙事驱动型经营 (Narrative-Driven Management)。
-2.结算显示饮品logo加数量，以及丢进垃圾桶的饮品，以及金币。
+2.end音效。
