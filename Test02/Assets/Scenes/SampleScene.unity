@@ -293,13 +293,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 71207828}
-  - {fileID: 883227106}
   - {fileID: 307090725}
-  - {fileID: 581571365}
   - {fileID: 771283304}
-  - {fileID: 495394667}
   - {fileID: 433032320}
-  - {fileID: 2004816318}
+  - {fileID: 1930495984}
   - {fileID: 952904015}
   - {fileID: 92399848}
   m_Father: {fileID: 958353555}
@@ -365,10 +362,10 @@ MonoBehaviour:
   purchasePanel: {fileID: 307090724}
   upgradePanel: {fileID: 771283303}
   achievementPanel: {fileID: 433032319}
-  inventoryButton: {fileID: 883227107}
-  purchaseButton: {fileID: 581571366}
-  upgradeButton: {fileID: 495394668}
-  achievementButton: {fileID: 2004816319}
+  inventoryBtn: {fileID: 883227107}
+  purchaseBtn: {fileID: 581571366}
+  upgradeBtn: {fileID: 495394668}
+  achievementBtn: {fileID: 2004816319}
 --- !u!1 &92399847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2843,12 +2840,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1884572767}
-  m_Father: {fileID: 77274509}
+  m_Father: {fileID: 1930495984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -695, y: -173}
-  m_SizeDelta: {x: -1800, y: -1050}
+  m_SizeDelta: {x: 20, y: -70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &495394668
 MonoBehaviour:
@@ -2893,7 +2890,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 495394669}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 77274512}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OpenUpgrade
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &495394669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3271,12 +3280,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 849067373}
-  m_Father: {fileID: 77274509}
+  m_Father: {fileID: 1930495984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -703, y: -4}
-  m_SizeDelta: {x: -1800, y: -1050}
+  m_SizeDelta: {x: 20, y: -70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &581571366
 MonoBehaviour:
@@ -3321,7 +3330,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 581571367}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 77274512}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OpenPurchase
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &581571367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4231,7 +4252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.48742133, b: 0.48742133, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4731,12 +4752,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 454029734}
-  m_Father: {fileID: 77274509}
+  m_Father: {fileID: 1930495984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -702, y: 182}
-  m_SizeDelta: {x: -1800, y: -1050}
+  m_SizeDelta: {x: 20, y: -70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &883227107
 MonoBehaviour:
@@ -4781,7 +4802,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 883227108}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 77274512}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OpenInventory
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &883227108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9270,7 +9303,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   achievementPanel: {fileID: 433032319}
-  openButton: {fileID: 2004816319}
   closeButton: {fileID: 1561594405}
   contentContainer: {fileID: 932995787}
   itemPrefab: {fileID: 276422687616310334, guid: e9ee167d8e4181d4683da44cbf6404e4, type: 3}
@@ -9584,6 +9616,45 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1912506330}
   m_CullTransparentMesh: 1
+--- !u!1 &1930495983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1930495984}
+  m_Layer: 5
+  m_Name: TabButtonContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1930495984
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930495983}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 883227106}
+  - {fileID: 581571365}
+  - {fileID: 495394667}
+  - {fileID: 2004816318}
+  m_Father: {fileID: 77274509}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1972027309
 GameObject:
   m_ObjectHideFlags: 0
@@ -9722,12 +9793,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1360244822}
-  m_Father: {fileID: 77274509}
+  m_Father: {fileID: 1930495984}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -697, y: -336}
-  m_SizeDelta: {x: -1800, y: -1050}
+  m_SizeDelta: {x: 20, y: -70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2004816319
 MonoBehaviour:
@@ -9772,7 +9843,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2004816320}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 77274512}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OpenAchievement
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2004816320
 MonoBehaviour:
   m_ObjectHideFlags: 0

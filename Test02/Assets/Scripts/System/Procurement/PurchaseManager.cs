@@ -43,9 +43,8 @@ public class PurchaseManager : MonoBehaviour
     {
         // purchasePanel.SetActive(false);
         openButton.onClick.AddListener(OpenPanel);
-        //closeButton.onClick.AddListener(ClosePanel);
-        closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
-
+        if (closeButton != null)
+            closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
 
         // 订阅销售事件
         if (EventManager.Instance != null)

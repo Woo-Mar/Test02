@@ -8,7 +8,7 @@ public class AchievementManager : MonoBehaviour
 
     [Header("UI引用")]
     public GameObject achievementPanel;
-    public Button openButton;
+    //public Button openButton;
     public Button closeButton;
     public Transform contentContainer;
     public GameObject itemPrefab;
@@ -22,10 +22,10 @@ public class AchievementManager : MonoBehaviour
 
     void Start()
     {
-        // achievementPanel.SetActive(false);
-        openButton.onClick.AddListener(OpenAchievementPanel);
-        //closeButton.onClick.AddListener(CloseAchievementPanel); // 改为调用方法
-        closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+        //openButton.onClick.AddListener(OpenAchievementPanel);
+        if (closeButton != null)
+            closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+
 
 
         // 确保事件订阅

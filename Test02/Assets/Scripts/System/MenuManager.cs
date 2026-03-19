@@ -5,23 +5,21 @@ public class MenuManager : MonoBehaviour
 {
     public static MenuManager Instance;
 
-    [Header("入口按钮")]
+    [Header("主控制")]
     public Button openMenuButton;
-
-    [Header("主菜单")]
     public GameObject menuPanel;
 
-    [Header("系统面板")]
+    [Header("子系统面板")]
     public GameObject inventoryPanel;
     public GameObject purchasePanel;
     public GameObject upgradePanel;
     public GameObject achievementPanel;
 
-    [Header("切换按钮")]
-    public Button inventoryButton;
-    public Button purchaseButton;
-    public Button upgradeButton;
-    public Button achievementButton;
+    [Header("切换按钮 (Tabs)")]
+    public Button inventoryBtn;
+    public Button purchaseBtn;
+    public Button upgradeBtn;
+    public Button achievementBtn;
 
     void Awake()
     {
@@ -30,62 +28,77 @@ public class MenuManager : MonoBehaviour
 
     void Start()
     {
-        menuPanel.SetActive(false);
+        // 1. 检查引用是否完整
+        CheckReferences();
 
-        openMenuButton.onClick.AddListener(OpenMenu);
+        // 2. 绑定事件
+        if (openMenuButton != null) openMenuButton.onClick.AddListener(OpenMenu);
 
-        inventoryButton.onClick.AddListener(OpenInventory);
-        purchaseButton.onClick.AddListener(OpenPurchase);
-        upgradeButton.onClick.AddListener(OpenUpgrade);
-        achievementButton.onClick.AddListener(OpenAchievement);
+        if (inventoryBtn != null) inventoryBtn.onClick.AddListener(() => { Debug.Log("点击了库存按钮"); OpenInventory(); });
+        if (purchaseBtn != null) purchaseBtn.onClick.AddListener(() => { Debug.Log("点击了采购按钮"); OpenPurchase(); });
+        if (upgradeBtn != null) upgradeBtn.onClick.AddListener(() => { Debug.Log("点击了升级按钮"); OpenUpgrade(); });
+        if (achievementBtn != null) achievementBtn.onClick.AddListener(() => { Debug.Log("点击了成就按钮"); OpenAchievement(); });
+
+        // 初始关闭
+        if (menuPanel != null) menuPanel.SetActive(false);
     }
 
-    void OpenMenu()
+    private void CheckReferences()
     {
+        if (inventoryBtn == null) Debug.LogError("MenuManager: inventoryBtn 未赋值！");
+        if (purchaseBtn == null) Debug.LogError("MenuManager: purchaseBtn 未赋值！");
+        if (inventoryPanel == null) Debug.LogError("MenuManager: inventoryPanel 未赋值！");
+    }
+
+    public void OpenMenu()
+    {
+        Debug.Log("打开主菜单");
         menuPanel.SetActive(true);
-
         GameManager.Instance.SetPause(true);
-
-        // 默认打开
-        OpenInventory();
+        OpenInventory(); // 默认打开库存
     }
 
     public void CloseMenu()
     {
+        Debug.Log("关闭主菜单");
         menuPanel.SetActive(false);
-
         GameManager.Instance.SetPause(false);
     }
 
-    void HideAll()
+    private void HideAll()
     {
-        inventoryPanel.SetActive(false);
-        purchasePanel.SetActive(false);
-        upgradePanel.SetActive(false);
-        achievementPanel.SetActive(false);
+        Debug.Log("隐藏所有面板");
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
+        if (purchasePanel != null) purchasePanel.SetActive(false);
+        if (upgradePanel != null) upgradePanel.SetActive(false);
+        if (achievementPanel != null) achievementPanel.SetActive(false);
     }
 
     public void OpenInventory()
     {
         HideAll();
-        inventoryPanel.SetActive(true);
+        if (inventoryPanel != null) inventoryPanel.SetActive(true);
+        Debug.Log("库存面板已激活");
     }
 
     public void OpenPurchase()
     {
         HideAll();
-        purchasePanel.SetActive(true);
+        if (purchasePanel != null) purchasePanel.SetActive(true);
+        Debug.Log("采购面板已激活");
     }
 
     public void OpenUpgrade()
     {
         HideAll();
-        upgradePanel.SetActive(true);
+        if (upgradePanel != null) upgradePanel.SetActive(true);
+        Debug.Log("升级面板已激活");
     }
 
     public void OpenAchievement()
     {
         HideAll();
-        achievementPanel.SetActive(true);
+        if (achievementPanel != null) achievementPanel.SetActive(true);
+        Debug.Log("成就面板已激活");
     }
 }

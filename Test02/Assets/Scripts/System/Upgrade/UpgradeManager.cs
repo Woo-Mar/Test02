@@ -19,7 +19,7 @@ public class UpgradeManager : MonoBehaviour
 
     [Header("UI引用")]
     public GameObject upgradePanel;
-    public Button openButton;
+    //public Button openButton;
     public Button closeButton;
     public Transform leftColumn;  // 背景升级容器
     public Transform rightColumn; // 设施升级容器
@@ -51,8 +51,10 @@ public class UpgradeManager : MonoBehaviour
 
     void Start()
     {
-        openButton.onClick.AddListener(OpenUpgradePanel);
-        closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+        //openButton.onClick.AddListener(OpenUpgradePanel);
+        if (closeButton != null)
+            closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
+
 
 
         // 默认背景1已解锁
@@ -117,15 +119,24 @@ public class UpgradeManager : MonoBehaviour
     }
 
     // 【修改2】改为 bool 类型
+    // 【修改】按顺序升级场景逻辑
     bool ApplyUpgradeEffect(int id)
     {
-        if (id < 100) // 背景类
+        if (id < 100) // 背景/场景类
         {
+            // 新增检查：如果不是第1个场景(id=0)，则必须要求前一个场景已经解锁
+            if (id > 0 && !bgUpgrades[id - 1].isUnlocked)
+            {
+                EventManager.Instance.TriggerGameLog($"升级失败：请先升级前置场景！", LogType.Warning);
+                return false; // 条件不满足，升级失败，不会扣钱
+            }
+
+            // 满足条件，执行升级
             bgUpgrades[id].isUnlocked = true;
             if (id < backgroundSprites.Length) background.sprite = backgroundSprites[id];
             if (tableSR != null && id < tableSprites.Length) tableSR.sprite = tableSprites[id];
             tipMultiplier = 1.0f + (id * 0.1f);
-            return true;
+            return true; // 真正成功
         }
         else // 设施类
         {
@@ -142,7 +153,6 @@ public class UpgradeManager : MonoBehaviour
                     if (machine != null)
                     {
                         machine.isAutomatic = true;
-                        // 如果咖啡机里有手动研磨次数，记得重置它（可选）
                     }
 
                     if (coffeeMachineSR != null) coffeeMachineSR.sprite = upgradedMachineSprite;
@@ -163,7 +173,7 @@ public class UpgradeManager : MonoBehaviour
                 return true;
             }
 
-            if (index == 2)
+            if (index == 2) // 其他设施升级
             {
                 facilityUpgrades[index].isUnlocked = true;
                 if (exhibit2 != null) exhibit2.SetActive(true);
@@ -174,4 +184,5 @@ public class UpgradeManager : MonoBehaviour
             return false;
         }
     }
+
 }
