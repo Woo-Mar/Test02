@@ -18,7 +18,7 @@ public class PurchaseManager : MonoBehaviour
 
     [Header("UI面板")]
     public GameObject purchasePanel;
-    public Button openButton;
+    //public Button openButton;
     public Button closeButton;
     public Transform contentContainer;
     public GameObject itemPrefab;
@@ -34,6 +34,10 @@ public class PurchaseManager : MonoBehaviour
     [Header("配送时间")]
     public float deliveryTime = 30f; // 初始30秒
 
+    private float deliveryMessageEndTime = 0f;
+    // 在类中定义一个计时器
+    private float nextMarketUpdate = 0f;
+
     // 销售追踪
     private Dictionary<Coffee.CoffeeType, int> salesHistory = new Dictionary<Coffee.CoffeeType, int>();
     private List<float> saleTimestamps = new List<float>();
@@ -41,8 +45,6 @@ public class PurchaseManager : MonoBehaviour
 
     void Start()
     {
-        // purchasePanel.SetActive(false);
-        openButton.onClick.AddListener(OpenPanel);
         if (closeButton != null)
             closeButton.onClick.AddListener(MenuManager.Instance.CloseMenu);
 
@@ -55,9 +57,16 @@ public class PurchaseManager : MonoBehaviour
 
     void Update()
     {
-        if (purchasePanel.activeSelf && marqueeText != null)
+        if (marqueeText != null)
         {
             ScrollMarquee();
+
+            // 仅在到达时间点时更新市场热点，避免每一帧都做复杂的计算
+            if (Time.time >= nextMarketUpdate)
+            {
+                UpdateMarketTrend();
+                nextMarketUpdate = Time.time + 10f; // 每10秒更新一次
+            }
         }
     }
 
@@ -75,24 +84,10 @@ public class PurchaseManager : MonoBehaviour
         }
     }
 
-    public void OpenPanel()
-    {
-        UpdateMarketTrend();
-        purchasePanel.SetActive(true);
-    }
-
-
-    //public void TryPurchase(string id, int cost, int amount)
+    //public void OpenPanel()
     //{
-    //    if (GameManager.Instance.SpendMoney(cost, "采购原料:" + id))
-    //    {
-    //        IngredientSystem.Instance.AddIngredient(id, amount);
-    //        EventManager.Instance.TriggerGameLog($"采购成功：增加了 {amount} {id}");
-    //    }
-    //    else
-    //    {
-    //        EventManager.Instance.TriggerGameLog("金币不足，无法采购！", LogType.Warning);
-    //    }
+    //    UpdateMarketTrend();
+    //    purchasePanel.SetActive(true);
     //}
 
     public void TryPurchase(string id, int cost, int amount)
@@ -107,11 +102,32 @@ public class PurchaseManager : MonoBehaviour
             }
         }
 
-        // --- 2. 扣钱与物流 ---
-        if (GameManager.Instance.SpendMoney(cost, "采购:" + id))
+        // --- 2. 购买逻辑 ---
+        if (GameManager.Instance.SpendMoney(cost, "购买:" + id))
         {
-            SetMarqueeText($"订单已发出，由于路不好走，预计{deliveryTime:F0}秒送达");
+            // 【新增逻辑】：检查道路是否已升级
+            // 根据之前的代码，facilityUpgrades[1] 是道路升级
+            bool isRoadUpgraded = false;
+            if (UpgradeManager.Instance != null && UpgradeManager.Instance.facilityUpgrades.Count > 1)
+            {
+                isRoadUpgraded = UpgradeManager.Instance.facilityUpgrades[1].isUnlocked;
+            }
+            deliveryMessageEndTime = Time.time + 5f;
+            // 根据状态显示不同文字
+            if (isRoadUpgraded)
+            {
+                SetMarqueeText($"订单已发出，道路已修好，预计{deliveryTime:F0}秒送达！");
+            }
+            else
+            {
+                SetMarqueeText($"订单已发出，由于路不好走，预计{deliveryTime:F0}秒送达！");
+            }
+
             StartCoroutine(DeliveryProcess(id, amount));
+        }
+        else
+        {
+            EventManager.Instance.TriggerGameLog("金币不足，无法购买！", LogType.Warning);
         }
     }
 
@@ -124,7 +140,15 @@ public class PurchaseManager : MonoBehaviour
 
     void SetMarqueeText(string msg)
     {
-        if (marqueeText != null) marqueeText.text = msg;
+        if (marqueeText != null)
+        {
+            marqueeText.text = msg;
+            Debug.Log($"[跑马灯] 文字已更新为: {msg}");
+        }
+        else
+        {
+            Debug.LogError("[跑马灯] 错误：marqueeText 引用丢失，请在 Inspector 中赋值！");
+        }
     }
 
     // --- 市场动态逻辑 ---
@@ -139,6 +163,8 @@ public class PurchaseManager : MonoBehaviour
 
     void UpdateMarketTrend()
     {
+        // 【新增】如果当前时间还在配送文案的显示时间内，直接跳过，不更新市场热点
+        if (Time.time < deliveryMessageEndTime) return;
         // 清理5分钟以前的数据 (300秒)
         float threshold = Time.time - 300f;
         while (saleTimestamps.Count > 0 && saleTimestamps[0] < threshold)
@@ -160,13 +186,8 @@ public class PurchaseManager : MonoBehaviour
 
         int count = saleTypes.Count(t => t == topDrink);
 
-        // 动态调价逻辑：热门饮品售价临时上涨20%
-        // 注意：这里需要修改DataManager中的价格或在结算时计算
         string drinkName = GetDrinkChineseName(topDrink);
-        marqueeText.text = $"【市场热点】{drinkName} 近期走红（售出{count}杯），建议零售价已上调！补货需及时！";
-
-        // 实际效果：直接影响DataManager里的单价
-        // DataManager.Instance.UpdatePrice(topDrink, ...); // 如果DataManager支持的话
+        marqueeText.text = $"【市场热点】{drinkName} 近期走红（售出{count}杯），补货需及时！";
     }
 
     void ScrollMarquee()

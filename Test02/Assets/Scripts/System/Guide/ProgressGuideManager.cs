@@ -73,26 +73,26 @@ public class ProgressGuideManager : MonoBehaviour
     void EnterPhase1()
     {
         guideStep = 1;
-        ShowGuide(image1, "后山的路还没修好，村里也没什么物资。目前我们只能用后山的无花果制作简单的果茶。磨豆机也是老旧的手动款。");
+        ShowGuide(image1, "后山路还没修好，村里物资少少的，暂时只能喝无花果茶啦～");
         CoffeeOrderManager.Instance.SetOrderPhase(1);
     }
 
     void EnterPhase2()
     {
         guideStep = 2;
-        ShowGuide(image2, "我们修通了进村的小路！现在可以去镇上采购咖啡豆和牛奶了。同时解锁了“村庄建设（升级）”系统，你可以尝试修缮道路来缩短物流时间！");
+        ShowGuide(image2, "小路终于通车啦！能去镇上买咖啡牛奶咯～解锁村庄建设，修路还能提速！VIP客户登场，每单1-2杯！");
     }
 
     void EnterPhase3()
     {
         guideStep = 3;
-        ShowGuide(image3, "小店名气越来越大，吸引了更多游客！解锁了“乡村荣誉（成就）”系统。虽然订单变难了，但我们的致富路也更宽了！");
+        ShowGuide(image3, "小店名气传开啦，游客越来越多！解锁乡村荣誉，订单变难？不怕！新增急躁客户，每单2-3杯，生意更火爆啦！");
     }
 
     void EnterPhase4()
     {
         guideStep = 4;
-        string summary = $"振兴成功！\n总饮品数：{soldCount}\n资产：{GameManager.Instance.money}";
+        string summary = $"恭喜你通关啦！\n总售卖饮品数：{soldCount}！\n资产：{GameManager.Instance.money}！";
         ShowGuide(image4, summary);
     }
 
