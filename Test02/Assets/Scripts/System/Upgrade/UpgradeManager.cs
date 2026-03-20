@@ -171,7 +171,7 @@ public class UpgradeManager : MonoBehaviour
             {
                 facilityUpgrades[index].isUnlocked = true;
                 PurchaseManager pm = FindObjectOfType<PurchaseManager>();
-                if (pm != null) pm.deliveryTime = 3f;
+                if (pm != null) pm.deliveryTime = 2f;
                 return true;
             }
 

@@ -9030,6 +9030,7 @@ MonoBehaviour:
     packAmount: 5
     baseBuyPrice: 15
   deliveryTime: 8
+  deliverySound: {fileID: 8300000, guid: baf3543ccb716d444a27b4ae19172e6c, type: 3}
 --- !u!114 &1906710236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9085,10 +9086,10 @@ MonoBehaviour:
     isUnlocked: 0
   - name: "\u9053\u8DEF\u5347\u7EA7"
     cost: 120
-    description: "\u7269\u6D41\u65F6\u95F4\u7F29\u77ED\u81F33\u79D2\uFF01"
+    description: "\u7269\u6D41\u65F6\u95F4\u7F29\u77ED\u81F32\u79D2\uFF01"
     icon: {fileID: -478387365, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
-  - name: "\u5C55\u89C8\u54C12"
+  - name: "\u5C55\u89C8\u54C1"
     cost: 350
     description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
     icon: {fileID: 835945529, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
