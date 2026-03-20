@@ -165,6 +165,6 @@ public class MainMenuController : MonoBehaviour
         }
 
         // Ìø×ªµ½scene1
-        SceneManager.LoadScene("Coffee");
+        SceneManager.LoadScene("End");
     }
 }

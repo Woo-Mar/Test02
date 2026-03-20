@@ -128,7 +128,7 @@ public class ProgressGuideManager : MonoBehaviour
         }
         else if (guideStep == 4)
         {
-            SceneTransitionManager.LoadSceneClean("Scene1");
+            SceneTransitionManager.LoadSceneClean("End");
         }
     }
 }

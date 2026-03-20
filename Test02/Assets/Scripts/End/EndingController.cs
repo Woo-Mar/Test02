@@ -47,6 +47,7 @@ public class EndingController : MonoBehaviour
     // 绑定给右下角按钮(NextButton)的点击事件
     public void OnNextButtonClicked()
     {
+        AudioManager.Instance.PlayButtonSound();
         clickCount++;
 
         // 如果点击次数在1到4之间
@@ -87,6 +88,7 @@ public class EndingController : MonoBehaviour
     // 绑定给ExitButton的点击事件
     public void OnExitButtonClicked()
     {
+        AudioManager.Instance.PlayButtonSound();
         Debug.Log("退出游戏");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

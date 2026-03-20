@@ -272,7 +272,7 @@ MonoBehaviour:
   emptySource: {fileID: 135459415}
   buttonClickSound: {fileID: 8300000, guid: aa940ae249082ba429123f131a9da164, type: 3}
   makeClickSound: {fileID: 8300000, guid: 0c5dd0fcc33d55148aaec69037a94780, type: 3}
-  emptyClickSound: {fileID: 8300000, guid: 526d52a718661b24298d9f9423c88af2, type: 3}
+  emptyClickSound: {fileID: 8300000, guid: 52bb41707c59b754eb40e3ca6f384ba3, type: 3}
 --- !u!82 &135459413
 AudioSource:
   m_ObjectHideFlags: 0
@@ -475,8 +475,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 526d52a718661b24298d9f9423c88af2, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 52bb41707c59b754eb40e3ca6f384ba3, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
