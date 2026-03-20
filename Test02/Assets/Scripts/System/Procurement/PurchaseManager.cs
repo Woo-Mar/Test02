@@ -32,7 +32,7 @@ public class PurchaseManager : MonoBehaviour
     public List<PurchaseConfig> configs;
 
     [Header("配送时间")]
-    public float deliveryTime = 30f; // 初始30秒
+    public float deliveryTime = 10f; // 初始10秒
 
     private float deliveryMessageEndTime = 0f;
     // 在类中定义一个计时器

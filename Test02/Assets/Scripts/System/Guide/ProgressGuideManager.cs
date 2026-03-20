@@ -64,10 +64,10 @@ public class ProgressGuideManager : MonoBehaviour
         soldCount++;
         // ½×¶Î 1 -> 2 (ÊÛ³ö3±­ÎŞ»¨¹û²è)
         if (guideStep == 1 && soldCount >= 3) EnterPhase2();
-        // ½×¶Î 2 -> 3 (ÊÛ³ö6±­)
-        else if (guideStep == 2 && soldCount >= 6) EnterPhase3();
-        // ½×¶Î 3 -> 4 (400½ğ±Ò)
-        if (GameManager.Instance.money >= 400 && guideStep < 4) EnterPhase4();
+        // ½×¶Î 2 -> 3 (ÊÛ³ö15±­)
+        else if (guideStep == 2 && soldCount >= 15) EnterPhase3();
+        // ½×¶Î 3 -> 4 (2000½ğ±Ò)
+        if (GameManager.Instance.money >= 2000 && guideStep < 4) EnterPhase4();
     }
 
     void EnterPhase1()

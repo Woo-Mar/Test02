@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.3238992, b: 0.3238992, a: 0.392}
+  m_Color: {r: 0.98742133, g: 0.97612804, b: 0.7980103, a: 0.392}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3628,7 +3628,7 @@ MonoBehaviour:
   isPaused: 0
   moneyText: {fileID: 481774445}
   customerCountText: {fileID: 243063292}
-  money: 100
+  money: 50
 --- !u!1 &661144469
 GameObject:
   m_ObjectHideFlags: 0
@@ -3881,6 +3881,7 @@ RectTransform:
   m_Children:
   - {fileID: 428298980}
   - {fileID: 581135167}
+  - {fileID: 1268329468}
   m_Father: {fileID: 77274509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5810,37 +5811,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1093566587
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1093566588}
-  m_Layer: 0
-  m_Name: zanshi
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1093566588
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1093566587}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5828645, y: -0.2606722, z: 0.17557552}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1116584252
 GameObject:
   m_ObjectHideFlags: 0
@@ -6246,6 +6216,140 @@ Transform:
   m_Children: []
   m_Father: {fileID: 817569564}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1268329467
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1268329468}
+  - component: {fileID: 1268329470}
+  - component: {fileID: 1268329469}
+  m_Layer: 5
+  m_Name: Introduce Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1268329468
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268329467}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 771283304}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 398.87326, y: 108.76531}
+  m_SizeDelta: {x: 597.7567, y: 74.0544}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1268329469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268329467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: "      \u9700\u8981\u5148\u5347\u7EA7\u5B8C\u5168\u90E8\u573A\u666F\u54E6~"
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 120038ebae00c6147bf9ae0551a4e991, type: 2}
+  m_sharedMaterial: {fileID: -8041619825393491039, guid: 120038ebae00c6147bf9ae0551a4e991, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4283585106
+  m_fontColor: {r: 0.32156864, g: 0.32156864, b: 0.32156864, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 45
+  m_fontSizeBase: 45
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 8
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &1268329470
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1268329467}
+  m_CullTransparentMesh: 1
 --- !u!1 &1282729388
 GameObject:
   m_ObjectHideFlags: 0
@@ -8791,12 +8895,12 @@ MonoBehaviour:
   ingredientData: []
   customerTypes: []
   coffeePrices:
-    hotCoffee: 10
-    icedCoffee: 15
-    latte: 15
-    strawberryLatte: 25
-    carambolaAmericano: 20
-    figTea: 5
+    hotCoffee: 18
+    icedCoffee: 22
+    latte: 26
+    strawberryLatte: 38
+    carambolaAmericano: 45
+    figTea: 15
 --- !u!114 &1906710233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8853,7 +8957,7 @@ MonoBehaviour:
   fig:
     id: fig
     name: "\u65E0\u82B1\u679C\u5E72"
-    currentAmount: 3
+    currentAmount: 5
     maxAmount: 100
     icon: {fileID: -433026714, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: "\u4E2A"
@@ -8867,7 +8971,7 @@ MonoBehaviour:
   cup:
     id: cup
     name: "\u676F\u5B50"
-    currentAmount: 3
+    currentAmount: 10
     maxAmount: 100
     icon: {fileID: 1529295972, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
     unit: "\u4E2A"
@@ -8899,32 +9003,32 @@ MonoBehaviour:
   configs:
   - id: cup
     displayName: "\u676F\u5B50"
-    packAmount: 1
-    baseBuyPrice: 2
+    packAmount: 10
+    baseBuyPrice: 20
   - id: coffee
     displayName: "\u5496\u5561\u8C46"
-    packAmount: 10
-    baseBuyPrice: 5
+    packAmount: 100
+    baseBuyPrice: 30
   - id: ice
     displayName: "\u51B0\u5757"
-    packAmount: 3
-    baseBuyPrice: 1
+    packAmount: 60
+    baseBuyPrice: 20
   - id: milk
     displayName: "\u725B\u5976"
-    packAmount: 5
-    baseBuyPrice: 3
+    packAmount: 50
+    baseBuyPrice: 20
   - id: strawberry
     displayName: "\u8349\u8393\u9171"
-    packAmount: 3
-    baseBuyPrice: 4
+    packAmount: 30
+    baseBuyPrice: 40
   - id: carambola
     displayName: "\u6768\u6843\u7247"
-    packAmount: 1
-    baseBuyPrice: 6
+    packAmount: 10
+    baseBuyPrice: 50
   - id: fig
     displayName: "\u65E0\u82B1\u679C\u5E72"
-    packAmount: 1
-    baseBuyPrice: 8
+    packAmount: 5
+    baseBuyPrice: 15
   deliveryTime: 30
 --- !u!114 &1906710236
 MonoBehaviour:
@@ -8959,33 +9063,33 @@ MonoBehaviour:
   upgradedMachineSprite: {fileID: 21300000, guid: 80f57117738342a4198ced529a287da2, type: 3}
   bgUpgrades:
   - name: "\u573A\u666F1"
-    cost: 10
-    description: "\u9ED8\u8BA4\uFF01"
+    cost: 0
+    description: "\u670D\u52A1\u8D391.0x\uFF01"
     icon: {fileID: 1152662425, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 1
   - name: "\u573A\u666F2"
-    cost: 20
-    description: "\u589E\u52A010%\u670D\u52A1\u8D39\uFF01"
+    cost: 250
+    description: "\u670D\u52A1\u8D391.1x\uFF01"
     icon: {fileID: -761175165, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u573A\u666F3"
-    cost: 30
-    description: "\u589E\u52A020%\u670D\u52A1\u8D39\uFF01"
+    cost: 600
+    description: "\u670D\u52A1\u8D391.2x\uFF01"
     icon: {fileID: -257760178, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   facilityUpgrades:
   - name: "\u5496\u5561\u673A\u5347\u7EA7"
-    cost: 10
+    cost: 800
     description: "\u5347\u7EA7\u4E3A\u5168\u81EA\u52A8\u7814\u78E8\uFF01"
     icon: {fileID: -1189471560, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u9053\u8DEF\u5347\u7EA7"
-    cost: 20
-    description: "\u7269\u6D41\u65F6\u95F4\u7F29\u77ED\u81F310\u79D2\uFF01"
+    cost: 120
+    description: "\u7269\u6D41\u65F6\u95F4\u7F29\u77ED\u81F33\u79D2\uFF01"
     icon: {fileID: -478387365, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u5C55\u89C8\u54C12"
-    cost: 30
+    cost: 350
     description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
     icon: {fileID: 835945529, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
@@ -9010,29 +9114,29 @@ MonoBehaviour:
   itemPrefab: {fileID: 276422687616310334, guid: e9ee167d8e4181d4683da44cbf6404e4, type: 3}
   achievements:
   - id: total_orders
-    name: "\u597D\u8BC4\u8FBE\u4EBA"
-    description: "\u8D5A\u53D65\u4E2A\u987E\u5BA2\u7684\u597D\u8BC4"
+    name: "\u5C0F\u6709\u540D\u6C14"
+    description: "\u8D5A\u53D615\u4E2A\u987E\u5BA2\u7684\u597D\u8BC4"
     icon: {fileID: -885763260, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
-    goalValue: 5
-    rewardMoney: 100
+    goalValue: 15
+    rewardMoney: 250
     currentProgress: 0
     isReached: 0
     isClaimed: 0
   - id: fig_master
-    name: "\u679C\u5E72\u5927\u5E08"
-    description: "\u552E\u535610\u676F\u65E0\u82B1\u679C\u8336\uFF08\u6D4B\u8BD53\uFF09"
+    name: "\u9760\u5C71\u5403\u5C71"
+    description: "\u552E\u535610\u676F\u65E0\u82B1\u679C\u8336"
     icon: {fileID: -1175056716, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
-    goalValue: 3
-    rewardMoney: 200
+    goalValue: 10
+    rewardMoney: 150
     currentProgress: 0
     isReached: 0
     isClaimed: 0
   - id: money_collector
     name: "\u4E94\u661F\u5E97\u957F"
-    description: "\u8D5A\u53D62000\u91D1\u5E01\uFF08\u6D4B\u8BD5\u7528100\uFF0C\u8BB0\u5F97\u6539\uFF09"
+    description: "\u8D5A\u53D61000\u91D1\u5E01"
     icon: {fileID: 1095742721, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
-    goalValue: 100
-    rewardMoney: 500
+    goalValue: 1000
+    rewardMoney: 400
     currentProgress: 0
     isReached: 0
     isClaimed: 0
@@ -9951,4 +10055,3 @@ SceneRoots:
   - {fileID: 1321867869}
   - {fileID: 1084569075}
   - {fileID: 1906710231}
-  - {fileID: 1093566588}
