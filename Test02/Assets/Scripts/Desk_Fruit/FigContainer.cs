@@ -1,5 +1,6 @@
 // FigContainer.cs - 修改版
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 无花果容器控制器 - 处理添加无花果干功能
@@ -46,6 +47,11 @@ public class FigContainer : MonoBehaviour
 
     void OnMouseDown()
     {
+        // 2. 核心拦截代码：如果鼠标当前在 UI 上，直接返回，不执行加冰逻辑
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         AddFigToCup();
     }
 

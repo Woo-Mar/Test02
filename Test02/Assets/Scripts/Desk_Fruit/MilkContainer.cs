@@ -1,5 +1,6 @@
 // MilkContainer.cs - 修改版
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 牛奶容器控制器 - 处理添加牛奶功能
@@ -46,6 +47,11 @@ public class MilkContainer : MonoBehaviour
 
     void OnMouseDown()
     {
+        // 2. 核心拦截代码：如果鼠标当前在 UI 上，直接返回，不执行加冰逻辑
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         AddMilkToCup();
     }
 

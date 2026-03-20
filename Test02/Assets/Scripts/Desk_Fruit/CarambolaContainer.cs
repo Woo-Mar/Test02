@@ -1,5 +1,6 @@
 // CarambolaContainer.cs - 修改版
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 杨桃容器控制器 - 处理添加杨桃片功能
@@ -46,6 +47,11 @@ public class CarambolaContainer : MonoBehaviour
 
     void OnMouseDown()
     {
+        // 2. 核心拦截代码：如果鼠标当前在 UI 上，直接返回，不执行加冰逻辑
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         AddCarambolaToCup();
     }
 
@@ -70,6 +76,7 @@ public class CarambolaContainer : MonoBehaviour
     /// </summary>
     void AddCarambolaToCup()
     {
+        
         Debug.Log("尝试添加杨桃片...");
 
         // 获取杨桃片消耗量配置

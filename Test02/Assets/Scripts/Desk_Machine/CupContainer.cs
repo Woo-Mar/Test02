@@ -72,6 +72,11 @@ public class CupContainer : MonoBehaviour
     /// </summary>
     void OnMouseDown()
     {
+        // 2. 核心拦截代码：如果鼠标当前在 UI 上，直接返回，不执行加冰逻辑
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         TrySpawnCup(); // 尝试生成杯子
     }
 

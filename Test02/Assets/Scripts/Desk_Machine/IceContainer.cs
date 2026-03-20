@@ -1,5 +1,6 @@
 // IceContainer.cs - 修改版
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 冰块容器控制器 - 处理加冰功能
@@ -51,6 +52,11 @@ public class IceContainer : MonoBehaviour
     {
         Debug.Log("尝试添加冰块...");
 
+        // 2. 核心拦截代码：如果鼠标当前在 UI 上，直接返回，不执行加冰逻辑
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         // 获取冰块消耗量配置
         int amountToConsume = IngredientSystem.Instance.GetConsumptionAmount("ice"); // 3块 每杯
 
