@@ -135,6 +135,7 @@ public class CoffeeMachine : MonoBehaviour
         // ¼ì²é¿§·È¶¹¿â´æ
         if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10gÃ¿±­
         {
+            
             EventManager.Instance.TriggerGameLog("¿§·È¶¹²»×ã£¡", LogType.Warning);
             return;
         }

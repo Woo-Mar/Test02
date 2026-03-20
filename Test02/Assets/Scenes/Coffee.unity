@@ -255,7 +255,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryPanel: {fileID: 71207827}
-  openInventoryButton: {fileID: 883227107}
   closeButton: {fileID: 643058534}
   ingredientItemPrefab: {fileID: 3146102423205133380, guid: c3d34a577383b574f9cf5870f8d48f41, type: 3}
   ingredientListContainer: {fileID: 1353377511}
@@ -5699,7 +5698,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1082532023
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9913,7 +9912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
