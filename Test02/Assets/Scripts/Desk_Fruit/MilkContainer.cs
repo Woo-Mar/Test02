@@ -80,6 +80,7 @@ public class MilkContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
+                AudioManager.Instance.PlayEmptySound();
                 EventManager.Instance.TriggerGameLog("牛奶库存不足！", LogType.Warning);
             }
             return;
@@ -123,7 +124,7 @@ public class MilkContainer : MonoBehaviour
 
             // 添加牛奶到杯子
             cup.AddExtraIngredient("milk");
-
+            AudioManager.Instance.PlayMakeSound();
             if (EventManager.Instance != null)
             {
                 EventManager.Instance.TriggerGameLog($"已添加牛奶！当前咖啡类型：{coffeeData.type}");

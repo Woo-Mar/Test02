@@ -106,6 +106,7 @@ public class ProgressGuideManager : MonoBehaviour
 
     void OnGuideButtonClick()
     {
+        AudioManager.Instance.PlayButtonSound();
         guidePanel.SetActive(false);
         GameManager.Instance.SetPause(false);
 

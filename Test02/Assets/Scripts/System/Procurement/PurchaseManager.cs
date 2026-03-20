@@ -84,14 +84,10 @@ public class PurchaseManager : MonoBehaviour
         }
     }
 
-    //public void OpenPanel()
-    //{
-    //    UpdateMarketTrend();
-    //    purchasePanel.SetActive(true);
-    //}
 
     public void TryPurchase(string id, int cost, int amount)
     {
+        AudioManager.Instance.PlayButtonSound();
         // --- 1. ½×¶ÎËø¶¨Âß¼­ ---
         if (ProgressGuideManager.Instance.guideStep == 1)
         {

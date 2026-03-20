@@ -52,6 +52,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu()
     {
+        AudioManager.Instance.PlayButtonSound();
         Debug.Log("打开主菜单");
         menuPanel.SetActive(true);
         GameManager.Instance.SetPause(true);
@@ -60,6 +61,7 @@ public class MenuManager : MonoBehaviour
 
     public void CloseMenu()
     {
+        AudioManager.Instance.PlayButtonSound();
         Debug.Log("关闭主菜单");
         menuPanel.SetActive(false);
         GameManager.Instance.SetPause(false);
@@ -76,6 +78,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenInventory()
     {
+        AudioManager.Instance.PlayButtonSound();
         HideAll();
         if (inventoryPanel != null) inventoryPanel.SetActive(true);
         Debug.Log("库存面板已激活");
@@ -83,6 +86,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenPurchase()
     {
+        AudioManager.Instance.PlayButtonSound();
         HideAll();
         if (purchasePanel != null) purchasePanel.SetActive(true);
         Debug.Log("采购面板已激活");
@@ -90,6 +94,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenUpgrade()
     {
+        AudioManager.Instance.PlayButtonSound();
         HideAll();
         if (upgradePanel != null) upgradePanel.SetActive(true);
         Debug.Log("升级面板已激活");
@@ -97,6 +102,7 @@ public class MenuManager : MonoBehaviour
 
     public void OpenAchievement()
     {
+        AudioManager.Instance.PlayButtonSound();
         HideAll();
         if (achievementPanel != null) achievementPanel.SetActive(true);
         Debug.Log("成就面板已激活");

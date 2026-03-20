@@ -11,7 +11,6 @@ public class InventoryPanelController : MonoBehaviour
 {
     [Header("UI引用")]
     public GameObject inventoryPanel;           // 原料面板
-    //public Button openInventoryButton;          // 打开原料面板按钮
     public Button closeButton;                  // 关闭按钮
 
     [Header("原料显示模板")]

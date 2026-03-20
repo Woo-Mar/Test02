@@ -90,6 +90,7 @@ public class CupContainer : MonoBehaviour
         // 检查杯子库存
         if (!IngredientSystem.Instance.HasEnoughIngredient("cup", amountToConsume))
         {
+            AudioManager.Instance.PlayEmptySound();
             Debug.Log("杯子库存不足！");
             EventManager.Instance.TriggerGameLog("杯子库存不足！", LogType.Warning);
             return;
@@ -117,7 +118,7 @@ public class CupContainer : MonoBehaviour
         if (IngredientSystem.Instance.ConsumeIngredient("cup", amountToConsume, "CupContainer"))
         {
             SpawnCupOnMachine(); // 在咖啡机上生成杯子
-
+            AudioManager.Instance.PlayMakeSound();
             Debug.Log($"生成杯子成功，杯子库存: {IngredientSystem.Instance.GetIngredient("cup").currentAmount}");
         }
     }
@@ -184,26 +185,6 @@ public class CupContainer : MonoBehaviour
             containerRenderer.sprite = fullContainerSprite;
         }
 
-        //// 根据库存状态设置颜色
-        //float ratio = (float)cup.currentAmount / cup.maxAmount;
-
-        //if (cup.currentAmount <= 0)
-        //{
-        //    // 缺货状态 - 红色
-        //    containerRenderer.color = outOfStockColor;
-        //}
-        //else if (ratio < 0.3f)
-        //{
-        //    // 低库存状态 - 黄色
-        //    containerRenderer.color = lowStockColor;
-        //}
-        //else
-        //{
-        //    // 正常库存 - 原始颜色
-        //    containerRenderer.color = originalColor;
-        //}
-
-        //Debug.Log($"杯子容器外观更新: 库存{cup.currentAmount}, 最大{cup.maxAmount}, 比例{ratio:F2}");
     }
 
     /// <summary>
@@ -240,16 +221,6 @@ public class CupContainer : MonoBehaviour
         return cup != null ? cup.currentAmount : 0;
     }
 
-    /// <summary>
-    /// 鼠标悬停效果
-    /// </summary>
-    //void OnMouseEnter()
-    //{
-    //    if (containerRenderer != null)
-    //    {
-    //        containerRenderer.color = highlightColor;
-    //    }
-    //}
 
     /// <summary>
     /// 鼠标离开效果

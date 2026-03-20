@@ -80,6 +80,7 @@ public class FigContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
+                AudioManager.Instance.PlayEmptySound();
                 EventManager.Instance.TriggerGameLog("无花果干库存不足！", LogType.Warning);
             }
             return;
@@ -119,6 +120,7 @@ public class FigContainer : MonoBehaviour
 
             // 添加无花果干到杯子
             cup.AddExtraIngredient("fig");
+            AudioManager.Instance.PlayMakeSound();
 
             if (EventManager.Instance != null)
             {

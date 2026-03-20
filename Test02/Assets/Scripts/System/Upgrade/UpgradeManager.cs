@@ -99,6 +99,7 @@ public class UpgradeManager : MonoBehaviour
     // 【修改1】将返回值改为 bool，用于判断升级是否真正成功应用
     public void TryUpgrade(int id, int cost, UpgradeItemUI clickedItemUI)
     {
+        
         // 先检查是否满足金币条件
         if (GameManager.Instance.money < cost)
         {
@@ -112,6 +113,7 @@ public class UpgradeManager : MonoBehaviour
             // 只有真正成功了，才扣钱和更新UI
             if (GameManager.Instance.SpendMoney(cost, "升级消费"))
             {
+                AudioManager.Instance.PlayButtonSound();
                 clickedItemUI.SetUnlocked();
                 EventManager.Instance.TriggerGameLog("升级成功！");
             }

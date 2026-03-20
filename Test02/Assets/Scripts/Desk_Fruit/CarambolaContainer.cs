@@ -80,6 +80,7 @@ public class CarambolaContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
+                AudioManager.Instance.PlayEmptySound();
                 EventManager.Instance.TriggerGameLog("杨桃片库存不足！", LogType.Warning);
             }
             return;
@@ -120,7 +121,7 @@ public class CarambolaContainer : MonoBehaviour
         {
             // 添加杨桃片原料到咖啡数据
             coffeeData.AddIngredient("carambola");
-
+            AudioManager.Instance.PlayMakeSound();
             // 添加杨桃片到杯子
             cup.AddExtraIngredient("carambola");
 

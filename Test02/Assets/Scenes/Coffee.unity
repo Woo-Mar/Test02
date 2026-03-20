@@ -8825,49 +8825,49 @@ MonoBehaviour:
   coffeeBeans:
     id: coffee
     name: "\u5496\u5561\u8C46"
-    currentAmount: 100
+    currentAmount: 0
     maxAmount: 100
     icon: {fileID: 304229705, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: g
   milk:
     id: milk
     name: "\u725B\u5976"
-    currentAmount: 50
+    currentAmount: 0
     maxAmount: 100
     icon: {fileID: -642835742, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: ml
   strawberry:
     id: strawberry
     name: "\u8349\u8393\u9171"
-    currentAmount: 30
+    currentAmount: 0
     maxAmount: 100
     icon: {fileID: 615696440, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: g
   carambola:
     id: carambola
     name: "\u6768\u6843\u7247"
-    currentAmount: 20
+    currentAmount: 0
     maxAmount: 100
     icon: {fileID: 1648834744, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: "\u7247"
   fig:
     id: fig
     name: "\u65E0\u82B1\u679C\u5E72"
-    currentAmount: 15
+    currentAmount: 3
     maxAmount: 100
     icon: {fileID: -433026714, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: "\u4E2A"
   ice:
     id: ice
     name: "\u51B0\u5757"
-    currentAmount: 200
+    currentAmount: 0
     maxAmount: 100
     icon: {fileID: -1723444379, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: "\u5757"
   cup:
     id: cup
     name: "\u676F\u5B50"
-    currentAmount: 10
+    currentAmount: 3
     maxAmount: 100
     icon: {fileID: 1529295972, guid: 57b010cec0d653347861b755a36c3f36, type: 3}
     unit: "\u4E2A"

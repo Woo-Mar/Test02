@@ -4,12 +4,12 @@ using UnityEngine;
 public class InventoryListener : MonoBehaviour
 {
     [Header("Ô­ÁÏ¿â´æ")]
-    public int coffeeBeans = 100;
-    public int milk = 50;
-    public int strawberry = 30;
-    public int carambola = 20;
-    public int fig = 15;
-    public int ice = 200;
+    public int coffeeBeans = 0;
+    public int milk = 0;
+    public int strawberry = 0;
+    public int carambola = 0;
+    public int fig = 3;
+    public int ice = 0;
 
     void Start()
     {

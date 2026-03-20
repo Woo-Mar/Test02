@@ -80,6 +80,7 @@ public class StrawberryContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
+                AudioManager.Instance.PlayEmptySound();
                 EventManager.Instance.TriggerGameLog("²ÝÝ®½´¿â´æ²»×ã£¡", LogType.Warning);
             }
             return;
@@ -123,6 +124,7 @@ public class StrawberryContainer : MonoBehaviour
 
             // Ìí¼Ó²ÝÝ®½´µ½±­×Ó
             cup.AddExtraIngredient("strawberry");
+            AudioManager.Instance.PlayMakeSound();
 
             if (EventManager.Instance != null)
             {

@@ -38,13 +38,13 @@ public class IngredientSystem : MonoBehaviour
     }
 
     [Header("Ô­ÁÏ¿â´æ")]
-    public Ingredient coffeeBeans = new Ingredient { id = "coffee", name = "¿§·È¶¹", currentAmount = 100, unit = "g" };
-    public Ingredient milk = new Ingredient { id = "milk", name = "Å£ÄÌ", currentAmount = 50, unit = "ml" };
-    public Ingredient strawberry = new Ingredient { id = "strawberry", name = "²ÝÝ®½´", currentAmount = 30, unit = "g" };
-    public Ingredient carambola = new Ingredient { id = "carambola", name = "ÑîÌÒÆ¬", currentAmount = 20, unit = "Æ¬" };
-    public Ingredient fig = new Ingredient { id = "fig", name = "ÎÞ»¨¹û¸É", currentAmount = 15, unit = "¸ö" };
-    public Ingredient ice = new Ingredient { id = "ice", name = "±ù¿é", currentAmount = 200, unit = "¿é" };
-    public Ingredient cup = new Ingredient { id = "cup", name = "±­×Ó", currentAmount = 10, unit = "¸ö" };
+    public Ingredient coffeeBeans = new Ingredient { id = "coffee", name = "¿§·È¶¹", currentAmount = 0, unit = "g" };
+    public Ingredient milk = new Ingredient { id = "milk", name = "Å£ÄÌ", currentAmount = 0, unit = "ml" };
+    public Ingredient strawberry = new Ingredient { id = "strawberry", name = "²ÝÝ®½´", currentAmount = 0, unit = "g" };
+    public Ingredient carambola = new Ingredient { id = "carambola", name = "ÑîÌÒÆ¬", currentAmount = 0, unit = "Æ¬" };
+    public Ingredient fig = new Ingredient { id = "fig", name = "ÎÞ»¨¹û¸É", currentAmount = 3, unit = "¸ö" };
+    public Ingredient ice = new Ingredient { id = "ice", name = "±ù¿é", currentAmount = 0, unit = "¿é" };
+    public Ingredient cup = new Ingredient { id = "cup", name = "±­×Ó", currentAmount = 3, unit = "¸ö" };
 
     [Header("ÏûºÄÅäÖÃ")]
     public int coffeeBeansPerCup = 10;      // Ã¿±­¿§·ÈÏûºÄµÄ¿§·È¶¹

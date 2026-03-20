@@ -95,37 +95,7 @@ public class CoffeeMachine : MonoBehaviour
         brewButton.interactable = hasGroundCoffee && currentCup != null;
     }
 
-    /// <summary>
-    /// 步骤1：研磨咖啡豆
-    /// </summary>
-    //public void GrindCoffee()
-    //{
-    //    Debug.Log("尝试研磨咖啡...");
-
-    //    // 检查咖啡豆库存
-    //    if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10g每杯
-    //    {
-    //        EventManager.Instance.TriggerGameLog("咖啡豆不足！", LogType.Warning);
-    //        return;
-    //    }
-
-    //    if (hasCoffeeBeans && !hasGroundCoffee)
-    //    {
-    //        hasGroundCoffee = true;
-    //        currentCoffee.hasCoffeePowder = true;
-
-    //        // 生成咖啡粉视觉效果
-    //        StartCoroutine(SpawnCoffeePowderEffect());
-
-    //        // 触发事件 - IngredientSystem会监听这个事件并消耗咖啡豆
-    //        if (EventManager.Instance != null)
-    //        {
-    //            EventManager.Instance.TriggerCoffeeGrinded("arabica"); // 假设咖啡豆类型
-    //            EventManager.Instance.TriggerGameLog("咖啡研磨完成！");
-    //        }
-    //        UpdateUI();
-    //    }
-    //}
+    
 
     public void GrindCoffee()
     {
@@ -135,13 +105,14 @@ public class CoffeeMachine : MonoBehaviour
         // 检查咖啡豆库存
         if (!IngredientSystem.Instance.HasEnoughIngredient("coffee", 10)) // 10g每杯
         {
-            
+            AudioManager.Instance.PlayEmptySound();
             EventManager.Instance.TriggerGameLog("咖啡豆不足！", LogType.Warning);
             return;
         }
 
         if (hasCoffeeBeans && !hasGroundCoffee)
         {
+            AudioManager.Instance.PlayMakeSound();
             hasGroundCoffee = true;
             currentCoffee.hasCoffeePowder = true;
 

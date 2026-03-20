@@ -114,6 +114,7 @@ public class AchievementManager : MonoBehaviour
 
     public void ClaimReward(string id)
     {
+        AudioManager.Instance.PlayButtonSound();
         var ach = achievements.Find(a => a.id == id);
         if (ach != null && ach.isReached && !ach.isClaimed)
         {

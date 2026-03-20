@@ -59,6 +59,7 @@ public class IceContainer : MonoBehaviour
         {
             if (EventManager.Instance != null)
             {
+                AudioManager.Instance.PlayEmptySound();
                 EventManager.Instance.TriggerGameLog("冰块库存不足！", LogType.Warning);
             }
             return;
@@ -79,7 +80,7 @@ public class IceContainer : MonoBehaviour
                 {
                     // 给杯子加冰
                     cup.AddIce();
-
+                    
                     // 获取咖啡数据并添加冰块原料
                     CoffeeMachine coffeeMachine = FindObjectOfType<CoffeeMachine>();
                     if (coffeeMachine != null && coffeeMachine.currentCoffee != null)
@@ -96,6 +97,7 @@ public class IceContainer : MonoBehaviour
                     autoDestroy.fadeOut = true;
                     autoDestroy.fadeDuration = 0.5f;
 
+                    AudioManager.Instance.PlayMakeSound();
                     if (EventManager.Instance != null)
                     {
                         EventManager.Instance.TriggerGameLog("冰块已加入咖啡");
