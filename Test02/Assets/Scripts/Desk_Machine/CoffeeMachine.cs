@@ -435,8 +435,9 @@ public class CoffeeMachine : MonoBehaviour
         // 回退到检查杯子状态
         return hasAnyDrink;
     }
+
     /// <summary>
-    /// 回收空杯子
+    /// 收回空杯子（修复幽灵杯子Bug版）
     /// </summary>
     public void ReturnEmptyCup(GameObject cup)
     {
@@ -445,29 +446,21 @@ public class CoffeeMachine : MonoBehaviour
             Cup cupScript = cup.GetComponent<Cup>();
             if (cupScript != null && cupScript.isEmpty)
             {
-                // 如果回收的杯子是当前杯子，清空引用
+                // 如果收回的杯子是当前杯子，清空引用
                 if (currentCup == cup)
                 {
-                    Debug.Log("清空咖啡机上的当前杯子引用");
                     currentCup = null;
                 }
 
-                // 使用 cupPosition 的位置来重置杯子位置
-                cup.transform.position = cupPosition.position;
-                cup.transform.SetParent(null);
-
-                // 确保Z轴正确
-                Vector3 pos = cup.transform.position;
-                pos.z = -2f; // 硬编码为-2
-                cup.transform.position = pos;
-
-                // 重新添加到可用杯子列表
-                if (!availableCups.Contains(cup))
+                // 【核心修复】不要把它留在原地，直接返还 1 个杯子库存，并彻底销毁该物体！
+                if (IngredientSystem.Instance != null)
                 {
-                    availableCups.Add(cup);
+                    IngredientSystem.Instance.AddIngredient("cup", 1);
                 }
 
-                Debug.Log($"空杯子已回收，当前可用杯子: {availableCups.Count}");
+                Destroy(cup); // 直接销毁，杜绝贴图残留
+
+                Debug.Log("空杯子已回收并销毁，库存 +1");
                 UpdateUI();
             }
         }

@@ -526,19 +526,27 @@ public class Cup : MonoBehaviour
     /// <summary>
     /// 返回咖啡机位置
     /// </summary>
+    /// <summary>
+    /// 返回咖啡机位置（修复占用重叠Bug版）
+    /// </summary>
     public void ReturnToCoffeeMachine()
     {
-        if (coffeeMachine != null)
+        // 检查咖啡机是否存在，且咖啡机当前是不是【空的】
+        if (coffeeMachine != null && coffeeMachine.currentCup == null)
         {
-            // 重新放置到咖啡机
+            // 机器空着，放回机器
             coffeeMachine.PlaceCup(gameObject);
         }
         else
         {
-            // 没有咖啡机则返回原始位置
+            // 机器被占用了（比如拖拽期间玩家又点了一个新杯子）
+            // 退回到拖拽前的原始位置，避免两个杯子重叠叠罗汉
             transform.position = originalPosition;
+            EnsureCorrectZPosition();
+            Debug.Log("咖啡机已被占用，杯子退回原位");
         }
     }
+
 
     /// <summary>
     /// 给杯子装满咖啡

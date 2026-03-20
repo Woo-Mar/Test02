@@ -9029,7 +9029,7 @@ MonoBehaviour:
     displayName: "\u65E0\u82B1\u679C\u5E72"
     packAmount: 5
     baseBuyPrice: 15
-  deliveryTime: 30
+  deliveryTime: 8
 --- !u!114 &1906710236
 MonoBehaviour:
   m_ObjectHideFlags: 0
