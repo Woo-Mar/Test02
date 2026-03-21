@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ShopSystem : MonoBehaviour
@@ -94,6 +95,11 @@ public class ShopSystem : MonoBehaviour
     // ★★★ 鼠标点击商店精灵时调用 ★★★
     void OnMouseDown()
     {
+        // 如果鼠标在 UI 上，则忽略本次点击
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         Debug.Log("点击商店精灵");
         OpenShop();
     }

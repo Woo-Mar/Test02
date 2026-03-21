@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CafeSystem : MonoBehaviour
@@ -71,6 +72,11 @@ public class CafeSystem : MonoBehaviour
     // ★★★ 鼠标点击咖啡馆精灵时调用 ★★★
     void OnMouseDown()
     {
+        // 如果鼠标在 UI 上，则忽略本次点击
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         Debug.Log("=== OnMouseDown 被触发 ===");
         Debug.Log($"游戏对象: {gameObject.name}");
         Debug.Log($"位置: {transform.position}");
