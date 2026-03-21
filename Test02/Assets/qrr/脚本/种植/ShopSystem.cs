@@ -58,7 +58,7 @@ public class ShopSystem : MonoBehaviour
     public Backpack seedBackpack;
 
     [Header("玩家金币")]
-    public int playerGold = 100;
+    public int playerGold = 60;
 
     void Awake()
     {
@@ -101,7 +101,7 @@ public class ShopSystem : MonoBehaviour
     void LoadGold()
     {
         // 强制重置金币为100，忽略保存的数据
-        playerGold = 100;
+        playerGold = 60;
         SaveGold();  // 保存新数据
 
         // 或者用这行读取保存的数据
