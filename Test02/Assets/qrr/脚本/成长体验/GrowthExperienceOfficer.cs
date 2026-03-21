@@ -27,7 +27,7 @@ public class GrowthExperienceOfficer : MonoBehaviour
     {
         // 初始化UI
         if (experiencePanel != null)
-            experiencePanel.SetActive(false);
+            experiencePanel.SetActive(true);
 
         // 绑定按钮事件
         if (openPanelButton != null)
@@ -39,7 +39,7 @@ public class GrowthExperienceOfficer : MonoBehaviour
         // 设置描述文本
         if (descriptionText != null)
         {
-            descriptionText.text = "玩家可以通关寻找出口去体验作物成长，" +
+            descriptionText.text = "玩家需要先去西边通关寻找出口体验作物成长，" +
                                   "完成挑战后会获得作物种子噢！";
         }
 
