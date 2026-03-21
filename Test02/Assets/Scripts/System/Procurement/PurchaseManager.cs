@@ -40,6 +40,8 @@ public class PurchaseManager : MonoBehaviour
 
     [Header("音效")]
     public AudioClip deliverySound; // 货物送达时的提示音效
+    [Range(0f, 1f)]
+    public float deliverySoundVolume = 0.5f; // 默认 0.5 音量
 
     // 销售追踪
     private Dictionary<Coffee.CoffeeType, int> salesHistory = new Dictionary<Coffee.CoffeeType, int>();
@@ -135,11 +137,10 @@ public class PurchaseManager : MonoBehaviour
         yield return new WaitForSeconds(deliveryTime);
         IngredientSystem.Instance.AddIngredient(id, amount);
         EventManager.Instance.TriggerGameLog($"物资 {id} 已送达仓库！");
-        // ---新增：播放送达音效-- -
+
         if (deliverySound != null)
         {
-            // 使用主摄像机的位置播放，确保这是一个全局UI音效，无论画面在哪都能听清
-            AudioSource.PlayClipAtPoint(deliverySound, Camera.main.transform.position);
+            AudioSource.PlayClipAtPoint(deliverySound, Camera.main.transform.position, deliverySoundVolume);
         }
     }
 

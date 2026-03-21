@@ -14,4 +14,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/End.unity
     guid: a2e9fdd693533d6488166437994f7b86
+  - enabled: 1
+    path: Assets/qrr/Scenes/Game.unity
+    guid: bf33c45057468d14ba89bc5ae0b4f69d
+  - enabled: 1
+    path: Assets/qrr/Scenes/Game2.unity
+    guid: 3cd7e6e7aba5c5146a1def1964990e5c
+  - enabled: 1
+    path: Assets/qrr/Scenes/Game3.unity
+    guid: e446cb3830954604db163fb540511b9d
   m_configObjects: {}
