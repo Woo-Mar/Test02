@@ -8895,11 +8895,11 @@ MonoBehaviour:
   ingredientData: []
   customerTypes: []
   coffeePrices:
-    hotCoffee: 18
-    icedCoffee: 22
-    latte: 26
-    strawberryLatte: 38
-    carambolaAmericano: 45
+    hotCoffee: 20
+    icedCoffee: 25
+    latte: 30
+    strawberryLatte: 45
+    carambolaAmericano: 40
     figTea: 15
 --- !u!114 &1906710233
 MonoBehaviour:
@@ -8930,7 +8930,7 @@ MonoBehaviour:
     id: coffee
     name: "\u5496\u5561\u8C46"
     currentAmount: 0
-    maxAmount: 100
+    maxAmount: 300
     icon: {fileID: 304229705, guid: de16a25ab3aec18489f162ceb02a4ccd, type: 3}
     unit: g
   milk:
@@ -9004,31 +9004,31 @@ MonoBehaviour:
   - id: cup
     displayName: "\u676F\u5B50"
     packAmount: 10
-    baseBuyPrice: 20
+    baseBuyPrice: 15
   - id: coffee
     displayName: "\u5496\u5561\u8C46"
     packAmount: 100
-    baseBuyPrice: 30
+    baseBuyPrice: 20
   - id: ice
     displayName: "\u51B0\u5757"
     packAmount: 60
-    baseBuyPrice: 20
+    baseBuyPrice: 10
   - id: milk
     displayName: "\u725B\u5976"
     packAmount: 50
-    baseBuyPrice: 20
+    baseBuyPrice: 15
   - id: strawberry
     displayName: "\u8349\u8393\u9171"
     packAmount: 30
-    baseBuyPrice: 40
+    baseBuyPrice: 25
   - id: carambola
     displayName: "\u6768\u6843\u7247"
     packAmount: 10
-    baseBuyPrice: 50
+    baseBuyPrice: 30
   - id: fig
     displayName: "\u65E0\u82B1\u679C\u5E72"
     packAmount: 5
-    baseBuyPrice: 15
+    baseBuyPrice: 10
   deliveryTime: 8
   deliverySound: {fileID: 8300000, guid: baf3543ccb716d444a27b4ae19172e6c, type: 3}
 --- !u!114 &1906710236
@@ -9069,28 +9069,28 @@ MonoBehaviour:
     icon: {fileID: 1152662425, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 1
   - name: "\u573A\u666F2"
-    cost: 250
+    cost: 150
     description: "\u670D\u52A1\u8D391.1x\uFF01"
     icon: {fileID: -761175165, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u573A\u666F3"
-    cost: 600
+    cost: 400
     description: "\u670D\u52A1\u8D391.2x\uFF01"
     icon: {fileID: -257760178, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   facilityUpgrades:
   - name: "\u5496\u5561\u673A\u5347\u7EA7"
-    cost: 800
+    cost: 600
     description: "\u5347\u7EA7\u4E3A\u5168\u81EA\u52A8\u7814\u78E8\uFF01"
     icon: {fileID: -1189471560, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u9053\u8DEF\u5347\u7EA7"
-    cost: 120
+    cost: 80
     description: "\u7269\u6D41\u65F6\u95F4\u7F29\u77ED\u81F32\u79D2\uFF01"
     icon: {fileID: -478387365, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
   - name: "\u5C55\u89C8\u54C1"
-    cost: 350
+    cost: 200
     description: "\u987E\u5BA2\u8010\u5FC3\u589E\u52A010\u79D2\uFF01"
     icon: {fileID: 835945529, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     isUnlocked: 0
@@ -9119,7 +9119,7 @@ MonoBehaviour:
     description: "\u8D5A\u53D615\u4E2A\u987E\u5BA2\u7684\u597D\u8BC4"
     icon: {fileID: -885763260, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     goalValue: 15
-    rewardMoney: 250
+    rewardMoney: 200
     currentProgress: 0
     isReached: 0
     isClaimed: 0
@@ -9128,7 +9128,7 @@ MonoBehaviour:
     description: "\u552E\u535610\u676F\u65E0\u82B1\u679C\u8336"
     icon: {fileID: -1175056716, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     goalValue: 10
-    rewardMoney: 150
+    rewardMoney: 100
     currentProgress: 0
     isReached: 0
     isClaimed: 0
@@ -9137,7 +9137,7 @@ MonoBehaviour:
     description: "\u8D5A\u53D61000\u91D1\u5E01"
     icon: {fileID: 1095742721, guid: 8c40f4f25e91a4a4fb84eb03b8fcaf5b, type: 3}
     goalValue: 1000
-    rewardMoney: 400
+    rewardMoney: 300
     currentProgress: 0
     isReached: 0
     isClaimed: 0

@@ -70,12 +70,12 @@ public class DataManager : MonoBehaviour
         // º€∏Ò≈‰÷√
         coffeePrices = new CoffeePrices
         {
-            hotCoffee = 10,
-            icedCoffee = 15,
-            latte = 15,
-            strawberryLatte = 25,
-            carambolaAmericano = 20,
-            figTea = 5
+            hotCoffee = 20,
+            icedCoffee = 25,
+            latte = 30,
+            strawberryLatte = 45,
+            carambolaAmericano = 40,
+            figTea = 15
         };
     }
 
@@ -132,7 +132,7 @@ public class CustomerTypeData
 {
     public string id;
     public string name;
-    public float basePatience = 30f;
+    public float basePatience = 40f;
     public int baseReward = 10;
     public Sprite sprite;
 }
@@ -140,10 +140,10 @@ public class CustomerTypeData
 [System.Serializable]
 public class CoffeePrices
 {
-    public int hotCoffee = 10;
-    public int icedCoffee = 15;
-    public int latte = 15;
-    public int strawberryLatte = 25;
-    public int carambolaAmericano = 20;
-    public int figTea = 5;
+    public int hotCoffee = 20;
+    public int icedCoffee = 25;
+    public int latte = 30;
+    public int strawberryLatte = 45;
+    public int carambolaAmericano = 40;
+    public int figTea = 15;
 }

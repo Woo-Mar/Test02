@@ -64,8 +64,8 @@ public class ProgressGuideManager : MonoBehaviour
         soldCount++;
         // 阶段 1 -> 2 (售出3杯无花果茶)
         if (guideStep == 1 && soldCount >= 3) EnterPhase2();
-        // 阶段 2 -> 3 (售出15杯)
-        else if (guideStep == 2 && soldCount >= 15) EnterPhase3();
+        // 阶段 2 -> 3 (售出10杯)
+        else if (guideStep == 2 && soldCount >= 10) EnterPhase3();
         // 阶段 3 -> 4 (2000金币)
         if (GameManager.Instance.money >= 2000 && guideStep < 4) EnterPhase4();
     }

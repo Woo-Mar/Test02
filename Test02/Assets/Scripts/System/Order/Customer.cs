@@ -31,7 +31,7 @@ public class Customer : MonoBehaviour
     public Sprite angryImpatientSprite;
 
     [Header("Settings")]
-    public float patience = 30f;        // 总耐心时间（秒）
+    public float patience = 40f;        // 总耐心时间（秒）
     public int baseReward = 10;         // 基础奖励金币
 
     [Header("UI")]
