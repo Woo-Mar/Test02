@@ -24,22 +24,21 @@ public class AudioManager1 : MonoBehaviour
     [Header("交互音效")]
     public AudioClip interactSound;       // 交互音效（按E/T键）
 
-    [Header("商店音效")]  // ★★★ 新增 ★★★
+    [Header("商店音效")]
     public AudioClip buySound;            // 购买音效
     public AudioClip sellSound;           // 出售音效
 
     void Awake()
     {
-        // 单例模式
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
+        // 场景级单例模式：如果当前场景已经有一个实例，销毁多余的
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        // ★★★ 删除了 DontDestroyOnLoad(gameObject); 这样跳转场景时它就会随场景自动销毁 ★★★
 
         // 如果没有指定音频源，自动添加
         if (sfxSource == null)
@@ -55,6 +54,15 @@ public class AudioManager1 : MonoBehaviour
             ambientSource = gameObject.AddComponent<AudioSource>();
             ambientSource.loop = true;
             ambientSource.volume = 0.5f;
+        }
+    }
+
+    // ★★★ 新增：当物体被销毁（如跳转场景）时，清空单例引用，防止野指针报错 ★★★
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 
