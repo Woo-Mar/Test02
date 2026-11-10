@@ -79,7 +79,7 @@
 4.成就item更新数据会导致升级系统的item移位。
 5.item位移修复：再包一层（ContentSizeFitter 放内层，不要放 HLG 的直接 child）。
  【不要在LeftColumn/RightColumn的rect transform里改位置，直接在vertical layout group里面改位置】。
-  我真服了。
+
 
 ## 2026.3.10
 ### C15
